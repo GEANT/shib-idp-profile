@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize" default-destroy-method="destroy">
+
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:placeholderPrefix="%{"
+        p:placeholderSuffix="}" />
+
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+
+    <bean id="shibboleth.userprofile.browserProfile" class="java.lang.Boolean" c:_0="true" />
+    
+    <bean id="shibboleth.userprofile.profileId" class="java.lang.String"
+        c:_0="#{T(org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration).PROFILE_ID}" />
+
+    <bean id="shibboleth.userprofile.loggingId" class="java.lang.String" c:_0="%{idp.service.logging.userprofilesso:USERPROFILE.SSO}" />
+
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
+        p:profileId-ref="shibboleth.userprofile.profileId"
+        p:loggingId-ref="shibboleth.userprofile.loggingId"
+        p:browserProfile-ref="shibboleth.userprofile.browserProfile" />
+
+    <bean id="InitializeRelyingPartyContext"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUnverifiedRelyingPartyContext" scope="prototype" />
+
+    <bean id="SelectRelyingPartyConfiguration"
+        class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+
+    <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
+        scope="prototype" />
+
+    <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.oidc.PostLookupAuditExtractors') ?: getObject('shibboleth.DefaultPostLookupAuditExtractors')}" />
+
+    <bean id="PopulateInboundInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="inbound">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.InboundFlowsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="InitializeAuthenticationContext"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeAuthenticationContext" scope="prototype" />
+
+    <bean id="PopulateUserAgentContext" class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext"
+        scope="prototype" p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
+    <bean id="PopulatePostAuthnInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows="#{@'shibboleth.ProfileInterceptorFlowDescriptorManager'.getComponents()}"
+            p:loggingLabel="post-authn">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="PopulateClientStorageLoadContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
+
+    <bean id="UpdateSessionWithSPSession"
+            class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
+            p:activationCondition="%{idp.session.trackSPSessions:false}"
+            p:sessionManager-ref="shibboleth.SessionManager"
+            p:SPSessionCreationStrategy-ref="%{idp.oidc.SPSessionCreationStrategy:DefaultSPSessionCreationStrategy}"/>
+
+    <bean id="DefaultSPSessionCreationStrategy" class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionCreationStrategy"
+        c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"/>
+
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+
+    <bean id="FlowStartPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.FlowStartAuditExtractors') ?: getObject('shibboleth.DefaultFlowStartAuditExtractors')}" />
+
+    <bean id="PopulateClientStorageSaveContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
+
+    <bean id="InitializeUserProfileContext"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUserProfileContext" scope="prototype"
+        p:userProfileCache-ref="shibboleth.UserProfileCache" p:clientInformationResolver-ref="shibboleth.ClientInformationResolver"
+        p:metadataResolver-ref="shibboleth.MetadataResolver"/>
+
+    <bean id="RenderUserProfileContext"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileContext" scope="prototype" />
+
+    <bean id="ResolveRPAttributes"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.ResolveRPAttributes"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" scope="prototype">
+        <constructor-arg index="0" ref="shibboleth.AttributeResolverService"/>
+    </bean>
+
+    <bean id="FilterRPAttributes"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.FilterRPAttributes"
+        p:metadataResolver-ref="shibboleth.MetadataResolver" scope="prototype">
+        <constructor-arg index="0" ref="shibboleth.AttributeFilterService"/>
+    </bean>
+
+    <bean id="RenderRPAttributes"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderRPAttributes"
+        p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"/>
+
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
+        
+    <bean id="MapEventToView" class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+        p:defaultView-ref="shibboleth.DefaultErrorView" p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
+
+</beans>
