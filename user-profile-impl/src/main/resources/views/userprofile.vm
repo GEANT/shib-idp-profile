@@ -15,7 +15,6 @@
 #set ($record = $userProfileContext.getRecord())
 #set ($pastLogins = $record.get("RELYING_PARTY"))
 #set ($relyingParties = $userProfileContext.getRelyingParties())
-#set ($attributeCtxs = $userProfileContext.getRPAttributeContext())
 #set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
 <!DOCTYPE html>
 <html>
@@ -40,16 +39,15 @@
                     <tr>
                       <td>$relyingParties[$rpId].name</td>
                       <td>
-                      #if ($attributeCtxs.containsKey($rpId))
+                      #if ($encodedJSONAttributes.containsKey($rpId))
                       <table>
-                        #set ($idPAttributes = $attributeCtxs[$rpId].getIdPAttributes())
                         #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
-                        #foreach($attributeId in $rpEncodedJSONAttributes.keySet())
+                        #foreach($attribute in $rpEncodedJSONAttributes.keySet())
                         <tr>
                           ## TBD What to show as 'name'
-                          <th>$attributeId</th>
+                          <th>$attribute.getId()</th>
                           ## TBD show all values
-                          <th>$idPAttributes[$attributeId].getValues()[0].getDisplayValue()</th>
+                          <th>$attribute.getValues()[0].getDisplayValue()</th>
                         </tr>
                         #end
                       </table>

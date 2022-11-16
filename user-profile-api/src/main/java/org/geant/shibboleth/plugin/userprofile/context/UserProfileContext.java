@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 
 import net.minidev.json.JSONObject;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 
 public final class UserProfileContext extends BaseContext {
@@ -22,7 +23,7 @@ public final class UserProfileContext extends BaseContext {
     private Iterable<EntityDescriptor> entityDescriptors;
 
     private Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
-    private Map<String, Map<String, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<String, JSONObject>>();
+    private Map<String, Map<IdPAttribute, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<IdPAttribute, JSONObject>>();
 
     /** Constructor. */
     public UserProfileContext(JsonObject record) {
@@ -69,14 +70,14 @@ public final class UserProfileContext extends BaseContext {
         return rpAttributeContext;
     }
 
-    public void setEncodedJSONAttribute(String rpId, String attributeId, JSONObject attribute) {
+    public void setEncodedJSONAttribute(String rpId, IdPAttribute attribute, JSONObject encoded) {
         if (rpEncodedJSONAttributes.get(rpId) == null) {
-            rpEncodedJSONAttributes.put(rpId, new HashMap<String, JSONObject>());
+            rpEncodedJSONAttributes.put(rpId, new HashMap<IdPAttribute, JSONObject>());
         }
-        rpEncodedJSONAttributes.get(rpId).put(attributeId, attribute);
+        rpEncodedJSONAttributes.get(rpId).put(attribute, encoded);
     }
 
-    public Map<String, Map<String, JSONObject>> getRPEncodedJSONAttributes() {
+    public Map<String, Map<IdPAttribute, JSONObject>> getRPEncodedJSONAttributes() {
         return rpEncodedJSONAttributes;
     }
 
