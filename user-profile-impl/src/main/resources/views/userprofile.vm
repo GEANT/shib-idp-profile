@@ -12,6 +12,7 @@
 ## userProfileContext - user profile context
 ##
 ##
+#set ($userAttributes = $userProfileContext.getIdPUserAttributes())
 #set ($record = $userProfileContext.getRecord())
 #set ($pastLogins = $record.get("RELYING_PARTY"))
 #set ($relyingParties = $userProfileContext.getRelyingParties())
@@ -31,9 +32,38 @@
                 <h1>#springMessageText("idp.userprofile.pageheading", "User Profile Page")</h1>
             </header>
             <section>
+                <h1>#springMessageText("idp.userprofile.personaldata.heading", "Personal Data")</h1>
+                <table>
+                  #foreach($attribute in $userAttributes)
+                  <tr>
+                    <td>$attribute.getId()</td>
+                    <td>$attribute.getValues()[0].getDisplayValue()</td>
+                  </tr>
+                  #end
+                </table>
+            </section>
+            <section>
+                <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected organizations")</h1>
+            </section>
+            <section>
+                <h1>#springMessageText("idp.userprofile.allactivity.heading", "All activity")</h1>
+                <table>
+                  <tr>
+                    <th>Time</th>
+                    <th>Service</th>
+                  </tr>
+                  #foreach($item in $pastLogins)
+                  <tr>
+                    <td>$item.iat</td>
+                    <td>$relyingParties["$item.value"].name</td>
+                  </tr>
+                  #end
+                </table>
+            </section>
+            <section>
                 <form action="$flowExecutionUrl" method="post">
                   #parse("csrf/csrf.vm")
-                  <h1>#springMessageText("idp.userprofile.relyingpartiesheading", "Connected organizations")</h1>
+                  <h1>#springMessageText("idp.userprofile.availableorganizations.heading", "Available Organizations")</h1>
                   <table>
                     #foreach($rpId in $relyingParties.keySet())
                     <tr>
@@ -44,7 +74,6 @@
                         #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
                         #foreach($attribute in $rpEncodedJSONAttributes.keySet())
                         <tr>
-                          ## TBD What to show as 'name'
                           <th>$attribute.getId()</th>
                           ## TBD show all values
                           <th>$attribute.getValues()[0].getDisplayValue()</th>
@@ -59,21 +88,6 @@
                   #end
                   </table>
                 </form>
-            </section>
-            <section>
-                <h1>#springMessageText("idp.userprofile.pastloginsheading", "All activity")</h1>
-                <table>
-                  <tr>
-                    <th>Time</th>
-                    <th>Service</th>
-                  </tr>
-                  #foreach($item in $pastLogins)
-                  <tr>
-                    <td>$item.iat</td>
-                    <td>$relyingParties["$item.value"].name</td>
-                  </tr>
-                  #end
-                </table>
             </section>
         </main>
         <footer class="footer">
