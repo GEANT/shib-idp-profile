@@ -105,6 +105,10 @@
         <constructor-arg index="0" ref="shibboleth.AttributeResolverService"/>
     </bean>
 
+    <bean id="RenderIdPAttributes"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderIdPAttributes"
+        p:idPUserAttributes="%{idp.userprofile.idpuserattributes:}" />
+
     <bean id="FilterRPAttributes"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.FilterRPAttributes"
         p:metadataResolver-ref="shibboleth.MetadataResolver" scope="prototype">

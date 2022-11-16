@@ -1,6 +1,8 @@
 package org.geant.shibboleth.plugin.userprofile.context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -16,19 +18,21 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 public final class UserProfileContext extends BaseContext {
 
     private final JsonObject record;
-
     private final JsonObject relyingParties;
-
     private Iterable<OIDCClientInformation> oidcClientInformation;
     private Iterable<EntityDescriptor> entityDescriptors;
-
     private Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
     private Map<String, Map<IdPAttribute, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<IdPAttribute, JSONObject>>();
+    private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
 
     /** Constructor. */
     public UserProfileContext(JsonObject record) {
         this.record = record;
         relyingParties = new JsonObject();
+    }
+
+    public List<IdPAttribute> getIdPUserAttributes() {
+        return idPUserAttributes;
     }
 
     public Iterable<OIDCClientInformation> getOidcClientInformation() {

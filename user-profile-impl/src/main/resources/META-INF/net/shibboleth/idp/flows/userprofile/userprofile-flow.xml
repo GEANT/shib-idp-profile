@@ -87,6 +87,8 @@
         <!-- Attach metadata -->
         <!-- Resolve user attributes for rp none -->
         <!-- Render user profile attributes for rp none -->
+        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="RenderIdPAttributes" />
         <evaluate expression="RenderUserProfileContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="UserProfileView" />
