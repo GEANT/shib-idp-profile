@@ -95,9 +95,13 @@
     <bean id="RenderUserProfileContext"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileContext" scope="prototype" />
 
-    <bean id="ResolveRPAttributes"
-        class="org.geant.shibboleth.plugin.userprofile.profile.impl.ResolveRPAttributes"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" scope="prototype">
+    <bean id="ExtractRelyingPartyIdFromRequest"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractRelyingPartyIdFromRequest"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" scope="prototype" />
+
+    <bean id="ResolveAttributes"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.ResolveAttributes"
+        scope="prototype">
         <constructor-arg index="0" ref="shibboleth.AttributeResolverService"/>
     </bean>
 

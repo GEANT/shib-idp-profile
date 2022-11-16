@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.opensaml.messaging.context.BaseContext;
@@ -24,17 +23,15 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
-public class ResolveRPAttributes extends AbstractProfileAction {
+public class ResolveAttributes extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull
-    private final Logger log = LoggerFactory.getLogger(ResolveRPAttributes.class);
+    private final Logger log = LoggerFactory.getLogger(ResolveAttributes.class);
 
     /** Service used to get the resolver for fetching attributes. */
     @Nonnull
@@ -81,19 +78,8 @@ public class ResolveRPAttributes extends AbstractProfileAction {
     @Nonnull
     private Function<ProfileRequestContext, AttributeResolutionContext> attributeResolutionContextLookupStrategy;
 
-    /** Parameter name for rpId. */
-    @Nonnull
-    @NotEmpty
-    private String rpIdFieldName;
-
-    /** For extracting user input. */
-    private HttpServletRequest request;
-
     /** For obtaining user principal name. */
     private SubjectContext subjectContext;
-
-    /** Relying Party Id we resolve attributes for. */
-    private String rpId;
 
     /** Context for User Profile . */
     private UserProfileContext userProfileContext;
@@ -108,9 +94,8 @@ public class ResolveRPAttributes extends AbstractProfileAction {
     private RelyingPartyContext rpContext;
 
     /** Constructor. */
-    ResolveRPAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
+    ResolveAttributes(@Nonnull final ReloadableService<AttributeResolver> resolverService) {
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
-        rpIdFieldName = "_eventId_showAttributes";
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         attributeResolutionContextLookupStrategy = new ChildContextLookup<>(AttributeResolutionContext.class, true);
@@ -119,16 +104,6 @@ public class ResolveRPAttributes extends AbstractProfileAction {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
-    }
-
-    /**
-     * 
-     * @param fieldName
-     */
-    public void setRpIdFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        rpIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
-                "Relying Party field name cannot be null or empty.");
     }
 
     /**
@@ -221,32 +196,15 @@ public class ResolveRPAttributes extends AbstractProfileAction {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        request = getHttpServletRequest();
-        if (request == null) {
-            log.error("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null || subjectContext.getPrincipalName() == null) {
             log.error("{} No principal name available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        rpId = request.getParameter(rpIdFieldName);
-        if (rpId == null || rpId.isBlank()) {
-            log.debug("{} Relying party id extraction failed", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
         userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
         if (userProfileContext == null) {
             log.error("{} No UserProfileContext name available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        if (!userProfileContext.getRelyingParties().has(rpId)) {
-            log.error("{} Relying Party {} is unknown.", getLogPrefix(), rpId);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
@@ -276,16 +234,11 @@ public class ResolveRPAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        // The manipulated context is used during attribute resolving and filtering. */
-        rpContext.setRelyingPartyId(rpId);
         // Initialize AttributeResolutionContext
-        if (issuerLookupStrategy != null) {
-            attributeResolutionContext.setAttributeIssuerID(issuerLookupStrategy.apply(profileRequestContext));
-        } else {
-            attributeResolutionContext.setAttributeIssuerID(null);
-        }
-        // TODO: Set Group id.
-        attributeResolutionContext.setAttributeRecipientID(rpId);
+        attributeResolutionContext.setAttributeIssuerID(
+                issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null);
+        // TODO: Set Group id to resolution context.
+        attributeResolutionContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
         // We set the User we resolve attributes for.
         attributeResolutionContext.setPrincipal(subjectContext.getPrincipalName());
         attributeResolutionContext.resolveAttributes(attributeResolverService);
@@ -300,6 +253,6 @@ public class ResolveRPAttributes extends AbstractProfileAction {
         parent = attributeCtx.getParent();
         parent.removeSubcontext(attributeCtx);
         // We store the result to UserProfileContext
-        userProfileContext.setAttributeContext(rpId, attributeCtx);
+        userProfileContext.setAttributeContext(rpContext.getRelyingPartyId(), attributeCtx);
     }
 }
