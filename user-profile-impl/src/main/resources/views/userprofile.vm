@@ -10,6 +10,7 @@
 ## encoder - HTMLEncoder class
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
+## attributeDisplayNameFunction - function to display attribute name
 ##
 ##
 #set ($userAttributes = $userProfileContext.getIdPUserAttributes())
@@ -36,7 +37,7 @@
                 <table>
                   #foreach($attribute in $userAttributes)
                   <tr>
-                    <td>$encoder.encodeForHTMLAttribute($attribute.getId())</td>
+                    <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
                     <td>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</td>
                   </tr>
                   #end
@@ -74,7 +75,7 @@
                         #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
                         #foreach($attribute in $rpEncodedJSONAttributes.keySet())
                         <tr>
-                          <th>$encoder.encodeForHTMLAttribute($attribute.getId())</th>
+                          <th>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</th>
                           ## TBD show all values
                           <th>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</th>
                         </tr>

@@ -20,6 +20,8 @@
 
     <bean id="shibboleth.userprofile.loggingId" class="java.lang.String" c:_0="%{idp.service.logging.userprofilesso:USERPROFILE.SSO}" />
 
+    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId-ref="shibboleth.userprofile.profileId"

@@ -101,6 +101,8 @@
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
         </on-entry>
         <transition on="showAttributes" to="ResolveRPAttributes" />
