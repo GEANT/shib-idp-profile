@@ -38,7 +38,11 @@
                   #foreach($attribute in $userAttributes)
                   <tr>
                     <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
-                    <td>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</td>
+                    <td>
+                    #foreach ($value in $attribute.values)
+                      <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
+                    #end
+                    </td>
                   </tr>
                   #end
                 </table>
@@ -75,9 +79,12 @@
                         #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
                         #foreach($attribute in $rpEncodedJSONAttributes.keySet())
                         <tr>
-                          <th>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</th>
-                          ## TBD show all values
-                          <th>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</th>
+                          <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
+                          <td>
+                          #foreach ($value in $attribute.values)
+                            <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
+                          #end
+                          </td>
                         </tr>
                         #end
                       </table>
