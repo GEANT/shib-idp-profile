@@ -36,8 +36,8 @@
                 <table>
                   #foreach($attribute in $userAttributes)
                   <tr>
-                    <td>$attribute.getId()</td>
-                    <td>$attribute.getValues()[0].getDisplayValue()</td>
+                    <td>$encoder.encodeForHTMLAttribute($attribute.getId())</td>
+                    <td>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</td>
                   </tr>
                   #end
                 </table>
@@ -54,8 +54,8 @@
                   </tr>
                   #foreach($item in $pastLogins)
                   <tr>
-                    <td>$item.iat</td>
-                    <td>$relyingParties["$item.value"].name</td>
+                    <td>$encoder.encodeForHTMLAttribute($item.iat)</td>
+                    <td>$encoder.encodeForHTMLAttribute($relyingParties["$item.value"].name)</td>
                   </tr>
                   #end
                 </table>
@@ -67,21 +67,21 @@
                   <table>
                     #foreach($rpId in $relyingParties.keySet())
                     <tr>
-                      <td>$relyingParties[$rpId].name</td>
+                      <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].name)</td>
                       <td>
                       #if ($encodedJSONAttributes.containsKey($rpId))
                       <table>
                         #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
                         #foreach($attribute in $rpEncodedJSONAttributes.keySet())
                         <tr>
-                          <th>$attribute.getId()</th>
+                          <th>$encoder.encodeForHTMLAttribute($attribute.getId())</th>
                           ## TBD show all values
-                          <th>$attribute.getValues()[0].getDisplayValue()</th>
+                          <th>$encoder.encodeForHTMLAttribute($attribute.getValues()[0].getDisplayValue())</th>
                         </tr>
                         #end
                       </table>
                       #else
-                      <button type="submit" name="_eventId_showAttributes" value="$rpId" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.resolving", "Resolving attributes, please wait...")'">#springMessageText("idp.userprofile.showattributes", "Information to be Provided to Service")</button>
+                      <button type="submit" name="_eventId_showAttributes" value="$encoder.encodeForHTMLAttribute($rpId)" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.resolving", "Resolving attributes, please wait...")'">#springMessageText("idp.userprofile.showattributes", "Information to be Provided to Service")</button>
                       #end
                       </td>
                     </tr>
