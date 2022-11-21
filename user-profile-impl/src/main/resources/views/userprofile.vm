@@ -82,20 +82,20 @@
       <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")</h1>
       <table>
         <tr>
-          <th>Service</th>
-          <th>Times</th>
+          <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
+          <th>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</th>
           <!--
-          <th>Last Attributes</th>
+          <th>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</th>
           -->
         </tr>
         #if ( $connectedOrganizations.getAsJsonObject().has("value") )
-          #set ($connectedOrganizations = $connectedOrganizations.getAsJsonObject().get("value"))
+          #set ($connectedOrganizations = $connectedOrganizations.value)
           #foreach($key in $connectedOrganizations.keySet())
           <tr>
             <td>$encoder.encodeForHTMLAttribute($key)</td>
-            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).getAsJsonObject().get("times"))</td>
+            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).times)</td>
             <!--
-            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).getAsJsonObject().get("attributes"))</td>
+            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).attributes))</td>
             -->
           </tr>
           #end
@@ -105,8 +105,8 @@
       <h1>#springMessageText("idp.userprofile.allactivity.heading", "All Activity")</h1>
       <table>
         <tr>
-          <th>Time</th>
-          <th>Service</th>
+          <th>#springMessageText("idp.userprofile.allactivity.columntime", "Time")</th>
+          <th>#springMessageText("idp.userprofile.allactivity.columnservice", "Service")</th>
         </tr>
         #foreach($item in $allActivity)
         <tr>
