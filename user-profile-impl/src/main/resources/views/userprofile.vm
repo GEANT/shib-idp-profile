@@ -15,7 +15,8 @@
 ##
 #set ($userAttributes = $userProfileContext.getIdPUserAttributes())
 #set ($record = $userProfileContext.getRecord())
-#set ($pastLogins = $record.get("RELYING_PARTY"))
+## ALL_ACTIVITY is record of past logins
+#set ($allActivity = $record.get("ALL_ACTIVITY"))
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 #set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
 <!DOCTYPE html>
@@ -76,7 +77,7 @@
         #end
       </table>
 
-      <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected organizations")</h1>
+      <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")</h1>
 
       <h1>#springMessageText("idp.userprofile.allactivity.heading", "All activity")</h1>
       <table>
@@ -84,7 +85,7 @@
           <th>Time</th>
           <th>Service</th>
         </tr>
-        #foreach($item in $pastLogins)
+        #foreach($item in $allActivity)
         <tr>
           <td>$encoder.encodeForHTMLAttribute($item.iat)</td>
           <td>$encoder.encodeForHTMLAttribute($relyingParties["$item.value"].name)</td>
