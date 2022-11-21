@@ -61,7 +61,7 @@
       <table>
         <!-- fixed table header -->
         <tr>
-            <th>Attribute <a href="#"><img src="style/icons/i.svg"></a></th>
+            <th>Attribute <a href="#"><img src="/icons/i.svg"></a></th>
             <th>Your value <a href="#" class="dropdown"></th>
         </tr>
         #foreach($attribute in $userAttributes)
