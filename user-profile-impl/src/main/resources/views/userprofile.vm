@@ -17,6 +17,8 @@
 #set ($record = $userProfileContext.getRecord())
 ## ALL_ACTIVITY is record of past logins
 #set ($allActivity = $record.get("ALL_ACTIVITY"))
+## CONNECTED_ORGANIZATIONS is record of past logins per relying party
+#set ($connectedOrganizations = $record.get("CONNECTED_ORGANIZATIONS"))
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 #set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
 <!DOCTYPE html>
@@ -78,8 +80,29 @@
       </table>
 
       <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")</h1>
+      <table>
+        <tr>
+          <th>Service</th>
+          <th>Times</th>
+          <!--
+          <th>Last Attributes</th>
+          -->
+        </tr>
+        #if ( $connectedOrganizations.getAsJsonObject().has("value") )
+          #set ($connectedOrganizations = $connectedOrganizations.getAsJsonObject().get("value"))
+          #foreach($key in $connectedOrganizations.keySet())
+          <tr>
+            <td>$encoder.encodeForHTMLAttribute($key)</td>
+            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).getAsJsonObject().get("times"))</td>
+            <!--
+            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).getAsJsonObject().get("attributes"))</td>
+            -->
+          </tr>
+          #end
+        #end
+      </table>
 
-      <h1>#springMessageText("idp.userprofile.allactivity.heading", "All activity")</h1>
+      <h1>#springMessageText("idp.userprofile.allactivity.heading", "All Activity")</h1>
       <table>
         <tr>
           <th>Time</th>
