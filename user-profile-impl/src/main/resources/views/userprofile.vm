@@ -84,9 +84,7 @@
         <tr>
           <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
           <th>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</th>
-          <!--
           <th>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</th>
-          -->
         </tr>
         #if ( $connectedOrganizations.getAsJsonObject().has("value") )
           #set ($connectedOrganizations = $connectedOrganizations.value)
@@ -94,9 +92,11 @@
           <tr>
             <td>$encoder.encodeForHTMLAttribute($key)</td>
             <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).times)</td>
-            <!--
-            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($key).attributes))</td>
-            -->
+            <td>
+            #foreach($attribute in $connectedOrganizations.get($key).attributes)
+            <p>$encoder.encodeForHTMLAttribute($attribute)</p>
+            #end
+            </td>
           </tr>
           #end
         #end
