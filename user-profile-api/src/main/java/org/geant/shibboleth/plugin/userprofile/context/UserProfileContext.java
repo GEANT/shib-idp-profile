@@ -14,6 +14,7 @@ import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 
 public final class UserProfileContext extends BaseContext {
 
@@ -22,6 +23,7 @@ public final class UserProfileContext extends BaseContext {
     private Iterable<OIDCClientInformation> oidcClientInformation;
     private Iterable<EntityDescriptor> entityDescriptors;
     private Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
+    private Map<String, RelyingPartyUIContext> rpRelyingPartyUIContext = new HashMap<String, RelyingPartyUIContext>();
     private Map<String, Map<IdPAttribute, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<IdPAttribute, JSONObject>>();
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
 
@@ -29,6 +31,10 @@ public final class UserProfileContext extends BaseContext {
     public UserProfileContext(JsonObject record) {
         this.record = record;
         relyingParties = new JsonObject();
+    }
+
+    public Map<String, RelyingPartyUIContext> getRPRelyingPartyUIContextes() {
+        return rpRelyingPartyUIContext;
     }
 
     public List<IdPAttribute> getIdPUserAttributes() {
