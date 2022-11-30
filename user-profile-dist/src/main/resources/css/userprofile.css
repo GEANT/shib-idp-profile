@@ -1,0 +1,399 @@
+:root {
+  /* */
+  --main-text-c: #181E3C;
+  --main-bg-c: #F5F5F5;
+
+  --heading-text-c: #5B6186;
+  
+  --caption-bg-c: #F0F2F9;
+  
+  --table-border: #F0F2F9;
+
+  --nav-bg-c: #F8F8FC;
+  
+  --button-bg-c: #4859B2;
+  --button-text-c: #ffffff;
+
+  --link-c: #4859B2;
+
+  --main-font-family: Raleway;
+  --main-font-weight: 500;
+  --mainfont-size: 18pt;
+
+  --table-font-size: 18pt;
+
+  --large-font-size: 24px;
+}
+
+/* raleway-300 - latin-ext_latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 300;
+  src: local(''),
+       url('/fonts/raleway-v28-latin-ext-latin-300.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/fonts/raleway-v28-latin-ext-latin-300.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-regular - latin-ext_latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('/fonts/raleway-v28-latin-ext-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/fonts/raleway-v28-latin-ext-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-500 - latin-ext_latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+       url('/fonts/raleway-v28-latin-ext-latin-500.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/fonts/raleway-v28-latin-ext-latin-500.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* raleway-600 - latin-ext_latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+       url('/fonts/raleway-v28-latin-ext-latin-600.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('/fonts/raleway-v28-latin-ext-latin-600.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* ======================= */
+/*     mobile-first body   */
+/* ======================= */
+
+body {
+  display: grid;
+  grid-template-rows: 4em auto auto auto auto;
+  grid-template-columns: 1fr 18fr 1fr;
+  grid-template-areas: 
+  "header header header"
+  "nav nav nav"
+  ". banner ."
+  ". main ."
+  "footer footer footer";
+  min-height: 100vh;
+  font-size: var(--main-font-size);
+  font-family: var(--main-font-family);
+  font-weight: var(--main-font-weight);
+  margin: 0;
+}
+
+/* ======================= */
+/*     header and logo     */
+/* ======================= */
+
+header {
+  grid-area: header;
+  background-color: var(--nav-bg-c);
+  color: var(--link-c);
+  display: flex;
+  text-align: center;
+  width:100%;
+  z-index:999;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#logo {
+  margin-left: 2em;
+}
+
+/* ======================= */
+/* Nav with hamburger menu */
+/* ======================= */
+
+#nav{
+  grid-area: nav;
+}
+
+nav {
+  width: 100%;
+  padding: 1em;
+  text-align: left;
+  display:none;
+  background-color: var(--nav-bg-c);  
+}
+
+nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: inline-flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: left;
+  justify-content: flex-end;
+}
+
+nav li {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  color: var(--alt-color);
+}
+
+nav > ul > li {
+  font-variant: normal;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0.5em;
+}
+
+nav > ul > li > a {
+  color: var(--banner-font-family);
+  text-decoration: none;
+  display: flex;
+  flex-direction: row;
+  justify-items: center;
+}
+
+.nav-toggle {
+  display:none;
+}
+
+.nav-toggle:checked ~ nav {
+  display: block;
+}
+
+.nav-toggle:checked ~ div {
+  display: none;
+}
+
+.nav-toggle-label {
+  margin-right: 1em;
+  margin-left: auto;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  align-self: flex-end;
+}
+
+.nav-toggle:not(:checked) ~ .nav-toggle-label {
+  margin-left: auto;
+}
+
+.nav-toggle-label span,
+.nav-toggle-label span:before,
+.nav-toggle-label span:after {
+  display: block;
+  background: var(--link-c);;
+  height: 2px;
+  width: 2em;
+  position: relative;
+}
+
+.nav-toggle-label span:before,
+.nav-toggle-label span:after {
+ content: '';
+ position: absolute;
+}
+
+.nav-toggle-label span:before {
+  bottom: 7px;
+}
+
+.nav-toggle-label span:after {
+  top: 7px;
+}
+
+.navicon {
+  display: inline-grid;
+  justify-content: center;
+  align-content: center;
+  width: 2em;
+}
+
+/* ======================= */
+/*     Banner              */
+/* ======================= */
+#banner {
+  grid-area: banner;
+}
+
+#banner div {
+  color: var(--link-c);
+  background-color: var(--nav-bg-c);
+  margin: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  padding-top: 2.5em;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--link-c);
+}
+
+/* ======================= */
+/*     Main                */
+/* ======================= */
+
+#main{
+  grid-area: main;
+}
+
+/* ======================= */
+/*     Table               */
+/* ======================= */
+
+table {
+  margin:1em;
+  padding:1em;
+  margin-right: auto;
+  font-size: var(--table-font-size);
+  width: 100%;
+}
+
+th {
+  text-align:left;
+  padding:0.5em;
+  word-wrap: break-word;
+}
+
+td {
+  text-align:left;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  padding-top:1.25em;
+  word-wrap: break-word;
+  border-top: solid 1px var(--table-border);
+}
+
+th a {
+  text-decoration:none;
+}
+
+td a {
+  text-decoration: none;
+}
+
+.dropdown {
+  float:right;
+}
+
+/* ======================= */
+/*      dropdown-box       */
+/* ======================= */
+
+.dropdown-toggle {
+  display: none;
+}
+
+.dropdown-container {
+  padding:0em;
+  border:none;
+  display:table-cell;
+}
+
+.dropdown-label {
+  float: right;
+  height: 1.25em;
+  position: relative;
+  top: -1.5em;
+}
+
+/*
+.dropdown-toggle:checked ~ .dropdown-label:first-of-type {
+  border: 3px solid black;
+}
+*/
+
+.dropdown-box {
+  background-color: var(--caption-bg-c);
+  display:none;
+}
+
+.dropdown-toggle:checked ~ div.dropdown-box:first-of-type {
+  display: block;
+}
+
+/* ======================= */
+/*     Footer              */
+/* ======================= */
+footer {
+  display: flex;
+  text-align: center;
+  width:100%;
+  z-index:999;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  grid-area: footer;
+  color: var(--link-c);
+  background-color: var(--nav-bg-c);
+}
+
+footer div {
+  margin: 2em;
+}
+
+/* ======================= */
+/*    desktop provisions   */
+/* ======================= */
+@media only screen and (min-width: 768px) {
+  body {
+      display: grid;
+      grid-template-rows: 4em auto auto auto;
+      grid-template-columns: 3fr 0.5fr 16fr 0.5fr;
+      grid-template-areas: 
+      "header header header header"
+      "nav . banner ."
+      "nav . main ."
+      "nav footer footer footer";
+      min-height: 100vh;
+      font-size: var(--body-font-size);
+      font-family: var(--main-font-family);
+      font-weight: var(--main-font-weight);
+      margin: 0;
+  }
+
+  header {
+      background-color: var(--main-bg-c);
+  }
+
+  #nav {
+      background-color: var(--nav-bg-c);
+  }
+
+  nav {
+      width: 100%;
+      padding: 0em;
+      margin-left: 0em;
+  }
+
+  nav > ul {
+      width: 100%;
+  }
+
+  nav > ul > li {
+      font-variant: normal;
+      font-size: 90%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding-left: 1em;
+  }
+
+  nav > ul > li > a {
+      width: 100%;
+  }
+
+  nav > ul > li > a > span > img {
+      display: inline;
+  }
+
+  .nav-toggle ~ nav {
+      display: block;
+  }
+
+  .nav-toggle-label {
+      display: none;
+  }
+
+}
