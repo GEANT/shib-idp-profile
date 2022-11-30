@@ -94,6 +94,7 @@
     <modules>
         <module>user-profile-api</module>
         <module>user-profile-impl</module>
+        <module>user-profile-dist</module>
     </modules>
         
     <build>
