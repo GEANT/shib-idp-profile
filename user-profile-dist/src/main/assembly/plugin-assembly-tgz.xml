@@ -44,5 +44,9 @@
                 <include>*.properties</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>../user-profile-dist/src/main/resources</directory>
+            <outputDirectory>edit-webapp</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>
