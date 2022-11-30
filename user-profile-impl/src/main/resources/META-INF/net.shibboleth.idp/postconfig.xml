@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+       <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+           p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+       <!-- Storage for User Profile. -->
+       <bean id="shibboleth.UserProfileCache" class="org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache"
+           p:storage-ref="#{'%{idp.userprofile.StorageService:shibboleth.StorageService}'.trim()}" />
+
+       <!-- Interceptor bean definition. -->
+       <bean id="intercept/user-profile" parent="shibboleth.InterceptFlow" />
+       
+       <!-- Profile configuration. -->
+       <bean id="USERPROFILE.SSO"  lazy-init="true"
+               class="org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration"/>
+
+       <!-- Indices we use to store metadata by for User Profile. -->
+       <util:set id="shibboleth.UserProfileMetadataIndices">
+           <bean class="org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex"/>
+       </util:set>
+
+</beans>
