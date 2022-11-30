@@ -35,7 +35,7 @@
   <body>
 
     <header>
-      <div id="logo"><img src="/icons/fppp-logo.svg" 
+      <div id="logo"><img src="/idp/icons/fppp-logo.svg"
               alt="#springMessageText("idp.logo.alt-text", "logo")" /></div>
       <label for="nav-toggle" class="nav-toggle-label">
           <span></span>
@@ -46,10 +46,10 @@
         <nav role="navigation" aria-label="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
             <ul>
                 <!-- TODO: get strings from spring messages -->
-                <li><a href="#"><span class="navicon"><img src="/icons/prof-page.svg" /></span><span>Data</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/icons/conn-orgs.svg" /></span><span>Connected Organizations</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/icons/activity.svg" /></span><span>Activity Page</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/icons/logout.svg" /></span><span>Log Out</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span>Data</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span>Connected Organizations</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span>Activity Page</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span>Log Out</span></a></li>
             </ul>
         </nav>
     </div>
@@ -65,7 +65,7 @@
       <table>
         <!-- fixed table header -->
         <tr>
-            <th>Attribute <a href="#"><img src="/icons/i.svg"></a></th>
+            <th>Attribute <a href="#"><img src="/idp/icons/i.svg"></a></th>
             <th>Your value <a href="#" class="dropdown"></th>
         </tr>
         #foreach($attribute in $userAttributes)
