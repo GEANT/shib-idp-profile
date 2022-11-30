@@ -8,7 +8,7 @@
     <fileSets>
         <fileSet>
             <directory>../user-profile-api/target</directory>
-            <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+            <outputDirectory>edit-webapp/WEB-INF/lib</outputDirectory>
             <includes>
                 <include>idp-plugin-userprofile-api-*.jar</include>
             </includes>
@@ -20,7 +20,7 @@
         </fileSet>
         <fileSet>
             <directory>../user-profile-impl/target</directory>
-            <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
+            <outputDirectory>edit-webapp/WEB-INF/lib</outputDirectory>
             <includes>
                 <include>idp-plugin-userprofile-impl-*.jar</include>
             </includes>
