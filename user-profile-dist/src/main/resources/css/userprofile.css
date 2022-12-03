@@ -214,7 +214,7 @@ nav > ul > li > a {
   margin-top: auto;
   margin-bottom: auto;
   min-height: 3em;
-  font-size: 70%;
+  font-size: 60%;
 }
 
 /* ======================= */
@@ -244,7 +244,7 @@ nav > ul > li > a {
 
 #main{
   grid-area: main;
-  font-size: 80%;
+  font-size: 55%;
 }
 
 /* ======================= */
@@ -272,6 +272,7 @@ td {
   padding-top:1.25em;
   word-wrap: break-word;
   border-top: solid 1px var(--table-border);
+  vertical-align: top;
 }
 
 th a {

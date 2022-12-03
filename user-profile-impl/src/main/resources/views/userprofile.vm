@@ -88,8 +88,8 @@
       <table>
         <!-- fixed table header -->
         <tr>
-            <th>Attribute <a href="#"><img src="/idp/icons/i.svg"></a></th>
-            <th>Your value <a href="#" class="dropdown"></th>
+            <th>#springMessageText("idp.userprofile.attribute_name", "Attribute Name")</th>
+            <th>#springMessageText("idp.userprofile.attribute_value", "Attribute Value")</th>
         </tr>
         #foreach($attribute in $userAttributes)
         <tr>
