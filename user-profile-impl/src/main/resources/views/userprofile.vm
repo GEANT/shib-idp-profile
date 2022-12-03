@@ -43,25 +43,47 @@
     </header>
     <div id="nav">
         <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <nav role="navigation" aria-label="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+        <nav role="navigation" aria-label='#springMessageText("idp.userprofile.pageheading", "User Profile Page")'>
             <ul>
                 <!-- TODO: get strings from spring messages -->
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span>Data</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span>Connected Organizations</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span>Activity Page</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span>Log Out</span></a></li>
+                <li>
+                    <a href="personal_data">
+                      <span class="navicon"><img src="/idp/icons/prof-page.svg" /></span>
+                      <span class="navlabel">#springMessageText("idp.userprofile.personal_data", "Personal Data")</span>
+                    </a>
+                </li>
+                <li>
+                  <a href="connected_organizations">
+                    <span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span>
+                    <span class="navlabel">#springMessageText("idp.userprofile.connected_organizations", "Connected Organizations")</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="activity_log">
+                    <span class="navicon"><img src="/idp/icons/activity.svg" /></span>
+                    <span class="navlabel">#springMessageText("idp.userprofile.activity_page", "Activity Page")</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="navicon"><img src="/idp/icons/logout.svg" /></span>
+                    <span class="navlabel">#springMessageText("idp.userprofile.logout", "Log Out")</span>
+                  </a>
+                </li>
             </ul>
         </nav>
     </div>
     <!-- end of header -->
     
     <section id="banner">
-        <!-- TODO explanatory message -->
+        <!-- TODO until there will be separate pages 
         <div>
-          #springMessageText("idp.userprofile.personaldata.heading", "Personal Data")
-        </div>
+        </div> 
+        -->
     </section>
-    <section id="main">
+
+    <section id="personal_data">
+      <h1>#springMessageText("idp.userprofile.personaldata.heading", "Personal Data")</h1>
       <table>
         <!-- fixed table header -->
         <tr>
@@ -79,7 +101,9 @@
         </tr>
         #end
       </table>
+    </section>
 
+    <section id="connected_organizations">
       <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")</h1>
       <table>
         <tr>
@@ -102,7 +126,8 @@
           #end
         #end
       </table>
-
+    </section id="activity_log">
+    <section>
       <h1>#springMessageText("idp.userprofile.allactivity.heading", "All Activity")</h1>
       <table>
         <tr>

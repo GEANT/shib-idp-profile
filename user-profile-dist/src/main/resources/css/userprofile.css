@@ -206,7 +206,14 @@ nav > ul > li > a {
   display: inline-grid;
   justify-content: center;
   align-content: center;
-  width: 2em;
+  min-width: 3em;
+  min-height: 3em;
+}
+
+.navlabel {
+  margin-top: auto;
+  margin-bottom: auto;
+  min-height: 3em;
 }
 
 /* ======================= */
