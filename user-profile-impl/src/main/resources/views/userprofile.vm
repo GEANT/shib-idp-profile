@@ -47,19 +47,19 @@
             <ul>
                 <!-- TODO: get strings from spring messages -->
                 <li>
-                    <a href="personal_data">
+                    <a href="#personal_data">
                       <span class="navicon"><img src="/idp/icons/prof-page.svg" /></span>
                       <span class="navlabel">#springMessageText("idp.userprofile.personal_data", "Personal Data")</span>
                     </a>
                 </li>
                 <li>
-                  <a href="connected_organizations">
+                  <a href="#connected_organizations">
                     <span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span>
                     <span class="navlabel">#springMessageText("idp.userprofile.connected_organizations", "Connected Organizations")</span>
                   </a>
                 </li>
                 <li>
-                  <a href="activity_log">
+                  <a href="#activity_log">
                     <span class="navicon"><img src="/idp/icons/activity.svg" /></span>
                     <span class="navlabel">#springMessageText("idp.userprofile.activity_page", "Activity Page")</span>
                   </a>
