@@ -96,7 +96,7 @@
           <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
           <td>
           #foreach ($value in $attribute.values)
-            <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
+            <span class="label">$encoder.encodeForHTMLAttribute($value.getDisplayValue())</span>
           #end
           </td>
         </tr>
@@ -120,7 +120,7 @@
             <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).times)</td>
             <td>
             #foreach($attribute in $connectedOrganizations.get($rpId).attributes)
-            <p>$encoder.encodeForHTMLAttribute($attribute)</p>
+            <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
             #end
             </td>
           </tr>
@@ -166,7 +166,7 @@
               #end
             </table>
             #else
-            <button type="submit" name="_eventId_showAttributes" value="$encoder.encodeForHTMLAttribute($rpId)" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.resolving", "Resolving attributes, please wait...")'">#springMessageText("idp.userprofile.showattributes", "Information to be Provided to Service")</button>
+            <button class="qbutton" type="submit" name="_eventId_showAttributes" value="$encoder.encodeForHTMLAttribute($rpId)" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.resolving", "Resolving attributes, please wait...")'">#springMessageText("idp.userprofile.showattributes", "Information to be Provided to Service")</button>
             #end
             </td>
           </tr>
