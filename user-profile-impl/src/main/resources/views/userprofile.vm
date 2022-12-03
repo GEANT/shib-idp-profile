@@ -82,7 +82,8 @@
         -->
     </section>
 
-    <section id="personal_data">
+    <section id="main">
+      <div id="personal_data">
       <h1>#springMessageText("idp.userprofile.personaldata.heading", "Personal Data")</h1>
       <table>
         <!-- fixed table header -->
@@ -101,9 +102,9 @@
         </tr>
         #end
       </table>
-    </section>
+    </div>
 
-    <section id="connected_organizations">
+    <div id="connected_organizations">
       <h1>#springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")</h1>
       <table>
         <tr>
@@ -126,8 +127,8 @@
           #end
         #end
       </table>
-    </section id="activity_log">
-    <section>
+    </div id="activity_log">
+    <div>
       <h1>#springMessageText("idp.userprofile.allactivity.heading", "All Activity")</h1>
       <table>
         <tr>
@@ -172,6 +173,7 @@
         #end
         </table>
       </form>
+      </div>
     </section>
 
     <footer>

@@ -214,6 +214,7 @@ nav > ul > li > a {
   margin-top: auto;
   margin-bottom: auto;
   min-height: 3em;
+  font-size: 70%;
 }
 
 /* ======================= */
@@ -243,6 +244,7 @@ nav > ul > li > a {
 
 #main{
   grid-area: main;
+  font-size: 80%;
 }
 
 /* ======================= */
