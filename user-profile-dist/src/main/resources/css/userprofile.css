@@ -246,7 +246,7 @@ nav > ul > li > a {
 
 #main{
   grid-area: main;
-  font-size: 65%;
+  font-size: 80%;
 }
 
 .label {
@@ -264,7 +264,6 @@ table {
   margin:1em;
   padding:1em;
   margin-right: auto;
-  font-size: var(--table-font-size);
   width: 100%;
 }
 
