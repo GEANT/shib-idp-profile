@@ -256,6 +256,12 @@ nav > ul > li > a {
   background-color: var(--caption-bg-c);
 }
 
+button {
+  border: none;
+  padding: 0.5em;
+  text-decoration: underline;
+}
+
 /* ======================= */
 /*     Table               */
 /* ======================= */
