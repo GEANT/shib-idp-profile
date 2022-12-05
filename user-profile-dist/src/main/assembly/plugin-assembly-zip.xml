@@ -34,7 +34,7 @@
             <directory>../user-profile-impl/src/main/resources/views</directory>
             <outputDirectory>views</outputDirectory>
             <includes>
-                <include>userprofile.vm</include>
+                <include>userprofile*.vm</include>
             </includes>
         </fileSet>
         <fileSet>

@@ -91,10 +91,10 @@
         <evaluate expression="RenderIdPAttributes" />
         <evaluate expression="RenderUserProfileContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="UserProfileView" />
+        <transition on="proceed" to="UserProfileViewPersonalData" />
     </action-state>
 
-    <view-state id="UserProfileView" view="userprofile">
+    <view-state id="UserProfileViewPersonalData" view="userprofile-pd">
         <on-entry>
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
@@ -105,6 +105,61 @@
                                                                                                result="viewScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
         </on-entry>
+        <transition on="personalData" to="UserProfileViewPersonalData" />
+        <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
+        <transition on="activityPage" to="UserProfileViewActivityPage" />
+        <transition on="allOrganizations" to="UserProfileViewAllOrganizations" />
+    </view-state>
+    
+    <view-state id="UserProfileViewConnectedOrganizations" view="userprofile-co">
+        <on-entry>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
+        </on-entry>
+        <transition on="personalData" to="UserProfileViewPersonalData" />
+        <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
+        <transition on="activityPage" to="UserProfileViewActivityPage" />
+        <transition on="allOrganizations" to="UserProfileViewAllOrganizations" />
+    </view-state>
+    
+    <view-state id="UserProfileViewActivityPage" view="userprofile-ap">
+        <on-entry>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
+        </on-entry>
+        <transition on="personalData" to="UserProfileViewPersonalData" />
+        <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
+        <transition on="activityPage" to="UserProfileViewActivityPage" />
+        <transition on="allOrganizations" to="UserProfileViewAllOrganizations" />
+    </view-state>
+    
+    <view-state id="UserProfileViewAllOrganizations" view="userprofile-ao">
+        <on-entry>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
+        </on-entry>
+        <transition on="personalData" to="UserProfileViewPersonalData" />
+        <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
+        <transition on="activityPage" to="UserProfileViewActivityPage" />
+        <transition on="allOrganizations" to="UserProfileViewAllOrganizations" />
         <transition on="showAttributes" to="ResolveRPAttributes" />
     </view-state>
 
@@ -114,7 +169,7 @@
         <evaluate expression="FilterRPAttributes" />
         <evaluate expression="RenderRPAttributes" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="UserProfileView" />
+        <transition on="proceed" to="UserProfileViewAllOrganizations" />
     </action-state>
 
     <!-- Error views, handling and end states -->
