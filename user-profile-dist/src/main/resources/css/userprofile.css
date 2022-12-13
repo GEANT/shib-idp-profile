@@ -127,14 +127,12 @@ nav ul {
   display: inline-flex;
   flex-direction: column;
   flex-wrap: wrap;
-  align-items: left;
   justify-content: flex-end;
 }
 
 nav li {
   margin-left: 0.5em;
   margin-right: 0.5em;
-  color: var(--alt-color);
 }
 
 nav > ul > li {
@@ -146,7 +144,6 @@ nav > ul > li {
 }
 
 nav > ul > li > a {
-  color: var(--banner-font-family);
   text-decoration: none;
   display: flex;
   flex-direction: row;

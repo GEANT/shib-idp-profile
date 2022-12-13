@@ -46,7 +46,7 @@
                 <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span>#springMessageText("idp.userprofile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
                 <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span>#springMessageText("idp.userprofile.menu.activitypage", "Activity Page")</span></a></li>
                 <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span>#springMessageText("idp.userprofile.menu.allorganizations", "All Organizations")</span></a></li>
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span>#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
             </ul>
         </nav>
     </div>
@@ -63,12 +63,16 @@
       <table>
         <!-- fixed table header -->
         <tr>
-            <th>Attribute <a href="#"><img src="/idp/icons/i.svg"></a></th>
-            <th>Your value <a href="#" class="dropdown"></th>
+            <th>Attribute</th>
+            <th>Your value</th>
         </tr>
         #foreach($attribute in $userAttributes)
         <tr>
-          <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
+          <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
+          <div class="popup" onclick="myFunction()"><img src="/idp/icons/i.svg"/>
+            <span class="popuptext" id="myPopup">Popup text...</span>
+          </div> 
+          </td>
           <td>
           #foreach ($value in $attribute.values)
             <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
