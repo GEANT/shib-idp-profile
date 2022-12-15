@@ -115,91 +115,93 @@ public class RenderUserProfileContext extends AbstractProfileAction {
             return;
         }
 
-        // Render OIDC JSON clients
-        userProfileContext.getOidcClientInformation().forEach(client -> {
-            userProfileContext.addRelyingParty(client.getID().getValue(), client.getOIDCMetadata().getName(), "OIDC");
-            RelyingPartyUIContext relyingPartyUIContext = new RelyingPartyUIContext();
-            final EntityDescriptor entityDescriptor = new EntityDescriptorBuilder().buildObject();
-            final OIDCClientMetadata oidcMetadata = client.getOIDCMetadata();
-            entityDescriptor.setEntityID(client.getID().getValue());
-            final SPSSODescriptor spDescriptor = new SPSSODescriptorBuilder().buildObject();
-            final UIInfo uiInfo = new UIInfoBuilder().buildObject();
-            if (fallbackLanguages != null) {
-                relyingPartyUIContext.setFallbackLanguages(fallbackLanguages);
-            }
-
-            for (final LangTag tag : oidcMetadata.getLogoURIEntries().keySet()) {
-                final Logo logo = new LogoBuilder().buildObject();
-                logo.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
-                final URI logoUri = oidcMetadata.getLogoURI(tag);
-                if (logoUri != null) {
-                    logo.setURI(logoUri.toString());
-                    uiInfo.getLogos().add(logo);
-                }
-            }
-            for (final LangTag tag : oidcMetadata.getPolicyURIEntries().keySet()) {
-                final PrivacyStatementURL url = new PrivacyStatementURLBuilder().buildObject();
-                url.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
-                url.setURI(oidcMetadata.getPolicyURI(tag).toString());
-                uiInfo.getPrivacyStatementURLs().add(url);
-            }
-            for (final LangTag tag : oidcMetadata.getTermsOfServiceURIEntries().keySet()) {
-                final InformationURL url = new InformationURLBuilder().buildObject();
-                url.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
-                url.setURI(oidcMetadata.getTermsOfServiceURI(tag).toString());
-                uiInfo.getInformationURLs().add(url);
-            }
-            final List<String> emails = oidcMetadata.getEmailContacts();
-            if (emails != null) {
-                for (final String email : emails) {
-                    final ContactPerson contactPerson = new ContactPersonBuilder().buildObject();
-                    // TODO: should it be configurable?
-                    contactPerson.setType(ContactPersonTypeEnumeration.SUPPORT);
-                    final EmailAddress address = new EmailAddressBuilder().buildObject();
-                    address.setURI(email.startsWith("mailto:") ? email : "mailto:" + email);
-                    contactPerson.getEmailAddresses().add(address);
-                    entityDescriptor.getContactPersons().add(contactPerson);
-                }
-            }
-            for (final LangTag tag : oidcMetadata.getNameEntries().keySet()) {
-                final DisplayName displayName = new DisplayNameBuilder().buildObject();
-                displayName.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
-                displayName.setValue(oidcMetadata.getNameEntries().get(tag));
-                uiInfo.getDisplayNames().add(displayName);
-            }
-            final Extensions extensions = new ExtensionsBuilder().buildObject();
-            extensions.getUnknownXMLObjects().add(uiInfo);
-            spDescriptor.setExtensions(extensions);
-            relyingPartyUIContext.setRPEntityDescriptor(entityDescriptor);
-            relyingPartyUIContext.setRPSPSSODescriptor(spDescriptor);
-            relyingPartyUIContext.setRPUInfo((UIInfo) uiInfo);
-            userProfileContext.getRPRelyingPartyUIContextes().put(client.getID().getValue(), relyingPartyUIContext);
-        });
-
-        // Render SAML2 clients
-        userProfileContext.getEntityDescriptors().forEach(client -> {
-            userProfileContext.addRelyingParty(client.getEntityID(), client.getEntityID(), "SAML2");
-            SPSSODescriptor spSSODescriptor = client.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-            if (spSSODescriptor != null) {
+        if (userProfileContext.getOidcClientInformation() != null)
+            userProfileContext.getOidcClientInformation().forEach(client -> {
+                userProfileContext.addRelyingParty(client.getID().getValue(), client.getOIDCMetadata().getName(),
+                        "OIDC");
                 RelyingPartyUIContext relyingPartyUIContext = new RelyingPartyUIContext();
+                final EntityDescriptor entityDescriptor = new EntityDescriptorBuilder().buildObject();
+                final OIDCClientMetadata oidcMetadata = client.getOIDCMetadata();
+                entityDescriptor.setEntityID(client.getID().getValue());
+                final SPSSODescriptor spDescriptor = new SPSSODescriptorBuilder().buildObject();
+                final UIInfo uiInfo = new UIInfoBuilder().buildObject();
                 if (fallbackLanguages != null) {
                     relyingPartyUIContext.setFallbackLanguages(fallbackLanguages);
                 }
-                // TODO: Implementation assumes all clients are of type SAML2. Fix it.
-                relyingPartyUIContext.setRPEntityDescriptor(client);
-                relyingPartyUIContext.setRPSPSSODescriptor(spSSODescriptor);
-                final Extensions exts = spSSODescriptor.getExtensions();
-                if (exts != null) {
-                    for (final XMLObject object : exts.getOrderedChildren()) {
-                        if (object instanceof UIInfo) {
-                            relyingPartyUIContext.setRPUInfo((UIInfo) object);
-                        }
+
+                for (final LangTag tag : oidcMetadata.getLogoURIEntries().keySet()) {
+                    final Logo logo = new LogoBuilder().buildObject();
+                    logo.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
+                    final URI logoUri = oidcMetadata.getLogoURI(tag);
+                    if (logoUri != null) {
+                        logo.setURI(logoUri.toString());
+                        uiInfo.getLogos().add(logo);
                     }
                 }
-                userProfileContext.getRPRelyingPartyUIContextes().put(client.getEntityID(), relyingPartyUIContext);
-            }
+                for (final LangTag tag : oidcMetadata.getPolicyURIEntries().keySet()) {
+                    final PrivacyStatementURL url = new PrivacyStatementURLBuilder().buildObject();
+                    url.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
+                    url.setURI(oidcMetadata.getPolicyURI(tag).toString());
+                    uiInfo.getPrivacyStatementURLs().add(url);
+                }
+                for (final LangTag tag : oidcMetadata.getTermsOfServiceURIEntries().keySet()) {
+                    final InformationURL url = new InformationURLBuilder().buildObject();
+                    url.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
+                    url.setURI(oidcMetadata.getTermsOfServiceURI(tag).toString());
+                    uiInfo.getInformationURLs().add(url);
+                }
+                final List<String> emails = oidcMetadata.getEmailContacts();
+                if (emails != null) {
+                    for (final String email : emails) {
+                        final ContactPerson contactPerson = new ContactPersonBuilder().buildObject();
+                        // TODO: should it be configurable?
+                        contactPerson.setType(ContactPersonTypeEnumeration.SUPPORT);
+                        final EmailAddress address = new EmailAddressBuilder().buildObject();
+                        address.setURI(email.startsWith("mailto:") ? email : "mailto:" + email);
+                        contactPerson.getEmailAddresses().add(address);
+                        entityDescriptor.getContactPersons().add(contactPerson);
+                    }
+                }
+                for (final LangTag tag : oidcMetadata.getNameEntries().keySet()) {
+                    final DisplayName displayName = new DisplayNameBuilder().buildObject();
+                    displayName.setXMLLang(tag == null ? defaultLanguage : tag.getLanguage());
+                    displayName.setValue(oidcMetadata.getNameEntries().get(tag));
+                    uiInfo.getDisplayNames().add(displayName);
+                }
+                final Extensions extensions = new ExtensionsBuilder().buildObject();
+                extensions.getUnknownXMLObjects().add(uiInfo);
+                spDescriptor.setExtensions(extensions);
+                relyingPartyUIContext.setRPEntityDescriptor(entityDescriptor);
+                relyingPartyUIContext.setRPSPSSODescriptor(spDescriptor);
+                relyingPartyUIContext.setRPUInfo((UIInfo) uiInfo);
+                userProfileContext.getRPRelyingPartyUIContextes().put(client.getID().getValue(), relyingPartyUIContext);
+            });
 
-        });
+        // Render SAML2 clients
+        if (userProfileContext.getEntityDescriptors() != null)
+            userProfileContext.getEntityDescriptors().forEach(client -> {
+                userProfileContext.addRelyingParty(client.getEntityID(), client.getEntityID(), "SAML2");
+                SPSSODescriptor spSSODescriptor = client.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+                if (spSSODescriptor != null) {
+                    RelyingPartyUIContext relyingPartyUIContext = new RelyingPartyUIContext();
+                    if (fallbackLanguages != null) {
+                        relyingPartyUIContext.setFallbackLanguages(fallbackLanguages);
+                    }
+                    // TODO: Implementation assumes all clients are of type SAML2. Fix it.
+                    relyingPartyUIContext.setRPEntityDescriptor(client);
+                    relyingPartyUIContext.setRPSPSSODescriptor(spSSODescriptor);
+                    final Extensions exts = spSSODescriptor.getExtensions();
+                    if (exts != null) {
+                        for (final XMLObject object : exts.getOrderedChildren()) {
+                            if (object instanceof UIInfo) {
+                                relyingPartyUIContext.setRPUInfo((UIInfo) object);
+                            }
+                        }
+                    }
+                    userProfileContext.getRPRelyingPartyUIContextes().put(client.getEntityID(), relyingPartyUIContext);
+                }
+
+            });
 
         // TODO: Render SAML2 XML clients
         log.debug("{} Relying party information rendered {}", getLogPrefix());
