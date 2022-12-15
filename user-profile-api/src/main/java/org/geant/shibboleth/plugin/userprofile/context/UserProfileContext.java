@@ -14,6 +14,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import com.google.gson.JsonObject;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 
+//TODO: Remove
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
