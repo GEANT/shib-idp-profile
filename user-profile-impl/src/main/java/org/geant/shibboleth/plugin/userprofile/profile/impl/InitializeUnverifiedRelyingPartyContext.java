@@ -16,24 +16,29 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+/**
+ * Relying Party Context initialization for User Profile flow. There is not much
+ * to do as there is no client.
+ */
 public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeUnverifiedRelyingPartyContext.class);
-    
+    @Nonnull
+    private final Logger log = LoggerFactory.getLogger(InitializeUnverifiedRelyingPartyContext.class);
+
     /** Strategy that will return or create a {@link RelyingPartyContext}. */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextCreationStrategy;
+    @Nonnull
+    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextCreationStrategy;
 
     /** Constructor. */
     public InitializeUnverifiedRelyingPartyContext() {
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class, true);
     }
-    
+
     /**
-     * Set the strategy used to return or create the {@link RelyingPartyContext}
-     * .
-     * @param strategy
-     *            creation strategy
+     * Set the strategy used to return or create the {@link RelyingPartyContext} .
+     * 
+     * @param strategy creation strategy
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
@@ -42,7 +47,7 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext creation strategy cannot be null");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
