@@ -14,13 +14,19 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Authentication Context initialization for User Profile flow. There is not
+ * much to do as there is no client.
+ */
 public class InitializeAuthenticationContext extends AbstractProfileAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
+    @Nonnull
+    private final Logger log = LoggerFactory.getLogger(InitializeAuthenticationContext.class);
 
     /** Extracts forceAuthn property from profile config. */
-    @Nonnull private Predicate<ProfileRequestContext> forceAuthnPredicate;
+    @Nonnull
+    private Predicate<ProfileRequestContext> forceAuthnPredicate;
 
     /**
      * Constructor.
@@ -30,7 +36,8 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     }
 
     /**
-     * Set the predicate to apply to derive the message-independent forced authn default. 
+     * Set the predicate to apply to derive the message-independent forced authn
+     * default.
      * 
      * @param condition condition to set
      * 
@@ -38,7 +45,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      */
     public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 
