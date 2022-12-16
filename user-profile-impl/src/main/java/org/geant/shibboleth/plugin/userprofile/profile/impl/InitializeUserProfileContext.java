@@ -22,7 +22,6 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import net.shibboleth.idp.session.context.navigate.CanonicalUsernameLookupStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -30,24 +29,37 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+/**
+ * Initializes User Profile Context. Context is initially populated with
+ * information of all known relying parties.
+ */
 public class InitializeUserProfileContext extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(InitializeUserProfileContext.class);
 
-    @Nonnull
-    private Function<ProfileRequestContext, String> usernameLookupStrategy;
-
+    /**
+     * Lookup strategy for Subject Context.
+     */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
 
+    /**
+     * User Profile Cache.
+     */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
 
+    /**
+     * OIDC Json based client information resolver.
+     */
     @NonnullAfterInit
     private ClientInformationResolver clientResolver;
 
+    /**
+     * XML based metadata resolver.
+     */
     /** Resolver used to look up SAML metadata. */
     @NonnullAfterInit
     private MetadataResolver metadataResolver;
@@ -55,26 +67,35 @@ public class InitializeUserProfileContext extends AbstractProfileAction {
     /** Constructor. */
     public InitializeUserProfileContext() {
         super();
-        usernameLookupStrategy = new CanonicalUsernameLookupStrategy();
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
-    public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
-    }
-
+    /**
+     * Set Lookup strategy for Subject Context.
+     * 
+     * @param strategy Lookup strategy for Subject Context
+     */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
+    /**
+     * Set User Profile Cache.
+     * 
+     * @param cache User Profile Cache
+     */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
     }
 
+    /**
+     * Set OIDC Json based client information resolver.
+     * 
+     * @param resolver OIDC Json based client information resolver
+     */
     public void setClientInformationResolver(@Nonnull final ClientInformationResolver resolver) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         clientResolver = Constraint.isNotNull(resolver, "ClientInformationResolver cannot be null");

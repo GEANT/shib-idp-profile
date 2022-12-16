@@ -1,0 +1,84 @@
+[
+
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "aaIK1GX427KQ",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Dragon UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "ccIK1GX427KQ",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Unicorn UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "abIK1GX427KQ",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Seal UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "XIK1GX427KQ",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Squirrel UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "DUH",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Mouse UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "IK1GX427KQ",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Elephant UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "IK1GX427KQ-2",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Capricorn UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "IK1GX427KQ-3",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Scorpion UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  },
+  {
+    "scope": "openid profile",
+    "redirect_uris": ["https://testrp-sds-test.rahtiapp.fi/oidc/redirect_uri"],
+    "client_id": "IK1GX427KQ-4",
+    "client_secret":"RLYILB2SNY",
+    "client_name":"Pike UserProfile Client",
+    "response_types": ["code"],
+    "grant_types":["authorization_code"]
+  }
+]
