@@ -64,8 +64,8 @@ public final class UserProfileContext extends BaseContext {
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
 
     /** Constructor. */
-    public UserProfileContext(JsonObject record) {
-        userRecord = Constraint.isNotNull(record, "User Record cannot be null");
+    public UserProfileContext(@Nullable JsonObject record) {
+        userRecord = record;
     }
 
     /**
