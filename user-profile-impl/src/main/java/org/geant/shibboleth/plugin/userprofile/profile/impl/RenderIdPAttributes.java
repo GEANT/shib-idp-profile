@@ -19,6 +19,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+/**
+ * Action sets the 'Personal Data' attributes of user.
+ */
 public class RenderIdPAttributes extends AbstractProfileAction {
 
     /** Class logger. */
@@ -34,6 +37,7 @@ public class RenderIdPAttributes extends AbstractProfileAction {
     /** Context for User Profile . */
     private UserProfileContext userProfileContext;
 
+    /** Attribute Id's of 'Personal Data' attributes. */
     private Collection<String> idPAttributes;
 
     /** Constructor. */
@@ -42,8 +46,11 @@ public class RenderIdPAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy Strategy used to locate or create the
+     *                 {@link UserProfileContext} to populate.
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -52,6 +59,11 @@ public class RenderIdPAttributes extends AbstractProfileAction {
         userProfileContextLookupStrategy = strategy;
     }
 
+    /**
+     * Set attribute Id's of 'Personal Data' attributes.
+     * 
+     * @param attributes Attribute Id's of 'Personal Data' attributes
+     */
     public void setIdPUserAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         if (attributes != null) {
             idPAttributes = StringSupport.normalizeStringCollection(attributes);
@@ -64,13 +76,18 @@ public class RenderIdPAttributes extends AbstractProfileAction {
             return false;
         }
         if (idPAttributes == null || idPAttributes.isEmpty()) {
-            // Nothing to do
+            // Nothing to do, no selected attributes.
             return false;
         }
         userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
         if (userProfileContext == null) {
             log.error("{} No UserProfileContext name available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
+        }
+        if (userProfileContext.getRPAttributeContext() == null
+                || userProfileContext.getRPAttributeContext().get(null) == null) {
+            // Nothing to do, no attributes resolved.
             return false;
         }
         return true;
@@ -80,6 +97,7 @@ public class RenderIdPAttributes extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        userProfileContext.getIdPUserAttributes().clear();
         for (final IdPAttribute attribute : userProfileContext.getRPAttributeContext().get(null).getIdPAttributes()
                 .values()) {
             if (attribute != null && !attribute.getValues().isEmpty() && idPAttributes.contains(attribute.getId())) {
