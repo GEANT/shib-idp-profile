@@ -28,6 +28,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+/**
+ * Actions that filters attributes for relying party. TODO: Pass also relying
+ * party metadata to filtering.
+ */
 public class FilterRPAttributes extends AbstractProfileAction {
 
     /** Class logger. */
@@ -236,10 +240,8 @@ public class FilterRPAttributes extends AbstractProfileAction {
         filterContext.setDirection(Direction.OUTBOUND).setMetadataResolver(metadataResolver)
                 .setPrincipal(subjectContext.getPrincipalName()).setAttributeRecipientID(rpId).setAttributeIssuerID(
                         issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null);
-        // .setIssuerMetadataContextLookupStrategy(issuerMetadataFromFilterLookupStrategy)
+        // TODO: We may rpId so we should also pass metadata to filtering.
         // .setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy)
-        // .setProxiedRequesterContextLookupStrategy(proxiesFromFilterLookupStrategy)
-        // .setProxiedRequesterMetadataContextLookupStrategy(proxiedMetadataFromFilterLookupStrategy);
         filterContext.setPrefilteredIdPAttributes(
                 userProfileContext.getRPAttributeContext().get(rpId).getIdPAttributes().values());
         ServiceableComponent<AttributeFilter> component = null;
@@ -267,8 +269,5 @@ public class FilterRPAttributes extends AbstractProfileAction {
                 component.unpinComponent();
             }
         }
-        // Cleanup
-        //BaseContext parent = filterContext.getParent();
-        //parent.removeSubcontext(filterContext);
     }
 }
