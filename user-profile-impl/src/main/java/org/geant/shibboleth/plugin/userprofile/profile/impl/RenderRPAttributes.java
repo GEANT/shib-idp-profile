@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +21,21 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.attribute.transcoding.TranscoderSupport;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+/**
+ * Action transcodes attributes per relying party. The purpose is to verify
+ * which of the resolved and filtered attributes have transcoding result and
+ * thus reach the user.
+ * 
+ */
 public class RenderRPAttributes extends AbstractProfileAction {
 
     /** Class logger. */
@@ -80,8 +87,11 @@ public class RenderRPAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy Strategy used to locate or create the
+     *                 {@link UserProfileContext} to populate.
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -100,6 +110,15 @@ public class RenderRPAttributes extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         transcoderRegistry = registry;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (transcoderRegistry == null) {
+            throw new ComponentInitializationException("transcoderRegistry cannot be null");
+        }
     }
 
     @Override
@@ -121,8 +140,15 @@ public class RenderRPAttributes extends AbstractProfileAction {
         }
         rpId = rpContext.getRelyingPartyId();
         if (rpId == null || rpId.isBlank()) {
-            log.debug("{} Relying party id extraction failed", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            log.error("{} Relying party id missing", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+            return false;
+        }
+        if (userProfileContext.getRPAttributeContext() == null
+                || userProfileContext.getRPAttributeContext().get(rpId) == null) {
+            // Nothing to do, no attributes resolved
+            // Cleanup relying party in this last action of attribute resolving/filtering.
+            rpContext.setRelyingPartyId(null);
             return false;
         }
         return true;
