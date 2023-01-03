@@ -49,6 +49,10 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+/**
+ * Actions merges SAML2 and OIDC based relying parties to single list. For each
+ * party Relying Party UI Context is created.
+ */
 public class RenderUserProfileContext extends AbstractProfileAction {
 
     /** Class logger. */
@@ -75,6 +79,9 @@ public class RenderUserProfileContext extends AbstractProfileAction {
         defaultLanguage = "en";
     }
 
+    /**
+     * Strategy used to locate or create the {@link UserProfileContext} to populate.
+     */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -202,10 +209,6 @@ public class RenderUserProfileContext extends AbstractProfileAction {
                 }
 
             });
-
-        // TODO: Render SAML2 XML clients
-        log.debug("{} Relying party information rendered {}", getLogPrefix());
-
     }
 
 }
