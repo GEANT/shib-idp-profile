@@ -166,9 +166,8 @@ public final class UserProfileContext extends BaseContext {
      * @param rpId Relying Party Id
      * @param ctx  Attribute Context
      */
-    public void setAttributeContext(@Nonnull String rpId, @Nonnull AttributeContext ctx) {
-        rpAttributeContext.put(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"),
-                Constraint.isNotNull(ctx, "Relying Party Attribute Context be null"));
+    public void setAttributeContext(@Nullable String rpId, @Nonnull AttributeContext ctx) {
+        rpAttributeContext.put(rpId, Constraint.isNotNull(ctx, "Relying Party Attribute Context be null"));
     }
 
     /**
