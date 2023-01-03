@@ -136,6 +136,33 @@
             <artifactId>oidc-common-metadata-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>net.shibboleth.oidc</groupId>
+            <artifactId>oidc-common-attribute-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.oidc</groupId>
+            <artifactId>oidc-common-attribute-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-attribute-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+	       <groupId>net.shibboleth.utilities</groupId>
+	       <artifactId>java-support</artifactId>
+	       <type>test-jar</type>
+	       <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
