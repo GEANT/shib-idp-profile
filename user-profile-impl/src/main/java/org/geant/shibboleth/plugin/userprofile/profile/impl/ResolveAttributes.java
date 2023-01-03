@@ -27,6 +27,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
+/**
+ * Action resolves attributes for relying party.
+ */
 public class ResolveAttributes extends AbstractProfileAction {
 
     /** Class logger. */
