@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.geant.shibboleth.plugin.userprofile</groupId>
         <artifactId>idp-plugin-userprofile</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>0.8.0</version>
     </parent>
     
     <name>Shibboleth IdP :: Plugins :: User Profile API</name>

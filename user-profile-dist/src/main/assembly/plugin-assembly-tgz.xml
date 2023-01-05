@@ -8,7 +8,7 @@
     <fileSets>
         <fileSet>
             <directory>../user-profile-api/target</directory>
-            <outputDirectory>edit-webapp/WEB-INF/lib</outputDirectory>
+            <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
             <includes>
                 <include>idp-plugin-userprofile-api-*.jar</include>
             </includes>
@@ -20,7 +20,7 @@
         </fileSet>
         <fileSet>
             <directory>../user-profile-impl/target</directory>
-            <outputDirectory>edit-webapp/WEB-INF/lib</outputDirectory>
+            <outputDirectory>webapp/WEB-INF/lib</outputDirectory>
             <includes>
                 <include>idp-plugin-userprofile-impl-*.jar</include>
             </includes>
@@ -31,22 +31,20 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>../user-profile-impl/src/main/resources/views</directory>
-            <outputDirectory>views</outputDirectory>
-            <includes>
-                <include>userprofile*.vm</include>
-            </includes>
+            <directory>src/main/resources/webapp</directory>
+            <outputDirectory>webapp</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>../user-profile-impl/src/main/resources/conf</directory>
-            <outputDirectory>conf</outputDirectory>
+            <directory>../user-profile-impl/src/main/resources/org/geant/shibboleth/plugin/userprofile</directory>
+            <outputDirectory>bootstrap</outputDirectory>
             <includes>
-                <include>*.properties</include>
+                <include>plugin.properties</include>
             </includes>
+            <lineEnding>windows</lineEnding>
         </fileSet>
         <fileSet>
-            <directory>../user-profile-dist/src/main/resources</directory>
-            <outputDirectory>edit-webapp</outputDirectory>
+            <directory>${dist.assemblyDirectory}</directory>
+            <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
