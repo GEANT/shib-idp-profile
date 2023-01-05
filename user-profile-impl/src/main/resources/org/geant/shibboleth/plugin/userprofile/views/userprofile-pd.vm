@@ -1,0 +1,94 @@
+##
+## Velocity Template for userprofile (for now as end state)
+##
+## Velocity context will contain the following variables during controlled errors.
+## Some error paths involve runtime exceptions handled outside Spring Web Flow by the
+## MVC layer and will not generally populate most of these variables.
+##
+## flowRequestContext - the Spring Web Flow RequestContext
+## profileRequestContext - root of context tree
+## encoder - HTMLEncoder class
+## environment - Spring Environment object for property resolution
+## userProfileContext - user profile context
+## attributeDisplayNameFunction - function to display attribute name
+##
+##
+#set ($userAttributes = $userProfileContext.getIdPUserAttributes())
+<!DOCTYPE html>
+<html>
+  <head>
+      <!-- TODO review this string here -->
+      <title>#springMessageText("idp.userprofile.pageheading", "User Profile Page")</title>
+      <meta charset="UTF-8" />
+      <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
+      <!-- TODO review description string -->
+      <meta name="Description" content="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+  </head>
+  <body>
+
+    <header>
+      <div id="logo"><img src="/idp/icons/fppp-logo.svg"
+              alt="#springMessageText("idp.logo.alt-text", "logo")" /></div>
+      <label for="nav-toggle" class="nav-toggle-label">
+          <span></span>
+      </label>
+    </header>
+    <div id="nav">
+        <input type="checkbox" id="nav-toggle" class="nav-toggle">
+        <nav role="navigation" aria-label="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+            <ul>
+                <!-- TODO: get strings from spring messages -->
+                #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
+                #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
+                #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
+                #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
+                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.personaldata", "Personal Data")</span></a></li>
+                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
+                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.activitypage", "Activity Page")</span></a></li>
+                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.allorganizations", "All Organizations")</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
+            </ul>
+        </nav>
+    </div>
+    <!-- end of header -->
+    
+    <section id="banner">
+        <!-- TODO explanatory message -->
+        <div>
+          #springMessageText("idp.userprofile.personaldata.heading", "Personal Data")
+        </div>
+    </section>
+    <section id="main">
+      <div id="personal_data">
+      <table>
+        <!-- fixed table header -->
+        <tr>
+            <th>Attribute</th>
+            <th>Your value</th>
+        </tr>
+        #foreach($attribute in $userAttributes)
+        <tr>
+          <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
+          <div class="popup" onclick="myFunction()"><img src="/idp/icons/i.svg"/>
+            <span class="popuptext" id="myPopup">Popup text...</span>
+          </div> 
+          </td>
+          <td>
+          #foreach ($value in $attribute.values)
+            <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
+          #end
+          </td>
+        </tr>
+        #end
+      </table>
+      </div id="personal_data">
+    </section>
+
+    <footer>
+      <div>
+          <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+      </div>
+    </footer>
+
+  </body>
+</html>
