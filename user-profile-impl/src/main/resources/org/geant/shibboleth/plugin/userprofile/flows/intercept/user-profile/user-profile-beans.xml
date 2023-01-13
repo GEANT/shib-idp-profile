@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+        <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+            p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+    
+        <bean id="org.geant.shibboleth.plugin.userprofile.setEvents" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript"
+            p:customObject-ref="shibboleth.UserProfileCache">
+            <constructor-arg>
+                <value>
+                    <![CDATA[
+                    result="proceed";
+                    logger = Java.type("org.slf4j.LoggerFactory").getLogger("org.geant.shibboleth.plugin.userprofile.setEvents");
+                    var UsernamePrincipal = Java.type("net.shibboleth.idp.authn.principal.UsernamePrincipal");
+                    subjectContext = input.getSubcontext("net.shibboleth.idp.authn.context.SubjectContext");
+                    var usernamePrincipal = new UsernamePrincipal(subjectContext.getPrincipalName());
+                    var RelyingPartyIdLookupFunction = Java.type("net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction");
+                    relyingPartyIdLookupFunction = new RelyingPartyIdLookupFunction();
+                    var relyingPartyId = relyingPartyIdLookupFunction.apply(input);
+
+                    //1. We create event to the list of last logins.
+                    custom.addMultiEvent(usernamePrincipal, "ALL_ACTIVITY", relyingPartyId, 50);
+
+                    //2. We update record of connected organizations.
+                    var connectedOrganizations = null;
+                    var entry = custom.getSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS");
+                    if (entry == null || entry.get("value") == null){
+                      var JsonObject = Java.type("com.google.gson.JsonObject");
+                      connectedOrganizations = new JsonObject();
+                    } else {
+                      connectedOrganizations = entry.get("value").getAsJsonObject();
+                    }
+                    logger.debug("Connected Organizations {}", connectedOrganizations.toString());
+                    var connectedOrganization = null;
+                    if (connectedOrganizations.get(relyingPartyId) == null){
+                      var JsonParser = Java.type("com.google.gson.JsonParser");
+                      connectedOrganization = JsonParser.parseString("{\"times\":0,\"attributes\":[]}").getAsJsonObject();
+                    } else {
+                      connectedOrganization = connectedOrganizations.get(relyingPartyId).getAsJsonObject();
+                    }
+                    connectedOrganization.addProperty("times", Number(connectedOrganization.get("times")) + Number(1));
+                    // We assume Profile Context -> Relying Party Context -> Attribute Context path exists in point of execution.
+                    relyingPartyContext = input.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext");
+                    attributeContext = relyingPartyContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext");
+                    //We are storing only attribute id. That is how Audit seems to work also i.e. not rendering the name.
+                    JsonArray = Java.type("com.google.gson.JsonArray");
+                    var attributes = new JsonArray();
+                    var itr = attributeContext.getIdPAttributes().keySet().iterator();
+                    while (itr.hasNext()) {
+                      attributes.add(itr.next());
+                    }
+                    connectedOrganization.add("attributes", attributes);
+                    connectedOrganizations.add(relyingPartyId, connectedOrganization);
+                    logger.debug("Connected Organizations updated as {}", connectedOrganizations.toString());
+                    custom.setSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS", connectedOrganizations);
+                    result;
+                    ]]>
+                </value>
+            </constructor-arg>
+        </bean>
+    
+</beans>
