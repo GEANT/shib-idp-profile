@@ -1,5 +1,5 @@
 ##
-## Velocity Template for userprofile (for now as end state)
+## Velocity Template for User Profile. Lists all activity for user.
 ##
 ## Velocity context will contain the following variables during controlled errors.
 ## Some error paths involve runtime exceptions handled outside Spring Web Flow by the
@@ -8,6 +8,7 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
+## dateUtil - User Profile utility class for rendering date.
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
 ## attributeDisplayNameFunction - function to display attribute name
@@ -71,7 +72,7 @@
         </tr>
         #foreach($item in $allActivity)
         <tr>
-          <td>$encoder.encodeForHTMLAttribute($item.iat)</td>
+          <td>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($item.iat))</td>
           <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes["$item.value"].serviceName)</td>
         </tr>
         #end
