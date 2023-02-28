@@ -69,7 +69,7 @@
           <th>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</th>
           <th>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</th>
         </tr>
-        #if ( $connectedOrganizations.getAsJsonObject().has("value") )
+        #if ( $connectedOrganizations.containsKey("value") )
           #set ($connectedOrganizations = $connectedOrganizations.value)
           #foreach($rpId in $connectedOrganizations.keySet())
           <tr>

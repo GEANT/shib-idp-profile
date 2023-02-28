@@ -11,10 +11,8 @@ import javax.annotation.Nullable;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
-import com.google.gson.JsonObject;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 
-//TODO: Remove
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -28,11 +26,11 @@ public final class UserProfileContext extends BaseContext {
 
     /** The user record. */
     @Nonnull
-    private final JsonObject userRecord;
+    private final JSONObject userRecord;
 
     /** The Relying Parties. */
     @Nonnull
-    private final JsonObject relyingParties = new JsonObject();
+    private final JSONObject relyingParties = new JSONObject();
 
     /** JSON based OIDC relying parties. */
     @Nullable
@@ -64,7 +62,7 @@ public final class UserProfileContext extends BaseContext {
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
 
     /** Constructor. */
-    public UserProfileContext(@Nullable JsonObject record) {
+    public UserProfileContext(@Nullable JSONObject record) {
         userRecord = record;
     }
 
@@ -132,7 +130,7 @@ public final class UserProfileContext extends BaseContext {
      * @return The user record
      */
     @Nonnull
-    public JsonObject getRecord() {
+    public JSONObject getRecord() {
         return userRecord;
     }
 
@@ -142,7 +140,7 @@ public final class UserProfileContext extends BaseContext {
      * @return The Relying Parties.
      */
     @Nonnull
-    public JsonObject getRelyingParties() {
+    public JSONObject getRelyingParties() {
         return relyingParties;
     }
 
@@ -154,10 +152,10 @@ public final class UserProfileContext extends BaseContext {
      * @param type Relying Party Type
      */
     public void addRelyingParty(@Nonnull String rpId, @Nonnull String name, @Nonnull String type) {
-        JsonObject content = new JsonObject();
-        content.addProperty("name", Constraint.isNotNull(name, "Relying Party name cannot be null"));
-        content.addProperty("type", Constraint.isNotNull(type, "Relying Party type cannot be null"));
-        relyingParties.add(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"), content);
+        JSONObject content = new JSONObject();
+        content.put("name", Constraint.isNotNull(name, "Relying Party name cannot be null"));
+        content.put("type", Constraint.isNotNull(type, "Relying Party type cannot be null"));
+        relyingParties.put(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"), content);
     }
 
     /**

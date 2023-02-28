@@ -83,6 +83,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>net.shibboleth.idp.plugin.oidc</groupId>
+            <artifactId>idp-plugin-oidc-op-api</artifactId>
+            <version>${oidc.op.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>oauth2-oidc-sdk</artifactId>
             <scope>provided</scope>
@@ -163,10 +168,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-	       <groupId>net.shibboleth.utilities</groupId>
-	       <artifactId>java-support</artifactId>
-	       <type>test-jar</type>
-	       <scope>test</scope>
+           <groupId>net.shibboleth.utilities</groupId>
+           <artifactId>java-support</artifactId>
+           <type>test-jar</type>
+           <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -7,7 +7,8 @@ import org.opensaml.storage.impl.client.ClientStorageService;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.JsonObject;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -29,7 +30,7 @@ public class UserProfileCacheTest {
     private UsernamePrincipal foobarUser = new UsernamePrincipal("foo@bar");
     private UsernamePrincipal foo2barUser = new UsernamePrincipal("foo2@bar");
 
-    private JsonObject jsonObject = new JsonObject();
+    private JSONObject jsonObject = new JSONObject();
 
     @BeforeMethod
     protected void setUp() throws Exception {
@@ -43,8 +44,8 @@ public class UserProfileCacheTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.initialize();
 
-        jsonObject.addProperty("key1", "value1");
-        jsonObject.addProperty("key2", 1);
+        jsonObject.put("key1", "value1");
+        jsonObject.put("key2", 1);
 
     }
 
@@ -90,8 +91,16 @@ public class UserProfileCacheTest {
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name", "value2"));
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name2", "value3"));
         // Test Reading Record
-        JsonObject result = userProfileCache.getRecord(foobarUser);
+        JSONObject result = userProfileCache.getRecord(foobarUser);
         Assert.assertNotNull(result);
+        Assert.assertEquals("value2", ((JSONObject)result.get("name")).getAsString("value"));
+        Assert.assertEquals("value3", ((JSONObject)result.get("name2")).getAsString("value"));
+        Assert.assertNull(userProfileCache.getRecord(foo2barUser));
+        Assert.assertEquals("value2",
+                ((JSONObject)userProfileCache.getSingleEvent(foobarUser, "name")).get("value"));
+        Assert.assertEquals("value3",
+                ((JSONObject)userProfileCache.getSingleEvent(foobarUser, "name2")).get("value"));
+        /*
         Assert.assertEquals("value2", result.get("name").getAsJsonObject().get("value").getAsString());
         Assert.assertEquals("value3", result.get("name2").getAsJsonObject().get("value").getAsString());
         Assert.assertNull(userProfileCache.getRecord(foo2barUser));
@@ -100,6 +109,7 @@ public class UserProfileCacheTest {
                 userProfileCache.getSingleEvent(foobarUser, "name").getAsJsonObject().get("value").getAsString());
         Assert.assertEquals("value3",
                 userProfileCache.getSingleEvent(foobarUser, "name2").getAsJsonObject().get("value").getAsString());
+        */        
         Assert.assertNull(userProfileCache.getSingleEvent(foobarUser, "name3"));
         Assert.assertNull(userProfileCache.getMultiEvent(foobarUser, "name2"));
     }
@@ -108,8 +118,18 @@ public class UserProfileCacheTest {
     public void testSingleJsonEvent() throws ComponentInitializationException, IOException {
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name", jsonObject));
         // Test Reading Record
-        JsonObject result = userProfileCache.getRecord(foobarUser);
+        JSONObject result = userProfileCache.getRecord(foobarUser);
         Assert.assertNotNull(result);
+        Assert.assertEquals("value1",
+                ((JSONObject)((JSONObject)result.get("name")).get("value")).get("key1"));
+        Assert.assertEquals(1,
+                ((JSONObject)((JSONObject)result.get("name")).get("value")).get("key2"));
+        // Test Reading Events
+        Assert.assertEquals("value1", ((JSONObject)((JSONObject)userProfileCache.getSingleEvent(foobarUser, "name")).get("value")
+                ).get("key1"));
+        Assert.assertEquals(1, ((JSONObject)((JSONObject)userProfileCache.getSingleEvent(foobarUser, "name")).get("value")
+                ).get("key2"));
+        /*
         Assert.assertEquals("value1",
                 result.get("name").getAsJsonObject().get("value").getAsJsonObject().get("key1").getAsString());
         Assert.assertEquals(1,
@@ -119,6 +139,7 @@ public class UserProfileCacheTest {
                 .getAsJsonObject().get("key1").getAsString());
         Assert.assertEquals(1, userProfileCache.getSingleEvent(foobarUser, "name").getAsJsonObject().get("value")
                 .getAsJsonObject().get("key2").getAsInt());
+        */        
     }
 
     @Test
@@ -128,8 +149,26 @@ public class UserProfileCacheTest {
         Assert.assertTrue(userProfileCache.addMultiEvent(foobarUser, "name", "value3", 2));
         Assert.assertTrue(userProfileCache.addMultiEvent(foobarUser, "name2", "value4", 2));
         // Test Reading Record
-        JsonObject result = userProfileCache.getRecord(foobarUser);
+        JSONObject result = userProfileCache.getRecord(foobarUser);
         Assert.assertNotNull(result);
+        Assert.assertEquals(2, ((JSONArray)result.get("name")).size());
+        Assert.assertEquals("value2",
+                ((JSONObject)((JSONArray)result.get("name")).get(0)).get("value"));
+        Assert.assertEquals("value3",
+                ((JSONObject)((JSONArray)result.get("name")).get(1)).get("value"));
+        Assert.assertEquals(1, ((JSONArray)result.get("name2")).size());
+        Assert.assertEquals("value4",
+                ((JSONObject)((JSONArray)result.get("name2")).get(0)).get("value"));
+        // Test Reading Events
+        Assert.assertEquals(2, userProfileCache.getMultiEvent(foobarUser, "name").size());
+        Assert.assertEquals("value2",
+                ((JSONObject)userProfileCache.getMultiEvent(foobarUser, "name").get(0)).get("value"));
+        Assert.assertEquals("value3",
+                ((JSONObject)userProfileCache.getMultiEvent(foobarUser, "name").get(1)).get("value"));
+        Assert.assertEquals(1, ((JSONArray)userProfileCache.getMultiEvent(foobarUser, "name2")).size());
+        Assert.assertEquals("value4", ((JSONObject)userProfileCache.getMultiEvent(foobarUser, "name2").get(0))
+                .get("value"));
+        /*
         Assert.assertEquals(2, result.get("name").getAsJsonArray().size());
         Assert.assertEquals("value2",
                 result.get("name").getAsJsonArray().get(0).getAsJsonObject().get("value").getAsString());
@@ -147,6 +186,8 @@ public class UserProfileCacheTest {
         Assert.assertEquals(1, userProfileCache.getMultiEvent(foobarUser, "name2").getAsJsonArray().size());
         Assert.assertEquals("value4", userProfileCache.getMultiEvent(foobarUser, "name2").get(0).getAsJsonObject()
                 .get("value").getAsString());
+        
+        */
         Assert.assertNull(userProfileCache.getSingleEvent(foobarUser, "name2"));
     }
 

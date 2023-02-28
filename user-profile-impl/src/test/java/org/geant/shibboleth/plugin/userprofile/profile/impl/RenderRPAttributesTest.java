@@ -14,7 +14,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.JsonObject;
+import net.minidev.json.JSONObject;
 
 import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -87,7 +87,7 @@ public class RenderRPAttributesTest {
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         action = new RenderRPAttributes();
         action.setTranscoderRegistry(new MockReloadableService<>(registry));
-        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JsonObject()), true);
+        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JSONObject()), true);
         relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(), true);
         relyingPartyContext.setRelyingPartyId("rpId");
 

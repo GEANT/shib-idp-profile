@@ -10,7 +10,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.gson.JsonObject;
+import net.minidev.json.JSONObject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -39,7 +39,7 @@ public class RenderIdPAttributesTest {
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         action = new RenderIdPAttributes();
         action.setIdPUserAttributes(Arrays.asList("attribute_1", "attribute_2"));
-        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JsonObject()), true);
+        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JSONObject()), true);
         AttributeContext attributeContext = new AttributeContext();
         IdPAttribute idPAttribute_0 = new IdPAttribute("attribute_0");
         idPAttribute_0.setValues(Arrays.asList(new StringAttributeValue("0")));

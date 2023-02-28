@@ -22,6 +22,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     <![CDATA[
                     result="proceed";
                     logger = Java.type("org.slf4j.LoggerFactory").getLogger("org.geant.shibboleth.plugin.userprofile.setEvents");
+                    var AccessToken = Java.type("org.geant.shibboleth.plugin.userprofile.utils.AccessToken");
+                    var accessToken = new AccessToken(input);
+                    logger.info("Access Token '{}' exists {}", accessToken.toJSONObject().toJSONString(),accessToken.exists());
+
                     var UsernamePrincipal = Java.type("net.shibboleth.idp.authn.principal.UsernamePrincipal");
                     subjectContext = input.getSubcontext("net.shibboleth.idp.authn.context.SubjectContext");
                     var usernamePrincipal = new UsernamePrincipal(subjectContext.getPrincipalName());
@@ -36,33 +40,33 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     var connectedOrganizations = null;
                     var entry = custom.getSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS");
                     if (entry == null || entry.get("value") == null){
-                      var JsonObject = Java.type("com.google.gson.JsonObject");
-                      connectedOrganizations = new JsonObject();
+                      var JSONObject = Java.type("net.minidev.json.JSONObject");
+                      connectedOrganizations = new JSONObject();
                     } else {
-                      connectedOrganizations = entry.get("value").getAsJsonObject();
+                      connectedOrganizations = entry.get("value");
                     }
-                    logger.debug("Connected Organizations {}", connectedOrganizations.toString());
+                    logger.info("Connected Organizations {}", connectedOrganizations.toString());
                     var connectedOrganization = null;
                     if (connectedOrganizations.get(relyingPartyId) == null){
-                      var JsonParser = Java.type("com.google.gson.JsonParser");
-                      connectedOrganization = JsonParser.parseString("{\"times\":0,\"attributes\":[]}").getAsJsonObject();
+                      var JSONParser = Java.type("net.minidev.json.parser.JSONParser");
+                      connectedOrganization = new JSONParser(JSONParser.MODE_PERMISSIVE).parse("{\"times\":0,\"attributes\":[]}");
                     } else {
-                      connectedOrganization = connectedOrganizations.get(relyingPartyId).getAsJsonObject();
+                      connectedOrganization = connectedOrganizations.get(relyingPartyId);
                     }
-                    connectedOrganization.addProperty("times", Number(connectedOrganization.get("times")) + Number(1));
+                    connectedOrganization.put("times", Number(connectedOrganization.get("times")) + Number(1));
                     // We assume Profile Context -> Relying Party Context -> Attribute Context path exists in point of execution.
                     relyingPartyContext = input.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext");
                     attributeContext = relyingPartyContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext");
                     //We are storing only attribute id. That is how Audit seems to work also i.e. not rendering the name.
-                    JsonArray = Java.type("com.google.gson.JsonArray");
-                    var attributes = new JsonArray();
+                    JSONArray = Java.type("net.minidev.json.JSONArray");
+                    var attributes = new JSONArray();
                     var itr = attributeContext.getIdPAttributes().keySet().iterator();
                     while (itr.hasNext()) {
                       attributes.add(itr.next());
                     }
-                    connectedOrganization.add("attributes", attributes);
-                    connectedOrganizations.add(relyingPartyId, connectedOrganization);
-                    logger.debug("Connected Organizations updated as {}", connectedOrganizations.toString());
+                    connectedOrganization.put("attributes", attributes);
+                    connectedOrganizations.put(relyingPartyId, connectedOrganization);
+                    logger.info("Connected Organizations updated as {}", connectedOrganizations.toString());
                     custom.setSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS", connectedOrganizations);
                     result;
                     ]]>

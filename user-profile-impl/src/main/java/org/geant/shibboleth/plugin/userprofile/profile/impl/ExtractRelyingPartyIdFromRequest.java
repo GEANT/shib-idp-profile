@@ -122,7 +122,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        if (!userProfileContext.getRelyingParties().has(rpId)) {
+        if (!userProfileContext.getRelyingParties().containsKey(rpId)) {
             log.error("{} Relying Party {} is unknown.", getLogPrefix(), rpId);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
