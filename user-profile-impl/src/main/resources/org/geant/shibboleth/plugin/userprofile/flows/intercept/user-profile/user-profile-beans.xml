@@ -22,9 +22,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     <![CDATA[
                     result="proceed";
                     logger = Java.type("org.slf4j.LoggerFactory").getLogger("org.geant.shibboleth.plugin.userprofile.setEvents");
-                    var AccessToken = Java.type("org.geant.shibboleth.plugin.userprofile.utils.AccessToken");
-                    var accessToken = new AccessToken(input);
-                    logger.info("Access Token '{}' exists {}", accessToken.toJSONObject().toJSONString(),accessToken.exists());
 
                     var UsernamePrincipal = Java.type("net.shibboleth.idp.authn.principal.UsernamePrincipal");
                     subjectContext = input.getSubcontext("net.shibboleth.idp.authn.context.SubjectContext");
@@ -73,5 +70,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                 </value>
             </constructor-arg>
         </bean>
+
+        <bean id="StoreToken"
+            class="org.geant.shibboleth.plugin.userprofile.intercept.impl.StoreToken" scope="prototype"
+            p:userProfileCache-ref="shibboleth.UserProfileCache"
+            p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"/>
     
 </beans>

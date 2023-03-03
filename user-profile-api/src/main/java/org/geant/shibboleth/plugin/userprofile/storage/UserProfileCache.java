@@ -144,6 +144,22 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
         record.put(eventName, createJsonEvent(eventValue));
         return setRecord(key, record);
     }
+    
+    /**
+     * 
+     * @param user
+     * @param eventName
+     * @param eventValue
+     * @return
+     * @throws IOException
+     */
+    public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
+            @Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final JSONArray eventValue) {
+        final String key = getKey(user);
+        JSONObject record = getRecord(key);
+        record.put(eventName, createJsonEvent(eventValue));
+        return setRecord(key, record);
+    }
 
     /**
      * 
@@ -236,6 +252,19 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      */
 
     private JSONObject createJsonEvent(JSONObject value) {
+        JSONObject entry=new JSONObject();
+        entry.put("value", value);
+        entry.put("iat", Instant.now().getEpochSecond());
+        return entry;
+    }
+    
+    /**
+     * 
+     * @param value
+     * @return
+     */
+
+    private JSONObject createJsonEvent(JSONArray value) {
         JSONObject entry=new JSONObject();
         entry.put("value", value);
         entry.put("iat", Instant.now().getEpochSecond());
