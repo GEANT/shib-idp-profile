@@ -32,6 +32,10 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 /**
  * Stores Access Token information if available.
+ * 
+ * TODO TESTS
+ * TODO JWT ACCESS TOKEN
+ * TODO Whether to execution to be configurable.
  */
 public class StoreToken extends AbstractProfileAction {
 

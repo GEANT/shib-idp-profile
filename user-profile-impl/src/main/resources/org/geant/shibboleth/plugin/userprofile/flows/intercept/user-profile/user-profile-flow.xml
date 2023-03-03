@@ -7,6 +7,7 @@
         <input name="calledAsSubflow" type="boolean" required="true" />
 
         <action-state id="SetEvent">
+           <evaluate expression="UpdateConnectedOrganizations" />     
            <evaluate expression="StoreToken" />        
            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('org.geant.shibboleth.plugin.userprofile.setEvents').apply(opensamlProfileRequestContext)" />
            <evaluate expression="'proceed'" />

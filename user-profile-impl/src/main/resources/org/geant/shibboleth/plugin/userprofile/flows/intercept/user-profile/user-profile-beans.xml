@@ -33,38 +33,6 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     //1. We create event to the list of last logins.
                     custom.addMultiEvent(usernamePrincipal, "ALL_ACTIVITY", relyingPartyId, 50);
 
-                    //2. We update record of connected organizations.
-                    var connectedOrganizations = null;
-                    var entry = custom.getSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS");
-                    if (entry == null || entry.get("value") == null){
-                      var JSONObject = Java.type("net.minidev.json.JSONObject");
-                      connectedOrganizations = new JSONObject();
-                    } else {
-                      connectedOrganizations = entry.get("value");
-                    }
-                    logger.info("Connected Organizations {}", connectedOrganizations.toString());
-                    var connectedOrganization = null;
-                    if (connectedOrganizations.get(relyingPartyId) == null){
-                      var JSONParser = Java.type("net.minidev.json.parser.JSONParser");
-                      connectedOrganization = new JSONParser(JSONParser.MODE_PERMISSIVE).parse("{\"times\":0,\"attributes\":[]}");
-                    } else {
-                      connectedOrganization = connectedOrganizations.get(relyingPartyId);
-                    }
-                    connectedOrganization.put("times", Number(connectedOrganization.get("times")) + Number(1));
-                    // We assume Profile Context -> Relying Party Context -> Attribute Context path exists in point of execution.
-                    relyingPartyContext = input.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext");
-                    attributeContext = relyingPartyContext.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext");
-                    //We are storing only attribute id. That is how Audit seems to work also i.e. not rendering the name.
-                    JSONArray = Java.type("net.minidev.json.JSONArray");
-                    var attributes = new JSONArray();
-                    var itr = attributeContext.getIdPAttributes().keySet().iterator();
-                    while (itr.hasNext()) {
-                      attributes.add(itr.next());
-                    }
-                    connectedOrganization.put("attributes", attributes);
-                    connectedOrganizations.put(relyingPartyId, connectedOrganization);
-                    logger.info("Connected Organizations updated as {}", connectedOrganizations.toString());
-                    custom.setSingleEvent(usernamePrincipal, "CONNECTED_ORGANIZATIONS", connectedOrganizations);
                     result;
                     ]]>
                 </value>
@@ -75,5 +43,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.StoreToken" scope="prototype"
             p:userProfileCache-ref="shibboleth.UserProfileCache"
             p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"/>
+            
+        <bean id="UpdateConnectedOrganizations"
+            class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizations" scope="prototype"
+            p:userProfileCache-ref="shibboleth.UserProfileCache"/>
     
 </beans>
