@@ -57,6 +57,10 @@ public final class UserProfileContext extends BaseContext {
     @Nonnull
     private final Map<String, Map<IdPAttribute, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<IdPAttribute, JSONObject>>();
 
+    /** tokens generated per Relying Party.. */
+    @Nonnull
+    private final Map<String, List<JSONObject>> rpTokens = new HashMap<String, List<JSONObject>>();
+
     /** Attributes presented as users personal data. */
     @Nonnull
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
@@ -203,6 +207,28 @@ public final class UserProfileContext extends BaseContext {
     @Nonnull
     public Map<String, Map<IdPAttribute, JSONObject>> getRPEncodedJSONAttributes() {
         return rpEncodedJSONAttributes;
+    }
+
+    /**
+     * Set token generated for Relying Party.
+     * 
+     * @param rpId  Relying Party Id
+     * @param token as JSONObject
+     */
+    public void addRPToken(@Nonnull String rpId, @Nonnull JSONObject token) {
+        if (!rpTokens.containsKey(rpId)) {
+            rpTokens.put(rpId, new ArrayList<JSONObject>());
+        }
+        rpTokens.get(rpId).add(token);
+    }
+
+    /**
+     * Get tokens generated per Relying Party.
+     * 
+     * @return tokens generated per Relying Party.
+     */
+    public @Nonnull Map<String, List<JSONObject>> getRPTokens() {
+        return rpTokens;
     }
 
 }

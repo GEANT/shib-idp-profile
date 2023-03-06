@@ -52,11 +52,6 @@
             <artifactId>oauth2-oidc-sdk</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- test dependencies -->
         <dependency>
             <groupId>org.opensaml</groupId>

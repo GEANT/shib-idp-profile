@@ -125,6 +125,10 @@
     <bean id="RenderRPAttributes"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderRPAttributes"
         p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"/>
+        
+    <bean id="RenderTokens"
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderTokens"
+        p:userProfileCache-ref="shibboleth.UserProfileCache"/>
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />

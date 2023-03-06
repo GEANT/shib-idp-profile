@@ -186,6 +186,7 @@ public class StoreToken extends AbstractProfileAction {
         }
     }
 
+    //TODO: All "items" stored to cache should have classes hiding the implementation!
     private JSONObject createAccessTokenEntry(AccessTokenClaimsSet token) {
         JSONObject entry = new JSONObject();
         entry.put("token_id", token.getID());
