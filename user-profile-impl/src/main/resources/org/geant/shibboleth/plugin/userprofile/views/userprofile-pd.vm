@@ -23,6 +23,12 @@
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+      <script>
+        function doPopup(popupId) {
+        var popup = document.getElementById(popupId);
+        popup.classList.toggle("show");
+        }
+      </script>
   </head>
   <body>
 
@@ -69,8 +75,8 @@
         #foreach($attribute in $userAttributes)
         <tr>
           <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
-          <div class="popup" onclick="myFunction()"><img src="/idp/icons/i.svg"/>
-            <span class="popuptext" id="myPopup">Popup text...</span>
+          <div class="popup" onclick="doPopup('popup-${attribute.name}')"><img src="/idp/icons/i.svg"/>
+            <span class="popuptext" id="myPopup">#springMessageText("idp.userprofile.attribute_help.${attribute.name}")</span>
           </div> 
           </td>
           <td>
