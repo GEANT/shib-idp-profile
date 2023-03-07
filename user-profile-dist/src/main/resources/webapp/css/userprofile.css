@@ -344,6 +344,10 @@ td a {
   cursor: pointer;
 }
 
+.popup i {
+  width: 1.3em;
+}
+
 .popup .popuptext {
   visibility: hidden;
   width: 160px;
