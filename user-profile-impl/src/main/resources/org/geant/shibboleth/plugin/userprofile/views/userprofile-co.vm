@@ -91,14 +91,19 @@
       <table>
         <tr>
           <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
-          <th>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token")</th>
+          <th>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Tokens")</th>
         </tr>
           #foreach($rpId in $relyingPartyTokens.keySet())
           <tr>
             <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$rpId].serviceName)</td>
             <td>
             #foreach($token in $relyingPartyTokens.get($rpId))
-            <span class="label">$encoder.encodeForHTMLAttribute($token.token_id) $encoder.encodeForHTMLAttribute($token.scope) $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.exp))</span>
+            <span class="label">
+              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.exp)) 
+              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.scope)
+              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.token_id)
+              <button>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+              </span><br/>
             #end
             </td>
           </tr>
