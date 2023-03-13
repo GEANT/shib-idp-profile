@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -59,7 +60,7 @@ public final class UserProfileContext extends BaseContext {
 
     /** tokens generated per Relying Party.. */
     @Nonnull
-    private final Map<String, List<JSONObject>> rpTokens = new HashMap<String, List<JSONObject>>();
+    private final Map<String, List<AccessToken>> rpTokens = new HashMap<String, List<AccessToken>>();
 
     /** Attributes presented as users personal data. */
     @Nonnull
@@ -213,11 +214,11 @@ public final class UserProfileContext extends BaseContext {
      * Set token generated for Relying Party.
      * 
      * @param rpId  Relying Party Id
-     * @param token as JSONObject
+     * @param token as AccessToken
      */
-    public void addRPToken(@Nonnull String rpId, @Nonnull JSONObject token) {
+    public void addRPToken(@Nonnull String rpId, @Nonnull AccessToken token) {
         if (!rpTokens.containsKey(rpId)) {
-            rpTokens.put(rpId, new ArrayList<JSONObject>());
+            rpTokens.put(rpId, new ArrayList<AccessToken>());
         }
         rpTokens.get(rpId).add(token);
     }
@@ -227,7 +228,7 @@ public final class UserProfileContext extends BaseContext {
      * 
      * @return tokens generated per Relying Party.
      */
-    public @Nonnull Map<String, List<JSONObject>> getRPTokens() {
+    public @Nonnull Map<String, List<AccessToken>> getRPTokens() {
         return rpTokens;
     }
 

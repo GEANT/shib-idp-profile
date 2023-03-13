@@ -5,6 +5,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
+import org.geant.shibboleth.plugin.userprofile.event.impl.StoredAccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -13,10 +15,13 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -136,16 +141,19 @@ public class RenderTokens extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
-        JSONObject entry = userProfileCache.getSingleEvent(user, "ACCESS_TOKENS");
-        log.debug("{} Access token event {} ", getLogPrefix(), entry);
-        JSONArray accessTokens = entry != null ? (JSONArray) entry.get("value") : new JSONArray();
-        // TODO: Remove also currently revoked.
-        accessTokens.removeIf(accessToken -> ((JSONObject) accessToken).getAsNumber("exp")
-                .longValue() < System.currentTimeMillis() / 1000);
-        log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.toString());
-        userProfileCache.setSingleEvent(user, "ACCESS_TOKENS", accessTokens);
-        accessTokens.forEach((accessToken -> userProfileContext
-                .addRPToken(((JSONObject) accessToken).getAsString("client_id"), (JSONObject) accessToken)));
+        JSONObject entry = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
+        try {
+            AccessTokens tokens = entry != null ? AccessTokens.parse(((String) entry.get("value")))
+                    : new AccessTokens();
+            tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
+            userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
+            log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+            tokens.getAccessTokens()
+                    .forEach((accessToken -> userProfileContext.addRPToken(accessToken.getClientId(), accessToken)));
+        } catch (JsonProcessingException e) {
+            log.error("{} Failed processing access tokens.", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+        }
 
     }
 

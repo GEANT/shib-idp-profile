@@ -6,6 +6,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.geant.shibboleth.plugin.userprofile.event.impl.StoredAccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -15,7 +17,8 @@ import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minidev.json.JSONArray;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -33,9 +36,8 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 /**
  * Stores Access Token information if available.
  * 
- * TODO TESTS
- * TODO JWT ACCESS TOKEN
- * TODO Whether to execution to be configurable.
+ * TODO TESTS TODO JWT ACCESS TOKEN TODO Whether to execution to be
+ * configurable.
  */
 public class StoreToken extends AbstractProfileAction {
 
@@ -170,31 +172,19 @@ public class StoreToken extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         try {
-
-            JSONObject entry = userProfileCache.getSingleEvent(user, "ACCESS_TOKENS");
-            log.debug("{} Access token event {} ", getLogPrefix(), entry);
-            JSONArray accessTokens = entry != null ? (JSONArray) entry.get("value") : new JSONArray();
-            // TODO: Remove also currently revoked.
-            accessTokens.removeIf(accessToken -> ((JSONObject) accessToken).getAsNumber("exp")
-                    .longValue() < System.currentTimeMillis() / 1000);
-            accessTokens.add(createAccessTokenEntry(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer)));
-            log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.toString());
-            userProfileCache.setSingleEvent(user, "ACCESS_TOKENS", accessTokens);
-        } catch (ParseException | DataSealerException e) {
+            JSONObject entry = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
+            AccessTokens tokens = entry != null ? AccessTokens.parse(((String) entry.get("value")))
+                    : new AccessTokens();
+            tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
+            StoredAccessToken token = new StoredAccessToken(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
+            tokens.getAccessTokens().add(token);
+            userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
+            log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+        } catch (JsonProcessingException | ParseException | DataSealerException e) {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
+
     }
 
-    //TODO: All "items" stored to cache should have classes hiding the implementation!
-    private JSONObject createAccessTokenEntry(AccessTokenClaimsSet token) {
-        JSONObject entry = new JSONObject();
-        entry.put("token_id", token.getID());
-        entry.put("token_rootid", token.getRootTokenIdentifier());
-        entry.put("client_id", token.getClientID());
-        entry.put("aud", token.getAudience());
-        entry.put("scope", token.getScope());
-        entry.put("exp", token.getExp().getEpochSecond());
-        return entry;
-    }
 }
