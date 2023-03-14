@@ -6,7 +6,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.geant.shibboleth.plugin.userprofile.event.impl.StoredAccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokenImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -176,7 +176,7 @@ public class StoreToken extends AbstractProfileAction {
             AccessTokens tokens = entry != null ? AccessTokens.parse(((String) entry.get("value")))
                     : new AccessTokens();
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
-            StoredAccessToken token = new StoredAccessToken(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
+            AccessTokenImpl token = new AccessTokenImpl(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
             tokens.getAccessTokens().add(token);
             userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());

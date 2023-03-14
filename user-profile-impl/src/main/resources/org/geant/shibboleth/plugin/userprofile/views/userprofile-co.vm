@@ -16,7 +16,7 @@
 ##
 #set ($record = $userProfileContext.getRecord())
 ## CONNECTED_ORGANIZATIONS is record of past logins per relying party
-#set ($connectedOrganizations = $record.get("CONNECTED_ORGANIZATIONS"))
+#set ($connectedOrganizations = $userProfileContext.getConnectedOrganizations())
 #set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())
 #set ($relyingPartyTokens = $userProfileContext.getRPTokens())
 <!DOCTYPE html>
@@ -71,19 +71,16 @@
           <th>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</th>
           <th>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</th>
         </tr>
-        #if ( $connectedOrganizations.containsKey("value") )
-          #set ($connectedOrganizations = $connectedOrganizations.value)
-          #foreach($rpId in $connectedOrganizations.keySet())
-          <tr>
-            <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$rpId].serviceName)</td>
-            <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).times)</td>
-            <td>
-            #foreach($attribute in $connectedOrganizations.get($rpId).attributes)
-            <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
-            #end
-            </td>
-          </tr>
+        #foreach($rpId in $connectedOrganizations.keySet())
+        <tr>
+          <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$rpId].serviceName)</td>
+          <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</td>
+          <td>
+          #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
+          <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
           #end
+          </td>
+        </tr>
         #end
       </table>
       </div id="connected_organizations">

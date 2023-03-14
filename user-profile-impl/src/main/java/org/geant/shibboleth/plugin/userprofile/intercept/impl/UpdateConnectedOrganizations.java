@@ -5,13 +5,16 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizationImpl;
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minidev.json.JSONArray;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
@@ -159,19 +162,28 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
-        JSONObject entry = userProfileCache.getSingleEvent(user, "CONNECTED_ORGANIZATIONS");
-        JSONObject connectedOrganizations = entry != null ? (JSONObject) entry.get("value") : new JSONObject();
-        log.debug("Connected Organizations {}", connectedOrganizations.toString());
-        String rpId = requesterLookupStrategy.apply(profileRequestContext);
-        JSONObject connectedOrganization = (connectedOrganizations.get(rpId) instanceof JSONObject)
-                ? (JSONObject) connectedOrganizations.get(rpId)
-                : new JSONObject().appendField("times", 0);
-        connectedOrganization.put("times", connectedOrganization.getAsNumber("times").longValue() + 1);
-        JSONArray attributes = new JSONArray();
-        attributeCtx.getIdPAttributes().keySet().forEach(attributeId -> attributes.add(attributeId));
-        connectedOrganization.put("attributes", attributes);
-        log.debug("{} Updated connected organization {} {} ", getLogPrefix(), rpId, connectedOrganization.toString());
-        userProfileCache.setSingleEvent(user, "CONNECTED_ORGANIZATIONS", connectedOrganizations);
+
+        JSONObject entry = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
+        ConnectedOrganizations organizations;
+        try {
+            organizations = entry != null ? ConnectedOrganizations.parse(((String) entry.get("value")))
+                    : new ConnectedOrganizations();
+            log.debug("Connected organizations {}", organizations.serialize());
+            String rpId = requesterLookupStrategy.apply(profileRequestContext);
+            ConnectedOrganizationImpl organization = organizations.getConnectedOrganization().containsKey(rpId)
+                    ? organizations.getConnectedOrganization().get(rpId)
+                    : new ConnectedOrganizationImpl(rpId);
+            organization.addCount();
+            organization.getLastAttributes().clear();
+            attributeCtx.getIdPAttributes().keySet()
+                    .forEach(attributeId -> organization.getLastAttributes().add(attributeId));
+            organizations.getConnectedOrganization().put(rpId, organization);
+            userProfileCache.setSingleEvent(user, ConnectedOrganizations.ENTRY_NAME, organizations.serialize());
+            log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
+        } catch (JsonProcessingException e) {
+            log.error("{} Failed parsing connected organizations", getLogPrefix(), e);
+            // We are intentionally not returning error.
+        }
 
     }
 

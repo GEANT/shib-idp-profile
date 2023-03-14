@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedOrganization;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -61,6 +62,10 @@ public final class UserProfileContext extends BaseContext {
     /** tokens generated per Relying Party.. */
     @Nonnull
     private final Map<String, List<AccessToken>> rpTokens = new HashMap<String, List<AccessToken>>();
+
+    /** Connected Organizations.. */
+    @Nonnull
+    private final Map<String, ConnectedOrganization> connectedOrganizations = new HashMap<String, ConnectedOrganization>();
 
     /** Attributes presented as users personal data. */
     @Nonnull
@@ -230,6 +235,15 @@ public final class UserProfileContext extends BaseContext {
      */
     public @Nonnull Map<String, List<AccessToken>> getRPTokens() {
         return rpTokens;
+    }
+
+    /**
+     * Get Connected Organizations per Relying Party.
+     * 
+     * @return Connected Organizations per Relying Party.
+     */
+    public Map<String, ConnectedOrganization> getConnectedOrganizations() {
+        return connectedOrganizations;
     }
 
 }

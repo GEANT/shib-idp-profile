@@ -9,11 +9,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 /**
  * Unit tests for {@link ExtractRelyingPartyIdFromRequest}.
  */
-public class StoredAccessTokenTest {
+public class AccessTokenImplTest {
 
     @Test
     public void test() throws JsonMappingException, JsonProcessingException {
-        StoredAccessToken accessToken = StoredAccessToken.parse(
+        AccessTokenImpl accessToken = AccessTokenImpl.parse(
                 " {\"tokenId\":\"_0101\",\"tokenRootId\":\"_0102\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":100} ");
         Assert.assertEquals(accessToken.getTokenId(), "_0101");
         Assert.assertEquals(accessToken.getTokenRootId(), "_0102");

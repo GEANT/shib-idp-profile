@@ -12,9 +12,9 @@ public class AccessTokens {
 
     public final static String ENTRY_NAME = "org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens";
 
-    private List<StoredAccessToken> accessTokens = new ArrayList<StoredAccessToken>();
+    private List<AccessTokenImpl> accessTokens = new ArrayList<AccessTokenImpl>();
 
-    public List<StoredAccessToken> getAccessTokens() {
+    public List<AccessTokenImpl> getAccessTokens() {
         return accessTokens;
     }
 
@@ -24,9 +24,9 @@ public class AccessTokens {
 
     public static AccessTokens parse(String tokens) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        StoredAccessToken[] accessTokens = objectMapper.readValue(tokens, StoredAccessToken[].class);
+        AccessTokenImpl[] accessTokens = objectMapper.readValue(tokens, AccessTokenImpl[].class);
         AccessTokens accTokens = new AccessTokens();
-        accTokens.accessTokens = new ArrayList<StoredAccessToken>(Arrays.asList(accessTokens));
+        accTokens.accessTokens = new ArrayList<AccessTokenImpl>(Arrays.asList(accessTokens));
         return accTokens;
     }
 

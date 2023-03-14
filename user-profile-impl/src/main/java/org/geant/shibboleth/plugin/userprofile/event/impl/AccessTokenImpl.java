@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 
-public class StoredAccessToken implements AccessToken{
+public class AccessTokenImpl implements AccessToken {
 
     private final String tokenId;
     private final String tokenRootId;
@@ -21,7 +21,7 @@ public class StoredAccessToken implements AccessToken{
     private final List<String> scope;
     private final long exp;
 
-    public StoredAccessToken(AccessTokenClaimsSet token) {
+    public AccessTokenImpl(AccessTokenClaimsSet token) {
         tokenId = token.getID();
         tokenRootId = token.getRootTokenIdentifier();
         clientId = token.getClientID().getValue();
@@ -31,7 +31,7 @@ public class StoredAccessToken implements AccessToken{
     }
 
     @JsonCreator
-    private StoredAccessToken(@JsonProperty("tokenId") String tokenId, @JsonProperty("tokenRootId") String tokenRootId,
+    private AccessTokenImpl(@JsonProperty("tokenId") String tokenId, @JsonProperty("tokenRootId") String tokenRootId,
             @JsonProperty("clientId") String clientId, @JsonProperty("audience") List<String> audience,
             @JsonProperty("scope") List<String> scope, @JsonProperty("exp") long exp) {
         this.tokenId = tokenId;
@@ -65,10 +65,10 @@ public class StoredAccessToken implements AccessToken{
     public long getExp() {
         return exp;
     }
-    
-    public static StoredAccessToken parse(String token) throws JsonMappingException, JsonProcessingException {
+
+    public static AccessTokenImpl parse(String token) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(token, StoredAccessToken.class);
+        return objectMapper.readValue(token, AccessTokenImpl.class);
     }
 
     public String serialize() throws JsonProcessingException {

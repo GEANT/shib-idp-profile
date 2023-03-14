@@ -5,8 +5,8 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
-import org.geant.shibboleth.plugin.userprofile.event.impl.StoredAccessToken;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -17,11 +17,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -29,7 +27,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Renders token information to user profile context.
+ * Renders information to user profile context.
  * 
  * TODO TESTS
  */
@@ -152,6 +150,18 @@ public class RenderTokens extends AbstractProfileAction {
                     .forEach((accessToken -> userProfileContext.addRPToken(accessToken.getClientId(), accessToken)));
         } catch (JsonProcessingException e) {
             log.error("{} Failed processing access tokens.", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return;
+        }
+        entry = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
+        try {
+            ConnectedOrganizations organizations = entry != null
+                    ? ConnectedOrganizations.parse(((String) entry.get("value")))
+                    : new ConnectedOrganizations();
+            organizations.getConnectedOrganization().forEach((rpId, connectedOrganization) -> userProfileContext
+                    .getConnectedOrganizations().put(rpId, connectedOrganization));
+        } catch (JsonProcessingException e) {
+            log.error("{} Failed processing connected organizations.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
         }
 
