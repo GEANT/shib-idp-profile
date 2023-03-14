@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -132,63 +131,6 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     /**
      * 
      * @param user
-     * @param eventName
-     * @param eventValue
-     * @return
-     * @throws IOException
-     */
-    public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
-            @Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final JSONObject eventValue) {
-        final String key = getKey(user);
-        JSONObject record = getRecord(key);
-        record.put(eventName, createJsonEvent(eventValue));
-        return setRecord(key, record);
-    }
-    
-    /**
-     * 
-     * @param user
-     * @param eventName
-     * @param eventValue
-     * @return
-     * @throws IOException
-     */
-    public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
-            @Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final JSONArray eventValue) {
-        final String key = getKey(user);
-        JSONObject record = getRecord(key);
-        record.put(eventName, createJsonEvent(eventValue));
-        return setRecord(key, record);
-    }
-
-    /**
-     * 
-     * @param user
-     * @param eventType
-     * @param eventValue
-     * @param maxItems
-     * @return
-     * @throws IOException
-     */
-
-    public synchronized boolean addMultiEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
-            @Nonnull @NotEmpty final String eventType, @Nonnull @NotEmpty final String eventValue, int maxItems) {
-        Constraint.isTrue(maxItems > 0, "maxItems bust be greater than 0");
-        final String key = getKey(user);
-        JSONObject record = getRecord(key);
-        Object event = record.get(eventType);
-        JSONArray eventArray = (event instanceof JSONArray) ? (JSONArray) event : new JSONArray();
-        eventArray.add(createJsonEvent(eventValue));
-        while (eventArray.size() > maxItems) {
-            eventArray.remove(0);
-        }
-        record.put(eventType, eventArray);
-        return setRecord(key, record);
-    }
-
-    /**
-     * 
-     * @param user
      * @return
      */
 
@@ -218,59 +160,17 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
 
     /**
      * 
-     * @param user
-     * @param eventType
-     * @return
-     */
-
-    @Nullable
-    @NotEmpty
-    public synchronized JSONArray getMultiEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
-            @Nonnull @NotEmpty String eventType) {
-        JSONObject record = getRecord(getKey(user));
-        Object event = record.get(eventType);
-        return (event instanceof JSONArray) ? (JSONArray) event : null;
-    }
-
-    /**
-     * 
      * @param value
      * @return
      */
-    
+
     private JSONObject createJsonEvent(String value) {
-        JSONObject entry=new JSONObject();
+        JSONObject entry = new JSONObject();
         entry.put("value", value);
         entry.put("iat", Instant.now().getEpochSecond());
         return entry;
     }
 
-    /**
-     * 
-     * @param value
-     * @return
-     */
-
-    private JSONObject createJsonEvent(JSONObject value) {
-        JSONObject entry=new JSONObject();
-        entry.put("value", value);
-        entry.put("iat", Instant.now().getEpochSecond());
-        return entry;
-    }
-    
-    /**
-     * 
-     * @param value
-     * @return
-     */
-
-    private JSONObject createJsonEvent(JSONArray value) {
-        JSONObject entry=new JSONObject();
-        entry.put("value", value);
-        entry.put("iat", Instant.now().getEpochSecond());
-        return entry;
-    }
-    
     /**
      * 
      * @param key
@@ -307,7 +207,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
             }
             log.debug("Located User Profile Record '{}' for user '{}'", entry.getValue(), key);
             Object object = new JSONParser(JSONParser.MODE_PERMISSIVE).parse(entry.getValue());
-            return  (object instanceof JSONObject) ? (JSONObject)object : new JSONObject();
+            return (object instanceof JSONObject) ? (JSONObject) object : new JSONObject();
         } catch (final IOException | ParseException e) {
             log.error("Exception reading from storage service, user '{}'. Empty record is created.", e, key);
             return new JSONObject();
