@@ -14,9 +14,8 @@
 ## attributeDisplayNameFunction - function to display attribute name
 ##
 ##
-#set ($record = $userProfileContext.getRecord())
 ## ALL_ACTIVITY is record of past logins
-#set ($allActivity = $record.get("ALL_ACTIVITY"))
+#set ($allActivity = $userProfileContext.getLoginEvents())
 #set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())
 <!DOCTYPE html>
 <html>
@@ -69,11 +68,17 @@
         <tr>
           <th>#springMessageText("idp.userprofile.allactivity.columntime", "Time")</th>
           <th>#springMessageText("idp.userprofile.allactivity.columnservice", "Service")</th>
+          <th>#springMessageText("idp.userprofile.allactivity.columnattributes", "Attributes")</th>
         </tr>
-        #foreach($item in $allActivity)
+        #foreach($event in $allActivity)
         <tr>
-          <td>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($item.iat))</td>
-          <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes["$item.value"].serviceName)</td>
+          <td>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</td>
+          <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$event.getRpId()].serviceName)</td>
+          <td>
+          #foreach($attribute in $event.getAttributes())
+          <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
+          #end
+          </td>
         </tr>
         #end
       </table>

@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
+import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -31,11 +32,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * 
  * TODO TESTS
  */
-public class RenderTokens extends AbstractProfileAction {
+public class RenderUserProfileCacheItems extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull
-    private final Logger log = LoggerFactory.getLogger(RenderTokens.class);
+    private final Logger log = LoggerFactory.getLogger(RenderUserProfileCacheItems.class);
 
     /** Subject context. */
     @Nonnull
@@ -63,7 +64,7 @@ public class RenderTokens extends AbstractProfileAction {
     private Function<ProfileRequestContext, UserProfileContext> userProfileContextLookupStrategy;
 
     /** Constructor. */
-    public RenderTokens() {
+    public RenderUserProfileCacheItems() {
         super();
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
@@ -160,6 +161,16 @@ public class RenderTokens extends AbstractProfileAction {
                     : new ConnectedOrganizations();
             organizations.getConnectedOrganization().forEach((rpId, connectedOrganization) -> userProfileContext
                     .getConnectedOrganizations().put(rpId, connectedOrganization));
+        } catch (JsonProcessingException e) {
+            log.error("{} Failed processing connected organizations.", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+        }
+        entry = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
+        try {
+            LoginEvents organizations = entry != null ? LoginEvents.parse(((String) entry.get("value")))
+                    : new LoginEvents();
+            userProfileContext.getLoginEvents().clear();
+            userProfileContext.getLoginEvents().addAll(organizations.getLoginEvents());
         } catch (JsonProcessingException e) {
             log.error("{} Failed processing connected organizations.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

@@ -14,7 +14,6 @@
 ## attributeDisplayNameFunction - function to display attribute name
 ##
 ##
-#set ($record = $userProfileContext.getRecord())
 ## CONNECTED_ORGANIZATIONS is record of past logins per relying party
 #set ($connectedOrganizations = $userProfileContext.getConnectedOrganizations())
 #set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())

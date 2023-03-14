@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
 import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedOrganization;
+import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -70,6 +71,10 @@ public final class UserProfileContext extends BaseContext {
     /** Attributes presented as users personal data. */
     @Nonnull
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
+
+    /** Users login events. */
+    @Nonnull
+    private final List<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
 
     /** Constructor. */
     public UserProfileContext(@Nullable JSONObject record) {
@@ -244,6 +249,15 @@ public final class UserProfileContext extends BaseContext {
      */
     public Map<String, ConnectedOrganization> getConnectedOrganizations() {
         return connectedOrganizations;
+    }
+
+    /**
+     * Get Users login events.
+     * 
+     * @return users login events
+     */
+    public List<LoginEvent> getLoginEvents() {
+        return loginEvents;
     }
 
 }
