@@ -27,9 +27,6 @@ public class UserProfileCacheTest {
     private UserProfileCache userProfileCache;
 
     private UsernamePrincipal foobarUser = new UsernamePrincipal("foo@bar");
-    private UsernamePrincipal foo2barUser = new UsernamePrincipal("foo2@bar");
-
-    private JSONObject jsonObject = new JSONObject();
 
     @BeforeMethod
     protected void setUp() throws Exception {
@@ -42,10 +39,6 @@ public class UserProfileCacheTest {
         userProfileCache.setRecordExpiration(Duration.ofMillis(500));
         userProfileCache.setStorage(storageService);
         userProfileCache.initialize();
-
-        jsonObject.put("key1", "value1");
-        jsonObject.put("key2", 1);
-
     }
 
     @AfterMethod
@@ -89,15 +82,8 @@ public class UserProfileCacheTest {
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name", "value1"));
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name", "value2"));
         Assert.assertTrue(userProfileCache.setSingleEvent(foobarUser, "name2", "value3"));
-        // Test Reading Record
-        JSONObject result = userProfileCache.getRecord(foobarUser);
-        Assert.assertNotNull(result);
-        Assert.assertEquals("value2", ((JSONObject) result.get("name")).getAsString("value"));
-        Assert.assertEquals("value3", ((JSONObject) result.get("name2")).getAsString("value"));
-        Assert.assertNull(userProfileCache.getRecord(foo2barUser));
-        Assert.assertEquals("value2", ((JSONObject) userProfileCache.getSingleEvent(foobarUser, "name")).get("value"));
-        Assert.assertEquals("value3", ((JSONObject) userProfileCache.getSingleEvent(foobarUser, "name2")).get("value"));
-        Assert.assertNull(userProfileCache.getSingleEvent(foobarUser, "name3"));
+        Assert.assertEquals(userProfileCache.getSingleEvent(foobarUser, "name").getValue(), "value2");
+        Assert.assertEquals(userProfileCache.getSingleEvent(foobarUser, "name2").getValue(), "value3");
     }
 
 }

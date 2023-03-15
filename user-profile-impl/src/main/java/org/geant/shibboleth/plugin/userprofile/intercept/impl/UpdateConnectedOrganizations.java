@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizationImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
+import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -163,10 +163,10 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
 
-        JSONObject entry = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
+        Event event = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
         ConnectedOrganizations organizations;
         try {
-            organizations = entry != null ? ConnectedOrganizations.parse(((String) entry.get("value")))
+            organizations = event != null ? ConnectedOrganizations.parse(event.getValue())
                     : new ConnectedOrganizations();
             log.debug("Connected organizations {}", organizations.serialize());
             String rpId = requesterLookupStrategy.apply(profileRequestContext);

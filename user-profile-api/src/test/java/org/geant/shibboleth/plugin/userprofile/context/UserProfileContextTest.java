@@ -20,7 +20,7 @@ import org.testng.Assert;
  */
 public class UserProfileContextTest {
 
-    private UserProfileContext ctx = new UserProfileContext(new JSONObject());
+    private UserProfileContext ctx = new UserProfileContext();
 
     @BeforeMethod
     protected void setUp() throws Exception {
@@ -47,22 +47,12 @@ public class UserProfileContextTest {
         Assert.assertEquals(2, ((List<?>) ctx.getOidcClientInformation()).size());
     }
 
-    @Test
-    public void testRecord() {
-        Assert.assertNotNull(ctx.getRecord());
-    }
 
     @Test
     public void testRelyingParties() {
         Assert.assertNotNull(ctx.getRelyingParties());
         ctx.addRelyingParty("id-1", "first", "oidc");
         ctx.addRelyingParty("id-2", "second", "saml2");
-        /*
-        Assert.assertEquals(ctx.getRelyingParties().get("id-1").getAsJsonObject().get("name").getAsString(), "first");
-        Assert.assertEquals(ctx.getRelyingParties().get("id-1").getAsJsonObject().get("type").getAsString(), "oidc");
-        Assert.assertEquals(ctx.getRelyingParties().get("id-2").getAsJsonObject().get("name").getAsString(), "second");
-        Assert.assertEquals(ctx.getRelyingParties().get("id-2").getAsJsonObject().get("type").getAsString(), "saml2");
-        */
     }
 
     @Test

@@ -15,10 +15,6 @@ import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import net.minidev.json.JSONObject;
-
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -123,23 +119,9 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
             @Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final String eventValue) {
         final String key = getKey(user);
-        JSONObject record = getRecord(key);
-        record.put(eventName, createJsonEvent(eventValue));
-        return setRecord(key, record);
-    }
-
-    /**
-     * 
-     * @param user
-     * @return
-     */
-
-    @Nullable
-    @NotEmpty
-    public synchronized JSONObject getRecord(@Nonnull @NotEmpty final UsernamePrincipal user) {
-        JSONObject record = getRecord(getKey(user));
-        return record.size() > 0 ? record : null;
-
+        Events events = getEvents(key);
+        events.getEvents().put(eventName, new Event(eventValue));
+        return setEvents(key, events);
     }
 
     /**
@@ -151,37 +133,23 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
 
     @Nullable
     @NotEmpty
-    public synchronized JSONObject getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
+    public synchronized Event getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
             @Nonnull @NotEmpty String eventType) {
-        JSONObject record = getRecord(getKey(user));
-        Object event = record.get(eventType);
-        return (event instanceof JSONObject) ? (JSONObject) event : null;
-    }
-
-    /**
-     * 
-     * @param value
-     * @return
-     */
-
-    private JSONObject createJsonEvent(String value) {
-        JSONObject entry = new JSONObject();
-        entry.put("value", value);
-        entry.put("iat", Instant.now().getEpochSecond());
-        return entry;
+        Events events = getEvents(getKey(user));
+        return events.getEvents().get(eventType);
     }
 
     /**
      * 
      * @param key
-     * @param record
+     * @param events
      * @return
      */
 
-    private boolean setRecord(@Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final JSONObject record) {
+    private boolean setEvents(@Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final Events events) {
         try {
-            if (!storage.update(context, key, record.toString(), Instant.now().plus(expires).toEpochMilli())) {
-                return storage.create(context, key, record.toString(), Instant.now().plus(expires).toEpochMilli());
+            if (!storage.update(context, key, events.serialize(), Instant.now().plus(expires).toEpochMilli())) {
+                return storage.create(context, key, events.serialize(), Instant.now().plus(expires).toEpochMilli());
             }
             return true;
         } catch (final Exception e) {
@@ -197,20 +165,19 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      */
 
     @Nonnull
-    private JSONObject getRecord(@Nonnull @NotEmpty final String key) {
+    private Events getEvents(@Nonnull @NotEmpty final String key) {
         // TODO: Add optional symmetric encryption for record.
         try {
             final StorageRecord<?> entry = storage.read(context, key);
             if (entry == null) {
                 log.debug("No User Profile Record for  '{}'", key);
-                return new JSONObject();
+                return new Events();
             }
             log.debug("Located User Profile Record '{}' for user '{}'", entry.getValue(), key);
-            Object object = new JSONParser(JSONParser.MODE_PERMISSIVE).parse(entry.getValue());
-            return (object instanceof JSONObject) ? (JSONObject) object : new JSONObject();
-        } catch (final IOException | ParseException e) {
+            return Events.parse(entry.getValue());
+        } catch (final IOException e) {
             log.error("Exception reading from storage service, user '{}'. Empty record is created.", e, key);
-            return new JSONObject();
+            return new Events();
         }
     }
 

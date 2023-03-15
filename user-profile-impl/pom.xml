@@ -85,7 +85,6 @@
         <dependency>
             <groupId>net.shibboleth.idp.plugin.oidc</groupId>
             <artifactId>idp-plugin-oidc-op-api</artifactId>
-            <version>${oidc.op.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>

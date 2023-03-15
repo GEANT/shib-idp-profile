@@ -27,9 +27,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 public final class UserProfileContext extends BaseContext {
 
-    /** The user record. */
-    @Nonnull
-    private final JSONObject userRecord;
 
     /** The Relying Parties. */
     @Nonnull
@@ -77,8 +74,7 @@ public final class UserProfileContext extends BaseContext {
     private final List<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
 
     /** Constructor. */
-    public UserProfileContext(@Nullable JSONObject record) {
-        userRecord = record;
+    public UserProfileContext() {
     }
 
     /**
@@ -137,16 +133,6 @@ public final class UserProfileContext extends BaseContext {
      */
     public void setEntityDescriptors(@Nullable Iterable<EntityDescriptor> descriptors) {
         entityDescriptors = descriptors;
-    }
-
-    /**
-     * Get The user record.
-     * 
-     * @return The user record
-     */
-    @Nonnull
-    public JSONObject getRecord() {
-        return userRecord;
     }
 
     /**

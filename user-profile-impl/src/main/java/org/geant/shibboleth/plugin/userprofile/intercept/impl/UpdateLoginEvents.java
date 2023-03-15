@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEventImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
+import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -195,13 +195,13 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         try {
-            JSONObject entry = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
-            LoginEvents events = entry != null ? LoginEvents.parse(((String) entry.get("value"))) : new LoginEvents();
+            Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
+            LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
             List<String> attributes = new ArrayList<String>();
             attributes.addAll(attributeCtx.getIdPAttributes().keySet());
-            LoginEventImpl event = new LoginEventImpl(rpId, System.currentTimeMillis() / 1000, attributes);
+            LoginEventImpl loginEvent = new LoginEventImpl(rpId, System.currentTimeMillis() / 1000, attributes);
             events.setMaxEntries(maxEntries);
-            events.getLoginEvents().add(event);
+            events.getLoginEvents().add(loginEvent);
             userProfileCache.setSingleEvent(user, LoginEvents.ENTRY_NAME, events.serialize());
             log.debug("{} Updated login events {} ", getLogPrefix(), events.serialize());
         } catch (JsonProcessingException e) {

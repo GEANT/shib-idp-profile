@@ -10,8 +10,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.minidev.json.JSONObject;
-
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -38,7 +36,7 @@ public class ExtractRelyingPartyIdFromRequestTest {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("_eventId_showAttributes", "rpId-1");
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
-        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JSONObject()), true);
+        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
         userProfileContext.addRelyingParty("rpId-1", "first", "oidc");
     }
 

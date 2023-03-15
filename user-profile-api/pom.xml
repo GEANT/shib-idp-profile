@@ -52,6 +52,14 @@
             <artifactId>oauth2-oidc-sdk</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <!-- test dependencies -->
         <dependency>
             <groupId>org.opensaml</groupId>

@@ -19,8 +19,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.minidev.json.JSONObject;
-
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -70,7 +68,7 @@ public class RenderUserProfileContextTest extends XMLObjectBaseTestCase {
         action = new RenderUserProfileContext();
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
-        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(new JSONObject()), true);
+        userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
         // TODO: Fix SAML2 test.
         // userProfileContext.setEntityDescriptors(metadataResolver.resolve(new
         // CriteriaSet(new SatisfyAnyCriterion(),

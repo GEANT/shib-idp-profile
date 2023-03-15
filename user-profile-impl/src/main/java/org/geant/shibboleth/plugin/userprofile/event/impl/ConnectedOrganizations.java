@@ -19,23 +19,20 @@ public class ConnectedOrganizations {
     }
 
     public ConnectedOrganizations() {
-
     }
 
     public static ConnectedOrganizations parse(String tokens) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         TypeReference<HashMap<String, ConnectedOrganizationImpl>> typeRef = new TypeReference<HashMap<String, ConnectedOrganizationImpl>>() {
         };
-        Map<String, ConnectedOrganizationImpl> accessTokens = objectMapper.readValue(tokens, typeRef);
-        ConnectedOrganizations accTokens = new ConnectedOrganizations();
-        accTokens.getConnectedOrganization().putAll(accessTokens);
-        return accTokens;
+        Map<String, ConnectedOrganizationImpl> connectedOrganizations = objectMapper.readValue(tokens, typeRef);
+        ConnectedOrganizations connectedOrganizationsObject = new ConnectedOrganizations();
+        connectedOrganizationsObject.getConnectedOrganization().putAll(connectedOrganizations);
+        return connectedOrganizationsObject;
     }
 
     public String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(getConnectedOrganization());
-
     }
-
 }

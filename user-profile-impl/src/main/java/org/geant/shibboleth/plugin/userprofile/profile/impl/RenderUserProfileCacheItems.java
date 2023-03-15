@@ -8,6 +8,7 @@ import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
+import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -18,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -140,10 +140,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
-        JSONObject entry = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
+        Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
         try {
-            AccessTokens tokens = entry != null ? AccessTokens.parse(((String) entry.get("value")))
-                    : new AccessTokens();
+            AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
@@ -154,10 +153,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
-        entry = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
+        event = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
         try {
-            ConnectedOrganizations organizations = entry != null
-                    ? ConnectedOrganizations.parse(((String) entry.get("value")))
+            ConnectedOrganizations organizations = event != null ? ConnectedOrganizations.parse(event.getValue())
                     : new ConnectedOrganizations();
             organizations.getConnectedOrganization().forEach((rpId, connectedOrganization) -> userProfileContext
                     .getConnectedOrganizations().put(rpId, connectedOrganization));
@@ -165,10 +163,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             log.error("{} Failed processing connected organizations.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
         }
-        entry = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
+        event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
         try {
-            LoginEvents organizations = entry != null ? LoginEvents.parse(((String) entry.get("value")))
-                    : new LoginEvents();
+            LoginEvents organizations = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
             userProfileContext.getLoginEvents().clear();
             userProfileContext.getLoginEvents().addAll(organizations.getLoginEvents());
         } catch (JsonProcessingException e) {

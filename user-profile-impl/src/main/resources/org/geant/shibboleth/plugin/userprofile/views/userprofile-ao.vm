@@ -13,7 +13,6 @@
 ## attributeDisplayNameFunction - function to display attribute name
 ##
 ##
-#set ($record = $userProfileContext.getRecord())
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 #set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
 #set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())

@@ -135,8 +135,7 @@ public class InitializeUserProfileContext extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
-        final UserProfileContext userProfileContext = new UserProfileContext(
-                userProfileCache.getRecord(new UsernamePrincipal(subjectContext.getPrincipalName())));
+        final UserProfileContext userProfileContext = new UserProfileContext();
         try {
             // We attach XML based (for now SAML2) metadata to context.
             userProfileContext.setEntityDescriptors(metadataResolver.resolve(new CriteriaSet(new SatisfyAnyCriterion(),

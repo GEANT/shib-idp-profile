@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokenImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
+import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -19,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
@@ -172,9 +172,8 @@ public class StoreToken extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         try {
-            JSONObject entry = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
-            AccessTokens tokens = entry != null ? AccessTokens.parse(((String) entry.get("value")))
-                    : new AccessTokens();
+            Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
+            AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             AccessTokenImpl token = new AccessTokenImpl(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
             tokens.getAccessTokens().add(token);
