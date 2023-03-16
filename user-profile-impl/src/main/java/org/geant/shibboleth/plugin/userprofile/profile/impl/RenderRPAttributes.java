@@ -182,7 +182,7 @@ public class RenderRPAttributes extends AbstractProfileAction {
                         final JSONObject encodedAttribute = transcoder.encode(profileRequestContext, attribute,
                                 JSONObject.class, rule);
                         if (encodedAttribute != null)
-                            userProfileContext.setEncodedJSONAttribute(rpId, attribute, encodedAttribute);
+                            userProfileContext.setEncodedJSONAttribute(rpId, attribute);
                         log.debug("{} Transcoded attribute {} as {}", getLogPrefix(), attribute.getId(),
                                 encodedAttribute.toString());
                     }

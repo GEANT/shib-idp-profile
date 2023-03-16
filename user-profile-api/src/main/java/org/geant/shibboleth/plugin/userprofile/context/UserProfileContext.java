@@ -16,7 +16,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
@@ -26,11 +25,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * Context for User Profile.
  */
 public final class UserProfileContext extends BaseContext {
-
-
-    /** The Relying Parties. */
-    @Nonnull
-    private final JSONObject relyingParties = new JSONObject();
 
     /** JSON based OIDC relying parties. */
     @Nullable
@@ -46,16 +40,15 @@ public final class UserProfileContext extends BaseContext {
 
     /** Relying Party UI Context per Relying Party. */
     @Nonnull
-    private final Map<String, RelyingPartyUIContext> rpRelyingPartyUIContext = new HashMap<String, RelyingPartyUIContext>();
+    private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
 
     /** OIDC transcodable attributes resolved for Relying Party. */
     /**
      * NOTE! TBD! Currently only OIDC transcodable attributes are shown as resolved
-     * attributes for both SAML2 and OIDC clients! NOTE! TBD! Actual encoded
-     * JSONObject value is not really used. Remove it!
+     * attributes for both SAML2 and OIDC clients!
      */
     @Nonnull
-    private final Map<String, Map<IdPAttribute, JSONObject>> rpEncodedJSONAttributes = new HashMap<String, Map<IdPAttribute, JSONObject>>();
+    private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
 
     /** tokens generated per Relying Party.. */
     @Nonnull
@@ -83,8 +76,8 @@ public final class UserProfileContext extends BaseContext {
      * @return Relying Party UI Context per Relying Party
      */
     @Nonnull
-    public Map<String, RelyingPartyUIContext> getRPRelyingPartyUIContextes() {
-        return rpRelyingPartyUIContext;
+    public Map<String, RelyingPartyUIContext> getRelyingParties() {
+        return relyingParties;
     }
 
     /**
@@ -136,30 +129,6 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Get The Relying Parties.
-     * 
-     * @return The Relying Parties.
-     */
-    @Nonnull
-    public JSONObject getRelyingParties() {
-        return relyingParties;
-    }
-
-    /**
-     * Add Relying Party.
-     * 
-     * @param rpId Relying Party Id
-     * @param name Relying Party Name
-     * @param type Relying Party Type
-     */
-    public void addRelyingParty(@Nonnull String rpId, @Nonnull String name, @Nonnull String type) {
-        JSONObject content = new JSONObject();
-        content.put("name", Constraint.isNotNull(name, "Relying Party name cannot be null"));
-        content.put("type", Constraint.isNotNull(type, "Relying Party type cannot be null"));
-        relyingParties.put(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"), content);
-    }
-
-    /**
      * Set Attribute Context for Relying Party.
      * 
      * @param rpId Relying Party Id
@@ -184,16 +153,13 @@ public final class UserProfileContext extends BaseContext {
      * 
      * @param rpId      Relying Party Id
      * @param attribute Attribute resolved
-     * @param encoded   Attribute encoded
      */
-    public void setEncodedJSONAttribute(@Nonnull String rpId, @Nonnull IdPAttribute attribute,
-            @Nonnull JSONObject encoded) {
+    public void setEncodedJSONAttribute(@Nonnull String rpId, @Nonnull IdPAttribute attribute) {
         if (rpEncodedJSONAttributes.get(rpId) == null) {
-            rpEncodedJSONAttributes.put(rpId, new HashMap<IdPAttribute, JSONObject>());
+            rpEncodedJSONAttributes.put(rpId, new ArrayList<IdPAttribute>());
         }
-        rpEncodedJSONAttributes.get(Constraint.isNotNull(rpId, "Relying Party Id cannot be null")).put(
-                Constraint.isNotNull(attribute, "Attribute cannot be null"),
-                Constraint.isNotNull(encoded, "Encoded Attribute cannot be null"));
+        rpEncodedJSONAttributes.get(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"))
+                .add(Constraint.isNotNull(attribute, "Attribute cannot be null"));
     }
 
     /**
@@ -202,7 +168,7 @@ public final class UserProfileContext extends BaseContext {
      * @return OIDC transcodable attributes resolved for Relying Party
      */
     @Nonnull
-    public Map<String, Map<IdPAttribute, JSONObject>> getRPEncodedJSONAttributes() {
+    public Map<String, List<IdPAttribute>> getRPEncodedJSONAttributes() {
         return rpEncodedJSONAttributes;
     }
 

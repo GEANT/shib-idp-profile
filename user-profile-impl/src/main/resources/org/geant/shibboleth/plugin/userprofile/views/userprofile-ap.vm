@@ -16,7 +16,7 @@
 ##
 ## ALL_ACTIVITY is record of past logins
 #set ($allActivity = $userProfileContext.getLoginEvents())
-#set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())
+#set ($relyingParties = $userProfileContext.getRelyingParties())
 <!DOCTYPE html>
 <html>
   <head>
@@ -73,7 +73,7 @@
         #foreach($event in $allActivity)
         <tr>
           <td>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</td>
-          <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$event.getRpId()].serviceName)</td>
+          <td>$encoder.encodeForHTMLAttribute($relyingParties[$event.getRpId()].serviceName)</td>
           <td>
           #foreach($attribute in $event.getAttributes())
           <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>

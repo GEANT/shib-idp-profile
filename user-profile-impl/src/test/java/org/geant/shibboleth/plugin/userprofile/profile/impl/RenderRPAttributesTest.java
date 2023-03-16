@@ -109,7 +109,7 @@ public class RenderRPAttributesTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         // Two of the attributes have value and transcoder.
-        Assert.assertEquals(userProfileContext.getRPEncodedJSONAttributes().get("rpId").keySet().size(), 2);
+        Assert.assertEquals(userProfileContext.getRPEncodedJSONAttributes().get("rpId").size(), 2);
     }
 
 }

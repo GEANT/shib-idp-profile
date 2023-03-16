@@ -124,8 +124,6 @@ public class RenderUserProfileContext extends AbstractProfileAction {
 
         if (userProfileContext.getOidcClientInformation() != null)
             userProfileContext.getOidcClientInformation().forEach(client -> {
-                userProfileContext.addRelyingParty(client.getID().getValue(), client.getOIDCMetadata().getName(),
-                        "OIDC");
                 RelyingPartyUIContext relyingPartyUIContext = new RelyingPartyUIContext();
                 final EntityDescriptor entityDescriptor = new EntityDescriptorBuilder().buildObject();
                 final OIDCClientMetadata oidcMetadata = client.getOIDCMetadata();
@@ -181,13 +179,12 @@ public class RenderUserProfileContext extends AbstractProfileAction {
                 relyingPartyUIContext.setRPEntityDescriptor(entityDescriptor);
                 relyingPartyUIContext.setRPSPSSODescriptor(spDescriptor);
                 relyingPartyUIContext.setRPUInfo((UIInfo) uiInfo);
-                userProfileContext.getRPRelyingPartyUIContextes().put(client.getID().getValue(), relyingPartyUIContext);
+                userProfileContext.getRelyingParties().put(client.getID().getValue(), relyingPartyUIContext);
             });
 
         // Render SAML2 clients
         if (userProfileContext.getEntityDescriptors() != null)
             userProfileContext.getEntityDescriptors().forEach(client -> {
-                userProfileContext.addRelyingParty(client.getEntityID(), client.getEntityID(), "SAML2");
                 SPSSODescriptor spSSODescriptor = client.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
                 if (spSSODescriptor != null) {
                     RelyingPartyUIContext relyingPartyUIContext = new RelyingPartyUIContext();
@@ -205,7 +202,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
                             }
                         }
                     }
-                    userProfileContext.getRPRelyingPartyUIContextes().put(client.getEntityID(), relyingPartyUIContext);
+                    userProfileContext.getRelyingParties().put(client.getEntityID(), relyingPartyUIContext);
                 }
 
             });

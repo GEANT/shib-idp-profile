@@ -37,7 +37,7 @@ public class ExtractRelyingPartyIdFromRequestTest {
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
-        userProfileContext.addRelyingParty("rpId-1", "first", "oidc");
+        userProfileContext.getRelyingParties().put("rpId-1", null);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ExtractRelyingPartyIdFromRequestTest {
     public void testParameterNameChange() throws ComponentInitializationException {
         action.setRpIdFieldName("_eventId_showAttributes2");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("_eventId_showAttributes2", "rpId-2");
-        userProfileContext.addRelyingParty("rpId-2", "second", "saml2");
+        userProfileContext.getRelyingParties().put("rpId-2", null);
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

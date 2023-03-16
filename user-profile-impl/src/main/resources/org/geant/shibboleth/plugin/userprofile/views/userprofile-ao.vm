@@ -13,9 +13,8 @@
 ## attributeDisplayNameFunction - function to display attribute name
 ##
 ##
-#set ($relyingParties = $userProfileContext.getRelyingParties())
 #set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
-#set ($relyingPartyUIContextes = $userProfileContext.getRPRelyingPartyUIContextes())
+#set ($relyingParties = $userProfileContext.getRelyingParties())
 <!DOCTYPE html>
 <html>
   <head>
@@ -67,12 +66,12 @@
         <table>
           #foreach($rpId in $relyingParties.keySet())
           <tr>
-            <td>$encoder.encodeForHTMLAttribute($relyingPartyUIContextes[$rpId].serviceName)</td>
+            <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
             <td>
             #if ($encodedJSONAttributes.containsKey($rpId))
             <table>
               #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
-              #foreach($attribute in $rpEncodedJSONAttributes.keySet())
+              #foreach($attribute in $rpEncodedJSONAttributes)
               <tr>
                 <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
                 <td>

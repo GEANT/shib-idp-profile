@@ -5,7 +5,6 @@ import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
 import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 
-import net.minidev.json.JSONObject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import org.testng.annotations.BeforeMethod;
@@ -29,7 +28,7 @@ public class UserProfileContextTest {
 
     @Test
     public void testRPRelyingPartyUIContextes() {
-        Assert.assertNotNull(ctx.getRPRelyingPartyUIContextes());
+        Assert.assertNotNull(ctx.getRelyingParties());
     }
 
     @Test
@@ -47,14 +46,6 @@ public class UserProfileContextTest {
         Assert.assertEquals(2, ((List<?>) ctx.getOidcClientInformation()).size());
     }
 
-
-    @Test
-    public void testRelyingParties() {
-        Assert.assertNotNull(ctx.getRelyingParties());
-        ctx.addRelyingParty("id-1", "first", "oidc");
-        ctx.addRelyingParty("id-2", "second", "saml2");
-    }
-
     @Test
     public void testRPAttributeContext() {
         Assert.assertNotNull(ctx.getRPAttributeContext());
@@ -66,8 +57,8 @@ public class UserProfileContextTest {
     @Test
     public void testEncodedJSONAttribute() {
         Assert.assertNotNull(ctx.getRPEncodedJSONAttributes());
-        ctx.setEncodedJSONAttribute("id-1", new IdPAttribute("attrId-1"), new JSONObject());
-        ctx.setEncodedJSONAttribute("id-2", new IdPAttribute("attrId-2"), new JSONObject());
+        ctx.setEncodedJSONAttribute("id-1", new IdPAttribute("attrId-1"));
+        ctx.setEncodedJSONAttribute("id-2", new IdPAttribute("attrId-2"));
         Assert.assertEquals(ctx.getRPEncodedJSONAttributes().size(), 2);
     }
 

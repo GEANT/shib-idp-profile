@@ -83,7 +83,6 @@ public class RenderUserProfileContextTest extends XMLObjectBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(userProfileContext.getRelyingParties().keySet().size(), 9);
-        Assert.assertEquals(userProfileContext.getRPRelyingPartyUIContextes().keySet().size(), 9);
     }
 
 }
