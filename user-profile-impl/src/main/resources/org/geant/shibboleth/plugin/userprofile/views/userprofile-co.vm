@@ -84,27 +84,31 @@
       </table>
       </div id="connected_organizations">
       <div id="connected_organizations">
-      <table>
-        <tr>
-          <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
-          <th>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Tokens")</th>
-        </tr>
-          #foreach($rpId in $relyingPartyTokens.keySet())
+      <form action="$flowExecutionUrl" method="post">
+        #parse("csrf/csrf.vm")
+        <table>
           <tr>
-            <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
-            <td>
-            #foreach($token in $relyingPartyTokens.get($rpId))
-            <span class="label">
-              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-              <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
-              <button>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
-              </span><br/>
-            #end
-            </td>
+            <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
+            <th>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Tokens")</th>
           </tr>
-          #end
-      </table>
+            #foreach($rpId in $relyingPartyTokens.keySet())
+            <tr>
+              <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
+              <td>
+              #foreach($token in $relyingPartyTokens.get($rpId))
+              <span class="label">
+                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                <button>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                <button type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                </span><br/>
+              #end
+              </td>
+            </tr>
+            #end
+        </table>
+      </form>
       </div id="connected_organizations">
     </section>
 
