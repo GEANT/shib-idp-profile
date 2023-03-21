@@ -132,6 +132,7 @@
     
     <bean id="ExtractAndRevokeTokenFromRequest"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractAndRevokeTokenFromRequest"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:revocationCache-ref="shibboleth.oidc.RevocationCache"/>
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
