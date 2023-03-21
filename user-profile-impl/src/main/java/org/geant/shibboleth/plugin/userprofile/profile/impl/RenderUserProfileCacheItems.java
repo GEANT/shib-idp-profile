@@ -143,9 +143,11 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
         try {
             AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
+            // TODO: take clockSkew into consideration
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+            // TODO: Now remove all revoked tokens from tokens displayed.
             tokens.getAccessTokens()
                     .forEach((accessToken -> userProfileContext.addRPToken(accessToken.getClientId(), accessToken)));
         } catch (JsonProcessingException e) {
