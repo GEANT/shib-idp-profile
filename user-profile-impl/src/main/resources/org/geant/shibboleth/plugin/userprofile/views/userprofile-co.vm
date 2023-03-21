@@ -95,14 +95,22 @@
             <tr>
               <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
               <td>
+              <table>
               #foreach($token in $relyingPartyTokens.get($rpId))
-              <span class="label">
-                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-                <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
-                <button type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
-                </span><br/>
+                <tr>
+                <td>
+                  <span class="label">
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                  </span>
+                </td>
+                <td>
+                  <button type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                </td>
+                </tr>
               #end
+              </table>
               </td>
             </tr>
             #end
