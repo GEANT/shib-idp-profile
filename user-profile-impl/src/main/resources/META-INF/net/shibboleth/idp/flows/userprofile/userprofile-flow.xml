@@ -125,6 +125,7 @@
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
         <transition on="activityPage" to="UserProfileViewActivityPage" />
         <transition on="allOrganizations" to="UserProfileViewAllOrganizations" />
+        <transition on="revokeToken" to="ExtractAndRevokeTokenFromRequest" />
     </view-state>
     
     <view-state id="UserProfileViewActivityPage" view="userprofile-ap">
@@ -168,6 +169,14 @@
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterRPAttributes" />
         <evaluate expression="RenderRPAttributes" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="UserProfileViewAllOrganizations" />
+    </action-state>
+    
+    <action-state id="ExtractAndRevokeTokenFromRequest">
+        <evaluate expression="ExtractAndRevokeTokenFromRequest" />
+        <evaluate expression="RenderUserProfileCacheItems" />
+        <transition on="RevocationFailed" to="UserProfileViewAllOrganizations" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="UserProfileViewAllOrganizations" />
     </action-state>
