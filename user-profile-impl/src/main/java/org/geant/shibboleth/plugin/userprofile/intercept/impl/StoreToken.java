@@ -174,6 +174,7 @@ public class StoreToken extends AbstractProfileAction {
         try {
             Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
             AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
+            //TODO: take clockSkew into consideration
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             AccessTokenImpl token = new AccessTokenImpl(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
             tokens.getAccessTokens().add(token);
