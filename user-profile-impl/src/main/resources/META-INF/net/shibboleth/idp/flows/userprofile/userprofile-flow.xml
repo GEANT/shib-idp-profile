@@ -176,8 +176,8 @@
     <action-state id="ExtractAndRevokeTokenFromRequest">
         <evaluate expression="ExtractAndRevokeTokenFromRequest" />
         <evaluate expression="RenderUserProfileCacheItems" />
-        <transition on="RevocationFailed" to="UserProfileViewAllOrganizations" />
         <evaluate expression="'proceed'" />
+        <transition on="RevocationFailed" to="UserProfileViewAllOrganizations" />
         <transition on="proceed" to="UserProfileViewAllOrganizations" />
     </action-state>
 
