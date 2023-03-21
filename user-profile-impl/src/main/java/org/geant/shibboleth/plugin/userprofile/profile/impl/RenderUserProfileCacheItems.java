@@ -161,6 +161,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
         try {
+            userProfileContext.getRPTokens().clear();
             AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
             // TODO: take clockSkew into consideration
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
@@ -180,6 +181,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         }
         event = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
         try {
+            userProfileContext.getConnectedOrganizations().clear();
             ConnectedOrganizations organizations = event != null ? ConnectedOrganizations.parse(event.getValue())
                     : new ConnectedOrganizations();
             organizations.getConnectedOrganization().forEach((rpId, connectedOrganization) -> userProfileContext
