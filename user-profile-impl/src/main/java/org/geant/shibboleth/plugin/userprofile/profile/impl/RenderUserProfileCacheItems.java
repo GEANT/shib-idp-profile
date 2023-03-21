@@ -14,6 +14,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.RevocationCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -47,6 +49,10 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
      */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+
+    /** Message revocation cache instance to use. */
+    @NonnullAfterInit
+    private RevocationCache revocationCache;
 
     /**
      * User Profile Cache.
@@ -82,6 +88,16 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     }
 
     /**
+     * Set the revocation cache instance to use.
+     * 
+     * @param cache The revocationCache to set.
+     */
+    public void setRevocationCache(@Nonnull final RevocationCache cache) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        revocationCache = Constraint.isNotNull(cache, "RevocationCache cannot be null");
+    }
+
+    /**
      * Set User Profile Cache.
      * 
      * @param cache User Profile Cache
@@ -108,6 +124,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         super.doInitialize();
         if (userProfileCache == null) {
             throw new ComponentInitializationException("UserProfileCache cannot be null");
+        }
+        if (revocationCache == null) {
+            throw new ComponentInitializationException("RevocationCache cannot be null");
         }
     }
 
@@ -148,6 +167,10 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
             // TODO: Now remove all revoked tokens from tokens displayed.
+            tokens.getAccessTokens().removeIf(accessToken -> revocationCache
+                    .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, accessToken.getTokenId()));
+            tokens.getAccessTokens().removeIf(accessToken -> revocationCache
+                    .isRevoked(RevocationCacheContexts.AUTHORIZATION_CODE, accessToken.getTokenRootId()));
             tokens.getAccessTokens()
                     .forEach((accessToken -> userProfileContext.addRPToken(accessToken.getClientId(), accessToken)));
         } catch (JsonProcessingException e) {
