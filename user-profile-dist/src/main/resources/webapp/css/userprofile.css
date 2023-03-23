@@ -16,6 +16,8 @@
 
   --link-c: #4859B2;
 
+  --delete-color: #cc3300;
+
   --main-font-family: Raleway;
   --main-font-weight: 500;
   --mainfont-size: 18pt;
@@ -259,6 +261,11 @@ button {
   text-decoration: underline;
 }
 
+button.delete {
+  background-color: var(--delete-color);
+  padding:0.3em;
+}
+
 /* ======================= */
 /*     Table               */
 /* ======================= */
@@ -306,7 +313,9 @@ table.detail {
 
 table.detail td {
   border:none;
-  padding: 0.25em;
+  padding: 0.3em;
+  background-color: var(--caption-bg-c);
+  vertical-align: middle;
 }
 
 /* ======================= */
