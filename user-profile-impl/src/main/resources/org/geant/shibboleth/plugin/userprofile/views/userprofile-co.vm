@@ -78,14 +78,16 @@
               <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
               <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</td>
               <td>
-                <ul>
+                <table class="detail">
                 #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
-                  <li class="label">$encoder.encodeForHTMLAttribute($attribute)</li>
+                  <tr>
+                    <td class="label">$encoder.encodeForHTMLAttribute($attribute)</td>
+                  </tr>
                 #end
-                </ul>
+                </table>
               </td>
               <td>
-                <table>
+                <table class="detail">
                 #foreach($token in $relyingPartyTokens.get($rpId))
                   <tr>
                   <td>

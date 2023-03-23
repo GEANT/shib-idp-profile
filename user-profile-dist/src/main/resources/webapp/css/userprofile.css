@@ -298,6 +298,17 @@ td a {
   float:right;
 }
 
+table.detail {
+  padding:0.5em;
+  margin:0.5em;
+  width:auto;
+}
+
+table.detail td {
+  border:none;
+  padding: 0.25em;
+}
+
 /* ======================= */
 /*      dropdown-box       */
 /* ======================= */
