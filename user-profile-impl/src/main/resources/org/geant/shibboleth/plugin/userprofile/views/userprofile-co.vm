@@ -98,10 +98,10 @@
               #foreach($token in $relyingPartyTokens.get($rpId))
               <tr>
                 <td></td>
-                <td></td>
-                <td colspan="2">
+                <td><b>#springMessageText("idp.userprofile.connectedorganizations.accesstoken", "Access Token")</b></td>
+                <td>
                   <span class="label">
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                   </span>
