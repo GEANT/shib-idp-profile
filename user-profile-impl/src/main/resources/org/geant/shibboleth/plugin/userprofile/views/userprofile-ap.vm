@@ -76,7 +76,7 @@
           <td>$encoder.encodeForHTMLAttribute($relyingParties[$event.getRpId()].serviceName)</td>
           <td>
           #foreach($attribute in $event.getAttributes())
-          <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
+          <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
           #end
           </td>
         </tr>

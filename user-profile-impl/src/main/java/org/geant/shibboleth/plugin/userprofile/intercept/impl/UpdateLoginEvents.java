@@ -2,11 +2,13 @@ package org.geant.shibboleth.plugin.userprofile.intercept.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.geant.shibboleth.plugin.userprofile.event.impl.AttributeImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEventImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -190,6 +193,15 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         return true;
     }
 
+    private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry) {
+        entry.getKey();
+        List<String> values = new ArrayList<String>();
+        entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+        // TODO use displayname functions instead of deprecated methods
+        return new AttributeImpl(entry.getKey(), entry.getValue().getDisplayNames().get("en"),
+                entry.getValue().getDisplayDescriptions().get("en"), values);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -197,8 +209,8 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         try {
             Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
             LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
-            List<String> attributes = new ArrayList<String>();
-            attributes.addAll(attributeCtx.getIdPAttributes().keySet());
+            List<AttributeImpl> attributes = new ArrayList<AttributeImpl>();
+            attributeCtx.getIdPAttributes().entrySet().forEach(entry -> attributes.add(toAttributeImpl(entry)));
             LoginEventImpl loginEvent = new LoginEventImpl(rpId, System.currentTimeMillis() / 1000, attributes);
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);

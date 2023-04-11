@@ -8,6 +8,6 @@ public interface LoginEvent {
 
     public long getTime();
 
-    public List<String> getAttributes();
+    public List<? extends Attribute> getAttributes();
 
 }

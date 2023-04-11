@@ -2,6 +2,7 @@ package org.geant.shibboleth.plugin.userprofile.event.impl;
 
 import java.util.List;
 
+import org.geant.shibboleth.plugin.userprofile.event.api.Attribute;
 import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,16 +15,16 @@ public class LoginEventImpl implements LoginEvent {
 
     private final String rpId;
     private final long time;
-    private final List<String> attributes;
+    private  List<AttributeImpl> attributes;
 
-    public LoginEventImpl(String rpId, long time, List<String> attributes) {
+    public LoginEventImpl(String rpId, long time, List<AttributeImpl> attributes) {
         this.rpId = rpId;
         this.time = time;
         this.attributes = attributes;
     }
 
     @JsonCreator
-    private LoginEventImpl(@JsonProperty("rpId") String rpId, @JsonProperty("attributes") List<String> attributes,
+    private LoginEventImpl(@JsonProperty("rpId") String rpId, @JsonProperty("attributes") List<AttributeImpl> attributes,
             @JsonProperty("time") long time) {
         this.rpId = rpId;
         this.time = time;
@@ -38,7 +39,8 @@ public class LoginEventImpl implements LoginEvent {
         return time;
     }
 
-    public List<String> getAttributes() {
+    
+    public List<? extends Attribute> getAttributes() {
         return attributes;
     }
 

@@ -13,12 +13,13 @@ public class LoginEventImplTest {
 
     @Test
     public void test() throws JsonMappingException, JsonProcessingException {
-        LoginEventImpl connectedOrganization = LoginEventImpl
-                .parse(" {\"rpId\":\"foo\",\"time\":1010102,\"attributes\":[\"foo\",\"bar\"]} ");
-        Assert.assertEquals(connectedOrganization.getRpId(), "foo");
-        Assert.assertEquals(connectedOrganization.getTime(), 1010102);
-        Assert.assertTrue(connectedOrganization.getAttributes().contains("foo"));
-        Assert.assertTrue(connectedOrganization.getAttributes().contains("bar"));
-
+        LoginEventImpl event = LoginEventImpl.parse(
+                "{\"rpId\":\"id\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
+        event = LoginEventImpl.parse(event.serialize());
+        Assert.assertEquals(event.getRpId(), "id");
+        Assert.assertEquals(event.getTime(), 500);
+        Assert.assertTrue(event.getAttributes().size() == 2);
+        Assert.assertEquals(event.getAttributes().get(0).getName(), "name");
     }
+
 }
