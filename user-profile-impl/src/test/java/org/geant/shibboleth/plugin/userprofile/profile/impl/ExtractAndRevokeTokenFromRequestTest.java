@@ -61,16 +61,16 @@ public class ExtractAndRevokeTokenFromRequestTest {
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
         Long exp = Instant.now().plus(Duration.ofSeconds(10)).getEpochSecond();
-        userProfileContext.addRPToken("rp1", AccessTokenImpl.parse(
+        userProfileContext.addAccessToken("rp1", AccessTokenImpl.parse(
                 " {\"tokenId\":\"_2345\",\"tokenRootId\":\"_0102\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + exp.toString() + "} "));
-        userProfileContext.addRPToken("rp1", AccessTokenImpl.parse(
+        userProfileContext.addAccessToken("rp1", AccessTokenImpl.parse(
                 " {\"tokenId\":\"_0101\",\"tokenRootId\":\"_0102\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + exp.toString() + "} "));
-        userProfileContext.addRPToken("rp2", AccessTokenImpl.parse(
+        userProfileContext.addAccessToken("rp2", AccessTokenImpl.parse(
                 " {\"tokenId\":\"_0101\",\"tokenRootId\":\"_0102\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + exp.toString() + "} "));
-        userProfileContext.addRPToken("rp2", AccessTokenImpl.parse(
+        userProfileContext.addAccessToken("rp2", AccessTokenImpl.parse(
                 " {\"tokenId\":\"_1234\",\"tokenRootId\":\"_0102\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + exp.toString() + "} "));
     }

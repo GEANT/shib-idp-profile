@@ -8,11 +8,12 @@ import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokenImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
+import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokenImpl;
+import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
+import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -36,8 +38,7 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 /**
  * Stores Access Token information if available.
  * 
- * TODO TESTS TODO JWT ACCESS TOKEN TODO Whether to execution to be
- * configurable.
+ * TODO TESTS TODO Whether to execution to be configurable.
  */
 public class StoreToken extends AbstractProfileAction {
 
@@ -52,6 +53,10 @@ public class StoreToken extends AbstractProfileAction {
     /** Strategy used to locate the subcontext with the token. */
     @Nonnull
     private Function<ProfileRequestContext, AccessTokenContext> accessTokenContextLookupStrategy;
+
+    /** oidc response context. */
+    @Nullable
+    private OIDCAuthenticationResponseContext oidcResponseContext;
 
     /** Token context. */
     @Nullable
@@ -157,10 +162,19 @@ public class StoreToken extends AbstractProfileAction {
             return false;
         }
 
+        final MessageContext outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
+        if (outboundMessageCtx == null) {
+            log.debug("{} No outbound message context", getLogPrefix());
+            return false;
+        }
+        oidcResponseContext = outboundMessageCtx.getSubcontext(OIDCAuthenticationResponseContext.class);
+        if (oidcResponseContext == null) {
+            log.debug("{} No OIDC response context", getLogPrefix());
+            return false;
+        }
+
         subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
         if (subjectContext == null || subjectContext.getPrincipalName() == null) {
-            log.error("{} No principal name available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
@@ -173,13 +187,33 @@ public class StoreToken extends AbstractProfileAction {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         try {
             Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
-            AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
-            //TODO: take clockSkew into consideration
-            tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
-            AccessTokenImpl token = new AccessTokenImpl(AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer));
-            tokens.getAccessTokens().add(token);
-            userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
-            log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+            AccessTokens accessTokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
+            // TODO: take clockSkew into consideration
+            accessTokens.getAccessTokens()
+                    .removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
+            AccessTokenClaimsSet accessToken = tokenCtx.getJWT() != null
+                    ? AccessTokenClaimsSet.parse(tokenCtx.getJWT().getJWTClaimsSet().toString())
+                    : AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer);
+            accessTokens.getAccessTokens().add(new AccessTokenImpl(accessToken));
+            userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, accessTokens.serialize());
+            log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.serialize());
+
+            String refreshToken = oidcResponseContext.getRefreshToken() != null
+                    ? oidcResponseContext.getRefreshToken().getValue()
+                    : null;
+            if (refreshToken != null) {
+                event = userProfileCache.getSingleEvent(user, RefreshTokens.ENTRY_NAME);
+                RefreshTokens refreshTokens = event != null ? RefreshTokens.parse(event.getValue())
+                        : new RefreshTokens();
+                // TODO: take clockSkew into consideration
+                refreshTokens.getRefreshTokens()
+                        .removeIf(refToken -> refToken.getExp() < System.currentTimeMillis() / 1000);
+                refreshTokens.getRefreshTokens()
+                        .add(new RefreshTokenImpl(RefreshTokenClaimsSet.parse(refreshToken, dataSealer)));
+                userProfileCache.setSingleEvent(user, RefreshTokens.ENTRY_NAME, refreshTokens.serialize());
+                log.debug("{} Updated refresh tokens {} ", getLogPrefix(), refreshTokens.serialize());
+            }
+
         } catch (JsonProcessingException | ParseException | DataSealerException e) {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.

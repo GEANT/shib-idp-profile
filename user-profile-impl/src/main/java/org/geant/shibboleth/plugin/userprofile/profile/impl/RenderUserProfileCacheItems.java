@@ -8,6 +8,7 @@ import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
+import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -161,7 +162,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
         try {
-            userProfileContext.getRPTokens().clear();
+            userProfileContext.getAccessTokens().clear();
             AccessTokens tokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
             // TODO: take clockSkew into consideration
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
@@ -172,10 +173,31 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
                     .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, accessToken.getTokenId()));
             tokens.getAccessTokens().removeIf(accessToken -> revocationCache
                     .isRevoked(RevocationCacheContexts.AUTHORIZATION_CODE, accessToken.getTokenRootId()));
-            tokens.getAccessTokens()
-                    .forEach((accessToken -> userProfileContext.addRPToken(accessToken.getClientId(), accessToken)));
+            tokens.getAccessTokens().forEach(
+                    (accessToken -> userProfileContext.addAccessToken(accessToken.getClientId(), accessToken)));
         } catch (JsonProcessingException e) {
             log.error("{} Failed processing access tokens.", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return;
+        }
+        event = userProfileCache.getSingleEvent(user, RefreshTokens.ENTRY_NAME);
+        try {
+            userProfileContext.getRefreshTokens().clear();
+            RefreshTokens tokens = event != null ? RefreshTokens.parse(event.getValue()) : new RefreshTokens();
+            // TODO: take clockSkew into consideration
+            tokens.getRefreshTokens()
+                    .removeIf(refreshToken -> refreshToken.getExp() < System.currentTimeMillis() / 1000);
+            userProfileCache.setSingleEvent(user, RefreshTokens.ENTRY_NAME, tokens.serialize());
+            log.debug("{} Updated refresh tokens {} ", getLogPrefix(), tokens.serialize());
+            // TODO: Now remove all revoked tokens from tokens displayed.
+            tokens.getRefreshTokens().removeIf(refreshToken -> revocationCache
+                    .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, refreshToken.getTokenId()));
+            tokens.getRefreshTokens().removeIf(refreshToken -> revocationCache
+                    .isRevoked(RevocationCacheContexts.AUTHORIZATION_CODE, refreshToken.getTokenRootId()));
+            tokens.getRefreshTokens().forEach(
+                    (refreshToken -> userProfileContext.addRefreshToken(refreshToken.getClientId(), refreshToken)));
+        } catch (JsonProcessingException e) {
+            log.error("{} Failed processing refresh tokens.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }

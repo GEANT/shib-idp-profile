@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
-import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.api.Token;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
@@ -66,8 +66,8 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     /** Context for User Profile . */
     private UserProfileContext userProfileContext;
 
-    /** Extracted access token. */
-    private AccessToken accessToken;
+    /** Extracted token. */
+    private Token token;
 
     /** Constructor. */
     ExtractAndRevokeTokenFromRequest() {
@@ -138,8 +138,8 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        String accessTokenId = request.getParameter(accessTokenIdFieldName);
-        if (accessTokenId == null || accessTokenId.isBlank()) {
+        String tokenId = request.getParameter(accessTokenIdFieldName);
+        if (tokenId == null || tokenId.isBlank()) {
             log.debug("{} Access token id extraction failed", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
@@ -150,19 +150,21 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        userProfileContext.getRPTokens().values()
-                .forEach(tokens -> tokens.forEach(accessToken -> collectValidAccessToken(accessTokenId, accessToken)));
-        if (accessToken == null) {
-            log.error("{} Access token id {} is not valid.", getLogPrefix(), accessTokenId);
+        userProfileContext.getAccessTokens().values()
+                .forEach(tokens -> tokens.forEach(token -> collectValidToken(tokenId, token)));
+        userProfileContext.getRefreshTokens().values()
+                .forEach(tokens -> tokens.forEach(token -> collectValidToken(tokenId, token)));
+        if (token == null) {
+            log.error("{} token id {} is not valid.", getLogPrefix(), tokenId);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         return true;
     }
 
-    private void collectValidAccessToken(String accessTokenId, AccessToken accessToken) {
-        if (accessTokenId.equals(accessToken.getTokenId())) {
-            this.accessToken = accessToken;
+    private void collectValidToken(String tokenId, Token token) {
+        if (tokenId.equals(token.getTokenId())) {
+            this.token = token;
         }
     }
 
@@ -171,21 +173,20 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final Instant now = Instant.now();
-        final Instant exp = Instant.ofEpochSecond(accessToken.getExp());
+        final Instant exp = Instant.ofEpochSecond(token.getExp());
         Duration revocationLifetime;
         if (now.isAfter(exp.plus(clockSkew))) {
             log.debug("Token expiration time was in the past, returning ZERO");
             revocationLifetime = Duration.ZERO;
         } else {
-            revocationLifetime = Duration.between(Instant.now(), Instant.ofEpochSecond(accessToken.getExp())).abs()
+            revocationLifetime = Duration.between(Instant.now(), Instant.ofEpochSecond(token.getExp())).abs()
                     .plus(Duration.ofMinutes(5)).plus(clockSkew);
         }
-        if (revocationCache.revoke(
-                RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, accessToken.getTokenId(),
+        if (revocationCache.revoke(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, token.getTokenId(),
                 revocationLifetime)) {
-            log.debug("{} Revoked the single token with ID '{}'", getLogPrefix(), accessToken.getTokenId());
+            log.debug("{} Revoked the single token with ID '{}'", getLogPrefix(), token.getTokenId());
         } else {
-            log.warn("{} Failed to revoke the single token with ID '{}'", getLogPrefix(), accessToken.getTokenId());
+            log.warn("{} Failed to revoke the single token with ID '{}'", getLogPrefix(), token.getTokenId());
             ActionSupport.buildEvent(profileRequestContext, OidcEventIds.REVOCATION_FAILED);
         }
     }

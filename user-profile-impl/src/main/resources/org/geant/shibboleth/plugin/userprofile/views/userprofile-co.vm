@@ -17,7 +17,8 @@
 ## CONNECTED_ORGANIZATIONS is record of past logins per relying party
 #set ($connectedOrganizations = $userProfileContext.getConnectedOrganizations())
 #set ($relyingParties = $userProfileContext.getRelyingParties())
-#set ($relyingPartyTokens = $userProfileContext.getRPTokens())
+#set ($relyingPartyAccessTokens = $userProfileContext.getAccessTokens())
+#set ($relyingPartyRefreshTokens = $userProfileContext.getRefreshTokens())
 <!DOCTYPE html>
 <html>
   <head>
@@ -95,10 +96,26 @@
                 #end
               </td>
               <td></td>
-              #foreach($token in $relyingPartyTokens.get($rpId))
+              #foreach($token in $relyingPartyAccessTokens.get($rpId))
               <tr>
                 <td></td>
                 <td><b>#springMessageText("idp.userprofile.connectedorganizations.accesstoken", "Access Token")</b></td>
+                <td>
+                  <span class="label">
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                  </span>
+                </td>
+                <td>
+                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                </td>
+              </tr>
+              #end
+              #foreach($token in $relyingPartyRefreshTokens.get($rpId))
+              <tr>
+                <td></td>
+                <td><b>#springMessageText("idp.userprofile.connectedorganizations.refreshtoken", "Refresh Token")</b></td>
                 <td>
                   <span class="label">
                     <b>#springMessageText("idp.userprofile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 

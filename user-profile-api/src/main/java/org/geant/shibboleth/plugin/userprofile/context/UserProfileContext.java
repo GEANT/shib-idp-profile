@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
 import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedOrganization;
 import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
+import org.geant.shibboleth.plugin.userprofile.event.api.Token;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -50,9 +51,13 @@ public final class UserProfileContext extends BaseContext {
     @Nonnull
     private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
 
-    /** tokens generated per Relying Party.. */
+    /** access tokens generated per Relying Party.. */
     @Nonnull
-    private final Map<String, List<AccessToken>> rpTokens = new HashMap<String, List<AccessToken>>();
+    private final Map<String, List<AccessToken>> accessTokens = new HashMap<String, List<AccessToken>>();
+
+    /** refresh tokens generated per Relying Party.. */
+    @Nonnull
+    private final Map<String, List<Token>> refreshTokens = new HashMap<String, List<Token>>();
 
     /** Connected Organizations.. */
     @Nonnull
@@ -173,25 +178,47 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Set token generated for Relying Party.
+     * Set access token generated for Relying Party.
      * 
      * @param rpId  Relying Party Id
      * @param token as AccessToken
      */
-    public void addRPToken(@Nonnull String rpId, @Nonnull AccessToken token) {
-        if (!rpTokens.containsKey(rpId)) {
-            rpTokens.put(rpId, new ArrayList<AccessToken>());
+    public void addAccessToken(@Nonnull String rpId, @Nonnull AccessToken token) {
+        if (!accessTokens.containsKey(rpId)) {
+            accessTokens.put(rpId, new ArrayList<AccessToken>());
         }
-        rpTokens.get(rpId).add(token);
+        accessTokens.get(rpId).add(token);
     }
 
     /**
-     * Get tokens generated per Relying Party.
+     * Get access tokens generated per Relying Party.
      * 
      * @return tokens generated per Relying Party.
      */
-    public @Nonnull Map<String, List<AccessToken>> getRPTokens() {
-        return rpTokens;
+    public @Nonnull Map<String, List<AccessToken>> getAccessTokens() {
+        return accessTokens;
+    }
+
+    /**
+     * Set refresh token generated for Relying Party.
+     * 
+     * @param rpId  Relying Party Id
+     * @param token as Token
+     */
+    public void addRefreshToken(@Nonnull String rpId, @Nonnull Token token) {
+        if (!refreshTokens.containsKey(rpId)) {
+            refreshTokens.put(rpId, new ArrayList<Token>());
+        }
+        refreshTokens.get(rpId).add(token);
+    }
+
+    /**
+     * Get refresh tokens generated per Relying Party.
+     * 
+     * @return tokens generated per Relying Party.
+     */
+    public @Nonnull Map<String, List<Token>> getRefreshTokens() {
+        return refreshTokens;
     }
 
     /**
