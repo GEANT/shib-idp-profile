@@ -56,6 +56,12 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
         <bean id="UpdateConnectedOrganizations"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizations" scope="prototype"
-            p:userProfileCache-ref="shibboleth.UserProfileCache"/>
+            p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
+            p:userProfileCache-ref="shibboleth.UserProfileCache"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            <property name="fallbackLanguages">
+                <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
+            </property>
+        </bean>
     
 </beans>

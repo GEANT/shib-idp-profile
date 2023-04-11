@@ -14,11 +14,10 @@ public class ConnectedOrganizationImplTest {
     @Test
     public void test() throws JsonMappingException, JsonProcessingException {
         ConnectedOrganizationImpl connectedOrganization = ConnectedOrganizationImpl.parse(
-                " {\"rpId\":\"foo\",\"times\":2,\"lastAttributes\":[\"foo\",\"bar\"]} ");
+                " {\"rpId\":\"foo\",\"times\":2,\"lastAttributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id2\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}]} ");
+        connectedOrganization = ConnectedOrganizationImpl.parse(connectedOrganization.serialize());
         Assert.assertEquals(connectedOrganization.getRpId(), "foo");
         Assert.assertEquals(connectedOrganization.getTimes(), 2);
-        Assert.assertTrue(connectedOrganization.getLastAttributes().contains("foo"));
-        Assert.assertTrue(connectedOrganization.getLastAttributes().contains("bar"));
-        
+        Assert.assertEquals(connectedOrganization.getLastAttributes().size(), 2);
     }
 }

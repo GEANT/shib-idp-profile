@@ -8,6 +8,6 @@ public interface ConnectedOrganization {
 
     public long getTimes();
 
-    public List<String> getLastAttributes();
+    public List<? extends Attribute> getLastAttributes();
 
 }

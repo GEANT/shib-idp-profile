@@ -92,7 +92,7 @@
               <td><b>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
               <td>
                 #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
-                  <span class="label">$encoder.encodeForHTMLAttribute($attribute)</span>
+                  <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
                 #end
               </td>
               <td></td>

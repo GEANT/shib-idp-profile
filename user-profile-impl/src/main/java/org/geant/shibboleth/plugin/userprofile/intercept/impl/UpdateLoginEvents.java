@@ -247,7 +247,6 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     }
 
     private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry) {
-        entry.getKey();
         List<String> values = new ArrayList<String>();
         entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
         return new AttributeImpl(entry.getKey(), attributeDisplayNameFunction.apply(entry.getValue()),

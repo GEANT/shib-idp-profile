@@ -1,10 +1,14 @@
 package org.geant.shibboleth.plugin.userprofile.intercept.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.geant.shibboleth.plugin.userprofile.event.impl.AttributeImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizationImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
@@ -16,16 +20,23 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
+import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Updates called connected organizations data.
@@ -69,6 +80,23 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
      */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
+
+    /** Transcoder registry service object. */
+    @NonnullAfterInit
+    private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
+
+    /**
+     * The system wide languages to inspect if there is no match between metadata
+     * and browser.
+     */
+    @Nullable
+    private List<String> fallbackLanguages;
+
+    @NonnullAfterInit
+    private AttributeDisplayDescriptionFunction attributeDisplayDescriptionFunction;
+
+    @NonnullAfterInit
+    private AttributeDisplayNameFunction attributeDisplayNameFunction;
 
     /** Constructor. */
     public UpdateConnectedOrganizations() {
@@ -126,6 +154,29 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
                 "AttributeContext lookup strategy cannot be null");
     }
 
+    /**
+     * Sets the registry of transcoding rules to apply to supply attribute display
+     * metadata.
+     * 
+     * @param registry registry service interface
+     */
+    public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        transcoderRegistry = registry;
+    }
+
+    /**
+     * Set the system wide default languages.
+     * 
+     * @param langs a semi-colon separated string.
+     */
+    public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -133,6 +184,13 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         if (userProfileCache == null) {
             throw new ComponentInitializationException("UserProfileCache cannot be null");
         }
+        if (transcoderRegistry == null) {
+            throw new ComponentInitializationException("transcoderRegistry cannot be null");
+        }
+        attributeDisplayDescriptionFunction = new AttributeDisplayDescriptionFunction(getHttpServletRequest(),
+                fallbackLanguages, transcoderRegistry);
+        attributeDisplayNameFunction = new AttributeDisplayNameFunction(getHttpServletRequest(), fallbackLanguages,
+                transcoderRegistry);
     }
 
     /** {@inheritDoc} */
@@ -158,6 +216,13 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         return true;
     }
 
+    private AttributeImpl toAttribute(Entry<String, IdPAttribute> entry) {
+        List<String> values = new ArrayList<String>();
+        entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+        return new AttributeImpl(entry.getKey(), attributeDisplayNameFunction.apply(entry.getValue()),
+                attributeDisplayDescriptionFunction.apply(entry.getValue()), values);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -175,8 +240,8 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
                     : new ConnectedOrganizationImpl(rpId);
             organization.addCount();
             organization.getLastAttributes().clear();
-            attributeCtx.getIdPAttributes().keySet()
-                    .forEach(attributeId -> organization.getLastAttributes().add(attributeId));
+            attributeCtx.getIdPAttributes().entrySet()
+                    .forEach(entry -> organization.getLastAttributesImpl().add(toAttribute(entry)));
             organizations.getConnectedOrganization().put(rpId, organization);
             userProfileCache.setSingleEvent(user, ConnectedOrganizations.ENTRY_NAME, organizations.serialize());
             log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
