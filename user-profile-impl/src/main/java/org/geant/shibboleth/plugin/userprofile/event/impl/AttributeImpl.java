@@ -5,6 +5,7 @@ import java.util.List;
 import org.geant.shibboleth.plugin.userprofile.event.api.Attribute;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -61,6 +62,7 @@ public class AttributeImpl implements Attribute {
     }
 
     @Override
+    @JsonIgnore
     public String getDisplayValue() {
         return values != null ? name + "[" + String.join(",", values) + "]" : name;
     }
