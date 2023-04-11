@@ -22,14 +22,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
+import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Stores login information.
@@ -79,6 +85,23 @@ public class UpdateLoginEvents extends AbstractProfileAction {
      */
     @Nonnull
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextCreationStrategy;
+
+    /** Transcoder registry service object. */
+    @NonnullAfterInit
+    private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
+
+    /**
+     * The system wide languages to inspect if there is no match between metadata
+     * and browser.
+     */
+    @Nullable
+    private List<String> fallbackLanguages;
+
+    @NonnullAfterInit
+    private AttributeDisplayDescriptionFunction attributeDisplayDescriptionFunction;
+
+    @NonnullAfterInit
+    private AttributeDisplayNameFunction attributeDisplayNameFunction;
 
     /** Relying party id. */
     private String rpId;
@@ -149,6 +172,29 @@ public class UpdateLoginEvents extends AbstractProfileAction {
                 "RelyingPartyContext lookup strategy cannot be null");
     }
 
+    /**
+     * Sets the registry of transcoding rules to apply to supply attribute display
+     * metadata.
+     * 
+     * @param registry registry service interface
+     */
+    public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        transcoderRegistry = registry;
+    }
+
+    /**
+     * Set the system wide default languages.
+     * 
+     * @param langs a semi-colon separated string.
+     */
+    public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -156,6 +202,13 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         if (userProfileCache == null) {
             throw new ComponentInitializationException("UserProfileCache cannot be null");
         }
+        if (transcoderRegistry == null) {
+            throw new ComponentInitializationException("transcoderRegistry cannot be null");
+        }
+        attributeDisplayDescriptionFunction = new AttributeDisplayDescriptionFunction(getHttpServletRequest(),
+                fallbackLanguages, transcoderRegistry);
+        attributeDisplayNameFunction = new AttributeDisplayNameFunction(getHttpServletRequest(), fallbackLanguages,
+                transcoderRegistry);
 
     }
 
@@ -197,9 +250,8 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         entry.getKey();
         List<String> values = new ArrayList<String>();
         entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
-        // TODO use displayname functions instead of deprecated methods
-        return new AttributeImpl(entry.getKey(), entry.getValue().getDisplayNames().get("en"),
-                entry.getValue().getDisplayDescriptions().get("en"), values);
+        return new AttributeImpl(entry.getKey(), attributeDisplayNameFunction.apply(entry.getValue()),
+                attributeDisplayDescriptionFunction.apply(entry.getValue()), values);
     }
 
     /** {@inheritDoc} */

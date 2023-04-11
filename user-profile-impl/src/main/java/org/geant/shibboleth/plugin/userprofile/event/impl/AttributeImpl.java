@@ -64,7 +64,7 @@ public class AttributeImpl implements Attribute {
     @Override
     @JsonIgnore
     public String getDisplayValue() {
-        return values != null ? name + "[" + String.join(",", values) + "]" : name;
+        return values != null ? name + " [ " + String.join(",", values) + " ] " : name;
     }
 
 }

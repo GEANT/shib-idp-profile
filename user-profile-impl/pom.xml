@@ -78,6 +78,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-consent-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>net.shibboleth.oidc</groupId>
             <artifactId>oidc-common-metadata-api</artifactId>
             <scope>provided</scope>
