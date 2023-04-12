@@ -62,7 +62,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <bean id="StoreToken"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.StoreToken" scope="prototype"
             p:userProfileCache-ref="shibboleth.UserProfileCache"
-            p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"/>
+            p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"
+            p:activationCondition-ref="%{idp.userprofile.tokens:shibboleth.Conditions.FALSE}"/>
 
         <bean id="UpdateConnectedOrganizations"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizations" scope="prototype"
