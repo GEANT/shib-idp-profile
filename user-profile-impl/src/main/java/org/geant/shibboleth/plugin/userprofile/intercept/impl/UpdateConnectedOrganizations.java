@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -40,9 +42,6 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Updates called connected organizations data.
- * 
- * TODO Execute only in Authenticating endpoint. TODO TESTS TODO Whether to
- * execution to be configurable.
  */
 public class UpdateConnectedOrganizations extends AbstractProfileAction {
 
@@ -98,6 +97,9 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @NonnullAfterInit
     private AttributeDisplayNameFunction attributeDisplayNameFunction;
 
+    @Nonnull
+    private Predicate<ProfileRequestContext> collectAttributeValues;
+
     /** Constructor. */
     public UpdateConnectedOrganizations() {
         super();
@@ -105,6 +107,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
+        collectAttributeValues = Predicates.alwaysFalse();
     }
 
     /**
@@ -177,6 +180,15 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 
+    /**
+     * Predicate to decide on whether to collect attribute values.
+     * 
+     * @param collect predicate to decide on whether to collect attribute values.
+     */
+    public void setCollectAttributeValues(Predicate<ProfileRequestContext> collect) {
+        collectAttributeValues = collect;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -216,9 +228,15 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         return true;
     }
 
-    private AttributeImpl toAttribute(Entry<String, IdPAttribute> entry) {
-        List<String> values = new ArrayList<String>();
-        entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+    private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        List<String> values;
+        if (collectAttributeValues.test(profileRequestContext)) {
+            values = new ArrayList<String>();
+            entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+        } else {
+            values = null;
+        }
         return new AttributeImpl(entry.getKey(), attributeDisplayNameFunction.apply(entry.getValue()),
                 attributeDisplayDescriptionFunction.apply(entry.getValue()), values);
     }
@@ -240,8 +258,8 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
                     : new ConnectedOrganizationImpl(rpId);
             organization.addCount();
             organization.getLastAttributes().clear();
-            attributeCtx.getIdPAttributes().entrySet()
-                    .forEach(entry -> organization.getLastAttributesImpl().add(toAttribute(entry)));
+            attributeCtx.getIdPAttributes().entrySet().forEach(
+                    entry -> organization.getLastAttributesImpl().add(toAttributeImpl(entry, profileRequestContext)));
             organizations.getConnectedOrganization().put(rpId, organization);
             userProfileCache.setSingleEvent(user, ConnectedOrganizations.ENTRY_NAME, organizations.serialize());
             log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());

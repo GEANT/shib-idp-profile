@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -39,9 +41,6 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
  * Stores login information.
- * 
- * TODO Execute only in Authenticating endpoint. TODO TESTS TODO Whether to
- * execution to be configurable.
  */
 public class UpdateLoginEvents extends AbstractProfileAction {
 
@@ -50,7 +49,7 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     private final Logger log = LoggerFactory.getLogger(UpdateLoginEvents.class);
 
     /** Max entries for user login events. */
-    private long maxEntries = 50;
+    private long maxEntries;
 
     /** Subject context. */
     @Nonnull
@@ -106,6 +105,9 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     /** Relying party id. */
     private String rpId;
 
+    @Nonnull
+    private Predicate<ProfileRequestContext> collectAttributeValues;
+
     /** Constructor. */
     public UpdateLoginEvents() {
         super();
@@ -113,15 +115,16 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        collectAttributeValues = Predicates.alwaysFalse();
     }
 
     /**
      * Set max entries for user login events.
      * 
-     * @param maxEntries max entries for user login events
+     * @param max max entries for user login events
      */
-    public void setMaxEntries(long maxEntries) {
-        this.maxEntries = maxEntries;
+    public void setMaxEntries(long max) {
+        maxEntries = max;
     }
 
     /**
@@ -195,6 +198,15 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 
+    /**
+     * Predicate to decide on whether to collect attribute values.
+     * 
+     * @param collect predicate to decide on whether to collect attribute values.
+     */
+    public void setCollectAttributeValues(Predicate<ProfileRequestContext> collect) {
+        collectAttributeValues = collect;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -246,9 +258,15 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         return true;
     }
 
-    private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry) {
-        List<String> values = new ArrayList<String>();
-        entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+    private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        List<String> values;
+        if (collectAttributeValues.test(profileRequestContext)) {
+            values = new ArrayList<String>();
+            entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
+        } else {
+            values = null;
+        }
         return new AttributeImpl(entry.getKey(), attributeDisplayNameFunction.apply(entry.getValue()),
                 attributeDisplayDescriptionFunction.apply(entry.getValue()), values);
     }
@@ -261,7 +279,8 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME);
             LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
             List<AttributeImpl> attributes = new ArrayList<AttributeImpl>();
-            attributeCtx.getIdPAttributes().entrySet().forEach(entry -> attributes.add(toAttributeImpl(entry)));
+            attributeCtx.getIdPAttributes().entrySet()
+                    .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
             LoginEventImpl loginEvent = new LoginEventImpl(rpId, System.currentTimeMillis() / 1000, attributes);
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
