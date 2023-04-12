@@ -43,7 +43,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateLoginEvents" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
             p:userProfileCache-ref="shibboleth.UserProfileCache"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:maxEntries="%{idp.userprofile.activitypage.maxentries:50}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
