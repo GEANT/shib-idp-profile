@@ -47,6 +47,16 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
+            <property name="activationCondition">
+                <bean parent="shibboleth.Conditions.AND">
+                    <constructor-arg>
+                        <list>
+                            <ref bean="shibboleth.Conditions.BrowserProfile" />
+                            <ref bean="%{idp.userprofile.activitypage:shibboleth.Conditions.FALSE}" />
+                        </list>
+                    </constructor-arg>
+                </bean>
+            </property>
         </bean>    
 
         <bean id="StoreToken"
@@ -61,6 +71,16 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
+            </property>
+            <property name="activationCondition">
+                <bean parent="shibboleth.Conditions.AND">
+                    <constructor-arg>
+                        <list>
+                            <ref bean="shibboleth.Conditions.BrowserProfile" />
+                            <ref bean="%{idp.userprofile.connectedservices:shibboleth.Conditions.FALSE}" />
+                        </list>
+                    </constructor-arg>
+                </bean>
             </property>
         </bean>
     
