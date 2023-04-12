@@ -45,7 +45,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:userProfileCache-ref="shibboleth.UserProfileCache"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
             p:maxEntries="%{idp.userprofile.activitypage.maxentries:50}"
-            p:collectAttributeValues-ref="%{idp.userprofile.attributevalues:shibboleth.Conditions.FALSE}">
+            p:collectAttributeValues-ref="%{idp.userprofile.attributevalues.collect:shibboleth.Conditions.FALSE}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
@@ -54,7 +54,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     <constructor-arg>
                         <list>
                             <ref bean="shibboleth.Conditions.BrowserProfile" />
-                            <ref bean="%{idp.userprofile.activitypage:shibboleth.Conditions.FALSE}" />
+                            <ref bean="%{idp.userprofile.activitypage.collect:shibboleth.Conditions.FALSE}" />
                         </list>
                     </constructor-arg>
                 </bean>
@@ -65,14 +65,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.StoreToken" scope="prototype"
             p:userProfileCache-ref="shibboleth.UserProfileCache"
             p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"
-            p:activationCondition-ref="%{idp.userprofile.tokens:shibboleth.Conditions.FALSE}"/>
+            p:activationCondition-ref="%{idp.userprofile.tokens.collect:shibboleth.Conditions.FALSE}"/>
 
         <bean id="UpdateConnectedOrganizations"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizations" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
             p:userProfileCache-ref="shibboleth.UserProfileCache"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:collectAttributeValues-ref="%{idp.userprofile.attributevalues:shibboleth.Conditions.FALSE}">
+            p:collectAttributeValues-ref="%{idp.userprofile.attributevalues.collect:shibboleth.Conditions.FALSE}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
@@ -81,7 +81,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                     <constructor-arg>
                         <list>
                             <ref bean="shibboleth.Conditions.BrowserProfile" />
-                            <ref bean="%{idp.userprofile.connectedservices:shibboleth.Conditions.FALSE}" />
+                            <ref bean="%{idp.userprofile.connectedservices.collect:shibboleth.Conditions.FALSE}" />
                         </list>
                     </constructor-arg>
                 </bean>
