@@ -11,6 +11,9 @@
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
 ## attributeDisplayNameFunction - function to display attribute name
+## showConnectedServices - whether to show Connected Services
+## showActivityPage - whether to show Activity Page
+## showAllServices - whether to show All Services
 ##
 ##
 #set ($userAttributes = $userProfileContext.getIdPUserAttributes())
@@ -49,9 +52,15 @@
                 #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
                 #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
                 <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.personaldata", "Personal Data")</span></a></li>
+                #if ($showConnectedServices)
                 <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
+                #end
+                #if ($showActivityPage)
                 <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.activitypage", "Activity Page")</span></a></li>
+                #end
+                #if ($showAllServices)
                 <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.allorganizations", "All Organizations")</span></a></li>
+                #end
                 <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
             </ul>
         </nav>

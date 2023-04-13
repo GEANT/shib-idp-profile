@@ -22,6 +22,10 @@
 
     <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
 
+    <bean id="showConnectedServices" class="java.lang.Boolean" c:_0="%{idp.userprofile.connectedservices.show:false}" />
+    <bean id="showActivityPage" class="java.lang.Boolean" c:_0="%{idp.userprofile.activitypage.show:false}" />
+    <bean id="showAllServices" class="java.lang.Boolean" c:_0="%{idp.userprofile.allservices.show:false}" />
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId-ref="shibboleth.userprofile.profileId"
