@@ -288,10 +288,9 @@ th {
   text-align:left;
   padding:0.5em;
   word-wrap: break-word;
-  border-bottom: solid 2px var(--table-border);
 }
 
-th.mainlabel {
+th span.mainlabel {
   font-size: 150%;
 }
 
@@ -305,7 +304,11 @@ td {
   vertical-align: middle;
 }
 
-td.mainlabel {
+td.mainline {
+  border-bottom: solid 2px var(--table-border);
+}
+
+td span.mainlabel {
   font-size: 120%;
 }
 

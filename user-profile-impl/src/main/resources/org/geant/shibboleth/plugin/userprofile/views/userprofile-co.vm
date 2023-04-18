@@ -81,12 +81,12 @@
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
             <tr>
-              <td colspan="3"><span class="mainlabel">$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</span></td>
+              <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</span></td>
             </tr>
             <tr>
               <td></td>
               <td><b>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</b>:</td>
-              <td>$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</td>
+              <td><span class="label">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</span></td>
               <td></td>
             </tr>
             <tr>

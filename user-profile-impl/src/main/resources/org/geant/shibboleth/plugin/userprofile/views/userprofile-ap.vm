@@ -78,13 +78,13 @@
         </tr>
         #foreach($event in $allActivity)
         <tr>
-          <td>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</td>
-          <td>$encoder.encodeForHTMLAttribute($relyingParties[$event.getRpId()].serviceName)</td>
-          <td>
+          <td class="mainline">$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</td>
+          <td class="mainline">$encoder.encodeForHTMLAttribute($relyingParties[$event.getRpId()].serviceName)</td>
+          <td class="mainline">
           #foreach($attribute in $event.getAttributes())
           <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
           #end
-          </td>
+          </td class="mainline">
         </tr>
         #end
       </table>
