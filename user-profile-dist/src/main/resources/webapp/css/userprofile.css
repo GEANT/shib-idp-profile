@@ -231,9 +231,9 @@ nav > ul > li > a {
   margin: 2em;
   padding-left: 1em;
   padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 2.5em;
-
+  padding-bottom: 2em;
+  padding-top: 2em;
+  text-align: center;
   border-width: 1px;
   border-style: solid;
   border-color: var(--link-c);
@@ -253,6 +253,11 @@ nav > ul > li > a {
   padding-left:1em;
   padding-right: 1em;
   background-color: var(--caption-bg-c);
+  margin: 0.5em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  display: inline-block;
+  border-radius: 0.7em;
 }
 
 button {
@@ -262,8 +267,10 @@ button {
 }
 
 button.delete {
+  color: var(--button-text-c);
   background-color: var(--delete-color);
-  padding:0.3em;
+  padding:0.5em;
+  border-radius: 0.7em;
 }
 
 /* ======================= */
@@ -281,6 +288,11 @@ th {
   text-align:left;
   padding:0.5em;
   word-wrap: break-word;
+  border-bottom: solid 2px var(--table-border);
+}
+
+th.mainlabel {
+  font-size: 150%;
 }
 
 td {
@@ -288,9 +300,13 @@ td {
   padding-left:0.5em;
   padding-right:0.5em;
   padding-top:1.25em;
+  padding-bottom:1.25em;
   word-wrap: break-word;
-  border-top: solid 1px var(--table-border);
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+td.mainlabel {
+  font-size: 120%;
 }
 
 th a {

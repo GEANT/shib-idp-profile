@@ -75,17 +75,13 @@
         #parse("csrf/csrf.vm")
           <table>
             <tr>
-              <th>#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</th>
-              <th></th>
-              <th></th>
-              <th></th>
+              <th colspan="3">
+                <span class="mainlabel">#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</span>
+              </th>
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
             <tr>
-              <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td colspan="3"><span class="mainlabel">$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</span></td>
             </tr>
             <tr>
               <td></td>
@@ -112,8 +108,6 @@
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                   </span>
-                </td>
-                <td>
                   <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
                 </td>
               </tr>
@@ -128,8 +122,6 @@
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
                     <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                   </span>
-                </td>
-                <td>
                   <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
                 </td>
               </tr>
