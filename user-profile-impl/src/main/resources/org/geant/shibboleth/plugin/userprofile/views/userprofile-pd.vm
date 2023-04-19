@@ -84,7 +84,7 @@
         #foreach($attribute in $userAttributes)
         <tr>
           <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
-          <div class="popup" onclick="doPopup('popup-${attribute.getId()}')"><img src="/idp/icons/i.svg"/>
+          <div class="popup" onclick="doPopup('popup-${attribute.getId()}')"><img class="information-icon" src="/idp/icons/i.svg"/>
             <span class="popuptext" id="${attribute.getId()}">#springMessageText("idp.userprofile.attribute_help.surname","UNDEFINED Help Text")</span>
           </div> 
           </td>
