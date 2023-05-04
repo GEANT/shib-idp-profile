@@ -213,7 +213,7 @@ nav > ul > li > a {
   margin-top: auto;
   margin-bottom: auto;
   min-height: 2.5em;
-  font-size: 85%;
+  font-size: 100%;
   display: inline-flex;
   align-items: center;
 }
@@ -228,15 +228,19 @@ nav > ul > li > a {
 #banner div {
   color: var(--link-c);
   background-color: var(--nav-bg-c);
-  margin: 2em;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
-  padding-bottom: 2em;
-  padding-top: 2em;
+  padding-bottom: 1em;
+  padding-top: 1em;
   text-align: center;
   border-width: 1px;
   border-style: solid;
   border-color: var(--link-c);
+  font-size: 125%;
 }
 
 /* ======================= */
@@ -245,7 +249,7 @@ nav > ul > li > a {
 
 #main{
   grid-area: main;
-  font-size: 80%;
+  font-size: 100%;
 }
 
 .label {
@@ -281,7 +285,7 @@ table {
   margin:1em;
   padding:1em;
   margin-right: auto;
-  width: 100%;
+  min-width: 75%;
 }
 
 th {
@@ -298,8 +302,8 @@ td {
   text-align:left;
   padding-left:0.5em;
   padding-right:0.5em;
-  padding-top:1.25em;
-  padding-bottom:1.25em;
+  padding-top:0.5em;
+  padding-bottom:0.5em;
   word-wrap: break-word;
   vertical-align: middle;
 }
@@ -485,7 +489,7 @@ footer div {
 
   nav > ul > li {
       font-variant: normal;
-      font-size: 90%;
+      font-size: 100%;
       display: flex;
       flex-direction: row;
       align-items: center;
