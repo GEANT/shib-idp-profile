@@ -253,13 +253,13 @@ nav > ul > li > a {
 }
 
 .label {
-  font-size: 90%;
+  font-size: 100%;
   padding-left:1em;
   padding-right: 1em;
   background-color: var(--caption-bg-c);
   margin: 0.5em;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
   display: inline-block;
   border-radius: 0.7em;
 }
@@ -271,9 +271,15 @@ button {
 }
 
 button.delete {
+  font-size: 100%;
   color: var(--button-text-c);
   background-color: var(--delete-color);
-  padding:0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 0.3em;
+  padding-bottom: 0.3em;
+  margin:0.5em;
+  display: inline-block;
   border-radius: 0.7em;
 }
 
