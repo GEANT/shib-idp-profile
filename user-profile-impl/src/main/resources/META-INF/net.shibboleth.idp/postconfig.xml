@@ -18,7 +18,7 @@
 
        <!-- Storage for User Profile. -->
        <bean id="shibboleth.UserProfileCache" class="org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache"
-           p:recordExpiration="%{idp.userprofile.recordexExpiration:PT10S}"
+           p:recordExpiration="%{idp.userprofile.recordexExpiration:PT2Y}"
            p:storage-ref="#{'%{idp.userprofile.StorageService:shibboleth.StorageService}'.trim()}" />
 
        <!-- Interceptor bean definition. -->
