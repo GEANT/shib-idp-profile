@@ -18,12 +18,21 @@ package org.geant.shibboleth.plugin.userprofile.event.api;
 
 import java.util.List;
 
+/**
+ * Interface for login event entry stored to user profile storage.
+ */
 public interface LoginEvent {
 
-    public String getRpId();
+    /** Relying party id of the connected service. */
+    public String getId();
 
+    /** Name of the connected service. */
+    public String getName();
+
+    /** Authentication time as seconds from epoch. */
     public long getTime();
 
+    /** Attributes sent. */
     public List<? extends Attribute> getAttributes();
 
 }

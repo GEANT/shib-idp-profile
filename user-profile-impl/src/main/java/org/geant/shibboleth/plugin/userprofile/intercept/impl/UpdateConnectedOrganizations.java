@@ -26,8 +26,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.impl.AttributeImpl;
-import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizationImpl;
-import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServiceImpl;
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServices;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -41,6 +41,7 @@ import com.google.common.base.Predicates;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
@@ -48,6 +49,7 @@ import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -115,6 +117,15 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
 
     @Nonnull
     private Predicate<ProfileRequestContext> collectAttributeValues;
+    
+    /**
+     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a given
+     * {@link ProfileRequestContext}.
+     */
+    @Nonnull
+    private Function<ProfileRequestContext, RelyingPartyUIContext> relyingPartyUIContextLookupStrategy;
+    
+    private RelyingPartyUIContext rpUIContext;
 
     /** Constructor. */
     public UpdateConnectedOrganizations() {
@@ -123,6 +134,8 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
+        relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
+                .compose(new ChildContextLookup<>(AuthenticationContext.class));
         collectAttributeValues = Predicates.alwaysFalse();
     }
 
@@ -204,6 +217,18 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     public void setCollectAttributeValues(Predicate<ProfileRequestContext> collect) {
         collectAttributeValues = collect;
     }
+    
+    /**
+     * Set the strategy used to return {@link RelyingPartyContext} .
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyUIContextLookup(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        relyingPartyUIContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyUIContext lookup strategy cannot be null");
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -240,6 +265,12 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
             log.debug("{} No AttributeSubcontext available, nothing to do", getLogPrefix());
             return false;
         }
+        
+        rpUIContext = relyingPartyUIContextLookupStrategy.apply(profileRequestContext);
+        if (rpUIContext == null) {
+            log.debug("{} Unable to locate RelyingPartyUIContext", getLogPrefix());
+            return false;
+        }
 
         return true;
     }
@@ -262,22 +293,22 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
 
-        Event event = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
-        ConnectedOrganizations organizations;
+        Event event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME);
+        ConnectedServices organizations;
         try {
-            organizations = event != null ? ConnectedOrganizations.parse(event.getValue())
-                    : new ConnectedOrganizations();
+            organizations = event != null ? ConnectedServices.parse(event.getValue())
+                    : new ConnectedServices();
             log.debug("Connected organizations {}", organizations.serialize());
             String rpId = requesterLookupStrategy.apply(profileRequestContext);
-            ConnectedOrganizationImpl organization = organizations.getConnectedOrganization().containsKey(rpId)
-                    ? organizations.getConnectedOrganization().get(rpId)
-                    : new ConnectedOrganizationImpl(rpId);
+            ConnectedServiceImpl organization = organizations.getConnectedServices().containsKey(rpId)
+                    ? organizations.getConnectedServices().get(rpId)
+                    : new ConnectedServiceImpl(rpId, rpUIContext.getServiceName());
             organization.addCount();
             organization.getLastAttributes().clear();
             attributeCtx.getIdPAttributes().entrySet().forEach(
                     entry -> organization.getLastAttributesImpl().add(toAttributeImpl(entry, profileRequestContext)));
-            organizations.getConnectedOrganization().put(rpId, organization);
-            userProfileCache.setSingleEvent(user, ConnectedOrganizations.ENTRY_NAME, organizations.serialize());
+            organizations.getConnectedServices().put(rpId, organization);
+            userProfileCache.setSingleEvent(user, ConnectedServices.ENTRY_NAME, organizations.serialize());
             log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
         } catch (JsonProcessingException e) {
             log.error("{} Failed parsing connected organizations", getLogPrefix(), e);

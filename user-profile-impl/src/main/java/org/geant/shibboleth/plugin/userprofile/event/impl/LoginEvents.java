@@ -24,34 +24,67 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Class providing serialization and deserialization for list of
+ * {@link LoginEventImpl}. List is stored to user profile storage by key name
+ * {@link LoginEvents.ENTRY_NAME}
+ */
 public class LoginEvents {
 
+    /** Entry name in user profile storage. */
     public final static String ENTRY_NAME = "org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents";
 
-    private long maxEntries = 10;
+    /** Max number of items serialized. */
+    private long maxEntries = 50;
 
+    /** List of login events. */
     private List<LoginEventImpl> loginEvents = new ArrayList<LoginEventImpl>();
 
+    /**
+     * Constuctor.
+     */
+    public LoginEvents() {
+
+    }
+    
+    /**
+     * Set max number of items serialized.
+     * @param maxEntries Max number of items serialized.
+     */
     public void setMaxEntries(long maxEntries) {
         this.maxEntries = maxEntries;
     }
 
+    /**
+     * Get list of login events.
+     * @return list of login events.
+     */
     public List<LoginEventImpl> getLoginEvents() {
         return loginEvents;
     }
 
-    public LoginEvents() {
-
-    }
-
-    public static LoginEvents parse(String tokens) throws JsonMappingException, JsonProcessingException {
+    /**
+     * Parse instance from json representation.
+     * 
+     * @param loginEvents Json representation.
+     * @return LoginEvents parsed from json representation.
+     * @throws JsonMappingException    Json contained illegal fields
+     * @throws JsonProcessingException Json is not json at all
+     */
+    public static LoginEvents parse(String loginEvents) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        LoginEventImpl[] accessTokens = objectMapper.readValue(tokens, LoginEventImpl[].class);
-        LoginEvents accTokens = new LoginEvents();
-        accTokens.loginEvents = new ArrayList<LoginEventImpl>(Arrays.asList(accessTokens));
-        return accTokens;
+        LoginEventImpl[] accessTokens = objectMapper.readValue(loginEvents, LoginEventImpl[].class);
+        LoginEvents events = new LoginEvents();
+        events.loginEvents = new ArrayList<LoginEventImpl>(Arrays.asList(accessTokens));
+        return events;
     }
 
+    /**
+     * Serialize instance to json string.
+     * 
+     * @return json string representing the instance.
+     * @throws JsonProcessingException something went wrong.
+     */
     public String serialize() throws JsonProcessingException {
         while (getLoginEvents().size() > maxEntries) {
             getLoginEvents().remove(0);

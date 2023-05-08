@@ -41,12 +41,14 @@ import com.google.common.base.Predicates;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -98,8 +100,16 @@ public class UpdateLoginEvents extends AbstractProfileAction {
      * Strategy used to locate or create the {@link RelyingPartyContext} to
      * populate.
      */
+    //TODO REMOVE
     @Nonnull
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextCreationStrategy;
+    
+    /**
+     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a given
+     * {@link ProfileRequestContext}.
+     */
+    @Nonnull
+    private Function<ProfileRequestContext, RelyingPartyUIContext> relyingPartyUIContextLookupStrategy;
 
     /** Transcoder registry service object. */
     @NonnullAfterInit
@@ -120,6 +130,8 @@ public class UpdateLoginEvents extends AbstractProfileAction {
 
     /** Relying party id. */
     private String rpId;
+    
+    private RelyingPartyUIContext rpUIContext;
 
     @Nonnull
     private Predicate<ProfileRequestContext> collectAttributeValues;
@@ -130,7 +142,10 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
+        //TODO remove
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
+                .compose(new ChildContextLookup<>(AuthenticationContext.class));
         collectAttributeValues = Predicates.alwaysFalse();
     }
 
@@ -184,12 +199,27 @@ public class UpdateLoginEvents extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
+    //TODO: remove
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set the strategy used to return {@link RelyingPartyContext} .
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setRelyingPartyUIContextLookup(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        relyingPartyUIContextLookupStrategy = Constraint.isNotNull(strategy,
+                "RelyingPartyUIContext lookup strategy cannot be null");
+    }
+    
+    
 
     /**
      * Sets the registry of transcoding rules to apply to supply attribute display
@@ -270,6 +300,12 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             log.debug("{} Relying party id missing", getLogPrefix());
             return false;
         }
+        
+        rpUIContext = relyingPartyUIContextLookupStrategy.apply(profileRequestContext);
+        if (rpUIContext == null) {
+            log.debug("{} Unable to locate RelyingPartyUIContext", getLogPrefix());
+            return false;
+        }
 
         return true;
     }
@@ -297,7 +333,7 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             List<AttributeImpl> attributes = new ArrayList<AttributeImpl>();
             attributeCtx.getIdPAttributes().entrySet()
                     .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
-            LoginEventImpl loginEvent = new LoginEventImpl(rpId, System.currentTimeMillis() / 1000, attributes);
+            LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(), System.currentTimeMillis() / 1000, attributes);
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
             userProfileCache.setSingleEvent(user, LoginEvents.ENTRY_NAME, events.serialize());

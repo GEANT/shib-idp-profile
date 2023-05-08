@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
-import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedOrganizations;
+import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServices;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
 import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
@@ -217,12 +217,12 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
-        event = userProfileCache.getSingleEvent(user, ConnectedOrganizations.ENTRY_NAME);
+        event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME);
         try {
             userProfileContext.getConnectedOrganizations().clear();
-            ConnectedOrganizations organizations = event != null ? ConnectedOrganizations.parse(event.getValue())
-                    : new ConnectedOrganizations();
-            organizations.getConnectedOrganization().forEach((rpId, connectedOrganization) -> userProfileContext
+            ConnectedServices organizations = event != null ? ConnectedServices.parse(event.getValue())
+                    : new ConnectedServices();
+            organizations.getConnectedServices().forEach((rpId, connectedOrganization) -> userProfileContext
                     .getConnectedOrganizations().put(rpId, connectedOrganization));
         } catch (JsonProcessingException e) {
             log.error("{} Failed processing connected organizations.", getLogPrefix(), e);

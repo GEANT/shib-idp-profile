@@ -18,12 +18,21 @@ package org.geant.shibboleth.plugin.userprofile.event.api;
 
 import java.util.List;
 
-public interface ConnectedOrganization {
+/**
+ * Interface for connected service entry stored to user profile storage.
+ */
+public interface ConnectedService {
 
-    public String getRpId();
+    /** Relying party id of the connected service. */
+    public String getId();
 
+    /** Name of the connected service. */
+    public String getName();
+
+    /** Number of times authenticated to connected service. */
     public long getTimes();
 
+    /** Attributes sent in last authentication. */
     public List<? extends Attribute> getLastAttributes();
 
 }

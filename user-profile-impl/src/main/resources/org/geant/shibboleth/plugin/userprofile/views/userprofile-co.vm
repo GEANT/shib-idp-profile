@@ -18,7 +18,6 @@
 ##
 ## CONNECTED_ORGANIZATIONS is record of past logins per relying party
 #set ($connectedOrganizations = $userProfileContext.getConnectedOrganizations())
-#set ($relyingParties = $userProfileContext.getRelyingParties())
 #set ($relyingPartyAccessTokens = $userProfileContext.getAccessTokens())
 #set ($relyingPartyRefreshTokens = $userProfileContext.getRefreshTokens())
 <!DOCTYPE html>
@@ -81,7 +80,7 @@
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
             <tr>
-              <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</span></td>
+              <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getName())</span></td>
             </tr>
             <tr>
               <td></td>

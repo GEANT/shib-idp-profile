@@ -18,8 +18,12 @@ package org.geant.shibboleth.plugin.userprofile.event.api;
 
 import java.util.List;
 
+/**
+ * Interface for oauth2 access tokens stored to user profile storage.
+ */
 public interface AccessToken extends Token {
 
+    /** audience of access token. */
     public List<String> getAudience();
 
 }

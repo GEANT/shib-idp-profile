@@ -19,16 +19,23 @@ package org.geant.shibboleth.plugin.userprofile.event.api;
 
 import java.util.List;
 
+/**
+ * Interface for attributes stored to user profile storage.
+ */
 public interface Attribute {
 
+    /** Attribute id. */
     public String getId();
 
+    /** Attribute name. */
     public String getName();
 
+    /** Attribute description. */
     public String getDescription();
 
+    /** Attribute values. */
     public List<String> getValues();
 
+    /** Attribute name and values as string. */
     public String getDisplayValue();
-
 }

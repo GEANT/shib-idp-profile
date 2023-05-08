@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
-import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedOrganization;
+import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedService;
 import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 import org.geant.shibboleth.plugin.userprofile.event.api.Token;
 import org.opensaml.messaging.context.BaseContext;
@@ -77,7 +77,7 @@ public final class UserProfileContext extends BaseContext {
 
     /** Connected Organizations.. */
     @Nonnull
-    private final Map<String, ConnectedOrganization> connectedOrganizations = new HashMap<String, ConnectedOrganization>();
+    private final Map<String, ConnectedService> connectedOrganizations = new HashMap<String, ConnectedService>();
 
     /** Attributes presented as users personal data. */
     @Nonnull
@@ -242,7 +242,7 @@ public final class UserProfileContext extends BaseContext {
      * 
      * @return Connected Organizations per Relying Party.
      */
-    public Map<String, ConnectedOrganization> getConnectedOrganizations() {
+    public Map<String, ConnectedService> getConnectedOrganizations() {
         return connectedOrganizations;
     }
 

@@ -18,16 +18,24 @@ package org.geant.shibboleth.plugin.userprofile.event.api;
 
 import java.util.List;
 
+/**
+ * Interface for oauth2 tokens stored to user profile storage.
+ */
 public abstract interface Token {
 
+    /** Token identifier. */
     public String getTokenId();
 
+    /** Token root identifier. */
     public String getTokenRootId();
 
+    /** Client Id of the relying party token is generated for. */
     public String getClientId();
 
+    /** Token scope. */
     public List<String> getScope();
 
+    /** Token expiration time as seconds from epoch. */
     public long getExp();
 
 }
