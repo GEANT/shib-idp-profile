@@ -28,10 +28,8 @@ import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
 import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedService;
 import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 import org.geant.shibboleth.plugin.userprofile.event.api.Token;
-import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
-import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
+import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -43,29 +41,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  */
 public final class UserProfileContext extends BaseContext {
 
-    /** JSON based OIDC relying parties. */
-    @Nullable
-    private Iterable<OIDCClientInformation> oidcClientInformation;
-
-    /** XML based relying parties. */
-    @Nullable
-    private Iterable<EntityDescriptor> entityDescriptors;
-
     /** Attribute Context per Relying Party. */
     @Nonnull
     private final Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
-
-    /** Relying Party UI Context per Relying Party. */
-    @Nonnull
-    private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
-
-    /** OIDC transcodable attributes resolved for Relying Party. */
-    /**
-     * NOTE! TBD! Currently only OIDC transcodable attributes are shown as resolved
-     * attributes for both SAML2 and OIDC clients!
-     */
-    @Nonnull
-    private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
 
     /** access tokens generated per Relying Party.. */
     @Nonnull
@@ -86,6 +64,20 @@ public final class UserProfileContext extends BaseContext {
     /** Users login events. */
     @Nonnull
     private final List<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
+
+    /** Relying Party UI Context per Relying Party. */
+    /** Note! Only used by (the most) experimental All Services - page. */
+    @Nonnull
+    private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
+
+    /** OIDC transcodable attributes resolved for Relying Party. */
+    /**
+     * NOTE! TBD! Currently only OIDC transcodable attributes are shown as resolved
+     * attributes for both SAML2 and OIDC clients!
+     */
+    /** Note! Only used by (the most) experimental All Services - page. */
+    @Nonnull
+    private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
 
     /** Constructor. */
     public UserProfileContext() {
@@ -109,44 +101,6 @@ public final class UserProfileContext extends BaseContext {
     @Nonnull
     public List<IdPAttribute> getIdPUserAttributes() {
         return idPUserAttributes;
-    }
-
-    /**
-     * Get JSON based OIDC relying parties.
-     * 
-     * @return JSON based OIDC relying parties.
-     */
-    @Nullable
-    public Iterable<OIDCClientInformation> getOidcClientInformation() {
-        return oidcClientInformation;
-    }
-
-    /**
-     * Set JSON based OIDC relying parties.
-     * 
-     * @param oidcClientInformation JSON based OIDC relying parties
-     */
-    public void setOidcClientInformation(@Nullable Iterable<OIDCClientInformation> clientInformation) {
-        oidcClientInformation = clientInformation;
-    }
-
-    /**
-     * Get XML based relying parties.
-     * 
-     * @return XML based relying parties
-     */
-    @Nullable
-    public Iterable<EntityDescriptor> getEntityDescriptors() {
-        return entityDescriptors;
-    }
-
-    /**
-     * Set XML based relying parties.
-     * 
-     * @param descriptors XML based relying parties
-     */
-    public void setEntityDescriptors(@Nullable Iterable<EntityDescriptor> descriptors) {
-        entityDescriptors = descriptors;
     }
 
     /**

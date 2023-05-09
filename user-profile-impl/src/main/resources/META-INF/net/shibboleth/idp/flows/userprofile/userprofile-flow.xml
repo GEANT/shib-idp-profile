@@ -90,7 +90,6 @@
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="RenderIdPAttributes" />
         <evaluate expression="RenderUserProfileCacheItems" />
-        <evaluate expression="RenderUserProfileContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="UserProfileViewPersonalData" />
     </action-state>
@@ -158,6 +157,7 @@
     
     <view-state id="UserProfileViewAllOrganizations" view="userprofile-ao">
         <on-entry>
+            <evaluate expression="RenderUserProfileContext" />
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />

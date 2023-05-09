@@ -20,12 +20,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandlerTest;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
+import org.opensaml.saml.metadata.resolver.index.MetadataIndex;
+import org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.Event;
@@ -40,7 +43,6 @@ import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.oidc.metadata.impl.FilesystemClientInformationResolver;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
@@ -78,20 +80,17 @@ public class RenderUserProfileContextTest extends XMLObjectBaseTestCase {
                 .getResource("/org/geant/shibboleth/plugin/userprofile/profile/impl/metadata.xml");
         final File mdFile = new File(mdURL.toURI());
         metadataResolver = new FilesystemMetadataResolver(mdFile);
+        metadataResolver.setIndexes(Collections.<MetadataIndex>singleton(new RoleMetadataIndex()));
         metadataResolver.setParserPool(parserPool);
         metadataResolver.setId("md");
         metadataResolver.initialize();
         action = new RenderUserProfileContext();
+        action.setMetadataResolver(metadataResolver);
+        action.setClientInformationResolver(resolver);
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
-        // TODO: Fix SAML2 test.
-        // userProfileContext.setEntityDescriptors(metadataResolver.resolve(new
-        // CriteriaSet(new SatisfyAnyCriterion(),
-        // new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
-        userProfileContext.setOidcClientInformation(resolver.resolve(new CriteriaSet()));
-
-    }
+     }
 
     @Test
     public void testSuccess() throws ComponentInitializationException {

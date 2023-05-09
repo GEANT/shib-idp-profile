@@ -96,13 +96,12 @@
         p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeUserProfileContext"
-        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUserProfileContext" scope="prototype"
-        p:userProfileCache-ref="shibboleth.UserProfileCache" p:clientInformationResolver-ref="shibboleth.ClientInformationResolver"
-        p:metadataResolver-ref="shibboleth.MetadataResolver"/>
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUserProfileContext" scope="prototype" />
 
     <bean id="RenderUserProfileContext"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileContext"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" scope="prototype" >
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:clientInformationResolver-ref="shibboleth.ClientInformationResolver"
+        p:metadataResolver-ref="shibboleth.MetadataResolver" scope="prototype" >
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>

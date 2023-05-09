@@ -17,16 +17,10 @@
 package org.geant.shibboleth.plugin.userprofile.context;
 
 import org.testng.annotations.Test;
-import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.openid.connect.sdk.rp.OIDCClientInformation;
-import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import org.testng.annotations.BeforeMethod;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.testng.Assert;
 
@@ -50,16 +44,6 @@ public class UserProfileContextTest {
     @Test
     public void testIdPUserAttributes() {
         Assert.assertNotNull(ctx.getIdPUserAttributes());
-    }
-
-    @Test
-    public void testOidcClientInformation() {
-        Assert.assertNull(ctx.getOidcClientInformation());
-        List<OIDCClientInformation> rps = new ArrayList<OIDCClientInformation>();
-        rps.add(new OIDCClientInformation(new ClientID(), new Date(), new OIDCClientMetadata(), null));
-        rps.add(new OIDCClientInformation(new ClientID(), new Date(), new OIDCClientMetadata(), null));
-        ctx.setOidcClientInformation(rps);
-        Assert.assertEquals(2, ((List<?>) ctx.getOidcClientInformation()).size());
     }
 
     @Test
