@@ -21,11 +21,11 @@
 <html>
   <head>
       <!-- TODO review this string here -->
-      <title>#springMessageText("idp.userprofile.pageheading", "User Profile Page")</title>
+      <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
       <meta charset="UTF-8" />
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
-      <meta name="Description" content="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+      <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
       <script>
         function doPopup(popupId) {
         var popup = document.getElementById(popupId);
@@ -44,24 +44,24 @@
     </header>
     <div id="nav">
         <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <nav role="navigation" aria-label="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+        <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
             <ul>
                 <!-- TODO: get strings from spring messages -->
                 #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
                 #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
                 #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
                 #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
-                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.personaldata", "Personal Data")</span></a></li>
+                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span></a></li>
                 #if ($showConnectedServices)
-                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
+                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
                 #end
                 #if ($showActivityPage)
-                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.activitypage", "Activity Page")</span></a></li>
+                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span></a></li>
                 #end
                 #if ($showAllServices)
-                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.allorganizations", "All Organizations")</span></a></li>
+                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span></a></li>
                 #end
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
             </ul>
         </nav>
     </div>
@@ -70,7 +70,7 @@
     <section id="banner">
         <!-- TODO explanatory message -->
         <div>
-          #springMessageText("idp.userprofile.personaldata.heading", "Personal Data")
+          #springMessageText("userProfile.personaldata.heading", "Personal Data")
         </div>
     </section>
     <section id="main">
@@ -85,7 +85,7 @@
         <tr>
           <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
           <div class="popup" onclick="doPopup('popup-${attribute.getId()}')"><img class="information-icon" src="/idp/icons/i.svg"/>
-            <span class="popuptext" id="${attribute.getId()}">#springMessageText("idp.userprofile.attribute_help.surname","UNDEFINED Help Text")</span>
+            <span class="popuptext" id="${attribute.getId()}">#springMessageText("userProfile.attribute_help.surname","UNDEFINED Help Text")</span>
           </div> 
           </td>
           <td>

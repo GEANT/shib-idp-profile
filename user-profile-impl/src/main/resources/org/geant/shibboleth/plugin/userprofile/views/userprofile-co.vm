@@ -24,11 +24,11 @@
 <html>
   <head>
       <!-- TODO review this string here -->
-      <title>#springMessageText("idp.userprofile.pageheading", "User Profile Page")</title>
+      <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
       <meta charset="UTF-8" />
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
-      <meta name="Description" content="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+      <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
   </head>
   <body>
 
@@ -41,22 +41,22 @@
     </header>
     <div id="nav">
         <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <nav role="navigation" aria-label="#springMessageText("idp.userprofile.pageheading", "User Profile Page")">
+        <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
             <ul>
                 <!-- TODO: get strings from spring messages -->
                 #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
                 #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
                 #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
                 #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
-                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.personaldata", "Personal Data")</span></a></li>
-                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
+                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span></a></li>
+                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
                 #if ($showActivityPage)
-                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.activitypage", "Activity Page")</span></a></li>
+                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span></a></li>
                 #end
                 #if ($showAllServices)
-                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.allorganizations", "All Organizations")</span></a></li>
+                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span></a></li>
                 #end
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("idp.userprofile.menu.logout", "Log Out")</span></a></li>
+                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
             </ul>
         </nav>
     </div>
@@ -65,7 +65,7 @@
     <section id="banner">
         <!-- TODO explanatory message -->
         <div>
-          #springMessageText("idp.userprofile.connectedorganizations.heading", "Connected Organizations")
+          #springMessageText("userProfile.connectedorganizations.heading", "Connected Organizations")
         </div>
     </section>
     <section id="main">
@@ -75,7 +75,7 @@
           <table>
             <tr>
               <th colspan="3">
-                <span class="mainlabel">#springMessageText("idp.userprofile.connectedorganizations.columnservice", "Service")</span>
+                <span class="mainlabel">#springMessageText("userProfile.connectedorganizations.columnservice", "Service")</span>
               </th>
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
@@ -84,13 +84,13 @@
             </tr>
             <tr>
               <td></td>
-              <td><b>#springMessageText("idp.userprofile.connectedorganizations.columntimes", "Times")</b>:</td>
+              <td><b>#springMessageText("userProfile.connectedorganizations.columntimes", "Times")</b>:</td>
               <td><span class="label">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</span></td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td><b>#springMessageText("idp.userprofile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
+              <td><b>#springMessageText("userProfile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
               <td>
                 #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
                   <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
@@ -100,28 +100,28 @@
               #foreach($token in $relyingPartyAccessTokens.get($rpId))
               <tr>
                 <td></td>
-                <td><b>#springMessageText("idp.userprofile.connectedorganizations.accesstoken", "Access Token")</b></td>
+                <td><b>#springMessageText("userProfile.connectedorganizations.accesstoken", "Access Token")</b></td>
                 <td>
                   <span class="label">
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                    <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                   </span>
-                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
                 </td>
               </tr>
               #end
               #foreach($token in $relyingPartyRefreshTokens.get($rpId))
               <tr>
                 <td></td>
-                <td><b>#springMessageText("idp.userprofile.connectedorganizations.refreshtoken", "Refresh Token")</b></td>
+                <td><b>#springMessageText("userProfile.connectedorganizations.refreshtoken", "Refresh Token")</b></td>
                 <td>
                   <span class="label">
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-                    <b>#springMessageText("idp.userprofile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                    <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                   </span>
-                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("idp.userprofile.revoking", "Revoking token, please wait...")'">#springMessageText("idp.userprofile.connectedorganizations.columntoken", "Revoke now")</button>
+                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
                 </td>
               </tr>
               #end
