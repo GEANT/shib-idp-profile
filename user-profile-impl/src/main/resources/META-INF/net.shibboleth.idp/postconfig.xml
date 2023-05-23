@@ -17,7 +17,7 @@
            p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
        <!-- Storage for User Profile. -->
-       <bean id="shibboleth.UserProfileCache" class="org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache"
+       <bean id="userProfile.Cache" class="org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache"
            p:recordExpiration="%{userProfile.recordexExpiration:P180D}"
            p:storage-ref="#{'%{userProfile.StorageService:shibboleth.StorageService}'.trim()}" />
 
@@ -29,7 +29,7 @@
                class="org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration"/>
 
        <!-- Indices we use to store metadata by for User Profile. -->
-       <util:set id="shibboleth.UserProfileMetadataIndices">
+       <util:set id="userProfile.metadataIndices">
            <bean class="org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex"/>
        </util:set>
 
