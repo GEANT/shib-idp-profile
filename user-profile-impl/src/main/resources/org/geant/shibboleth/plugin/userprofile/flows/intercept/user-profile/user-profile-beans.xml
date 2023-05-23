@@ -46,7 +46,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
             p:userProfileCache-ref="userProfile.Cache"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:maxEntries="%{userProfile.activityPage.maxentries:50}"
+            p:maxEntries="%{userProfile.activityPage.maxEntries:50}"
             p:collectAttributeValues-ref="%{userProfile.attributeValues.collect:shibboleth.Conditions.FALSE}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
