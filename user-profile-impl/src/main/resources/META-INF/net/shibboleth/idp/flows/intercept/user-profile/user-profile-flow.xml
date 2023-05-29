@@ -13,7 +13,7 @@
            <evaluate expression="UpdateLoginEvents" />
            <evaluate expression="UpdateConnectedOrganizations" />     
            <evaluate expression="StoreToken" />        
-           <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('org.geant.shibboleth.plugin.userprofile.setEvents').apply(opensamlProfileRequestContext)" />
+           <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('userProfile.setEventsFunction') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('userProfile.setEventsFunction').apply(opensamlProfileRequestContext):'proceed'" />
            <evaluate expression="'proceed'" />
            <transition on="proceed" to="proceed" />
         </action-state>
