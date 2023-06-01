@@ -65,6 +65,7 @@ public class ExtractAndRevokeTokenFromRequestTest {
         storageService.initialize();
 
         revocationCache = new RevocationCache();
+        revocationCache.setId("test-2");
         revocationCache.setEntryExpiration(Duration.ofHours(1));
         revocationCache.setStorage(storageService);
         revocationCache.initialize();
