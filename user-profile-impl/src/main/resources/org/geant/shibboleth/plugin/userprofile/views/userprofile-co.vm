@@ -80,16 +80,16 @@
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
             <tr>
+              <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getName())</span></td>
+            </tr>
+            <tr>
               <td class="dropdown-container" colspan="3">
               <input id="dropdown-toggle-$rpId" class="dropdown-toggle" type="checkbox">
               <label class="dropdown-label" for="dropdown-toggle-$rpId">
-                <img src="/idp/icons/fppp-logo.svg">
+                <img src="/idp/icons/dropdown.svg">
               </label>
               <div class="dropdown-box">
                 <table>
-                <tr>
-                  <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getName())</span></td>
-                </tr>
                 <tr>
                   <td></td>
                   <td><b>#springMessageText("userProfile.connectedorganizations.columntimes", "Times")</b>:</td>
