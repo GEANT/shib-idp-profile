@@ -88,9 +88,9 @@
             <span class="popuptext" id="popup-${attribute.getId()}">#springMessageText("userProfile.attribute_help.surname","UNDEFINED Help Text")</span>
           </div> 
           </td>
-          <td>
+          <td class="personaldata">
           #foreach ($value in $attribute.values)
-            <p>$encoder.encodeForHTMLAttribute($value.getDisplayValue())</p>
+            <span class="label">$encoder.encodeForHTMLAttribute($value.getDisplayValue())</span>
           #end
           </td>
         </tr>
