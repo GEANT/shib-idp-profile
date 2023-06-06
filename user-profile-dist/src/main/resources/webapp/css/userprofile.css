@@ -314,6 +314,17 @@ td {
   vertical-align: middle;
 }
 
+td.personaldata {
+  text-align:left;
+  padding-left:0.5em;
+  padding-right:0.5em;
+  padding-top:0.1em;
+  padding-bottom:0.1em;
+  word-wrap: break-word;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--heading-text-c);
+}
+
 td.mainline {
   border-bottom: solid 2px var(--table-border);
 }
