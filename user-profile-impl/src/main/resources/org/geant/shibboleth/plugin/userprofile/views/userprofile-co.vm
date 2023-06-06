@@ -80,52 +80,63 @@
             </tr>
             #foreach($rpId in $connectedOrganizations.keySet())
             <tr>
-              <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getName())</span></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><b>#springMessageText("userProfile.connectedorganizations.columntimes", "Times")</b>:</td>
-              <td><span class="label">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</span></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><b>#springMessageText("userProfile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
-              <td>
-                #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
-                  <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
-                #end
-              </td>
-              <td></td>
-              #foreach($token in $relyingPartyAccessTokens.get($rpId))
-              <tr>
-                <td></td>
-                <td><b>#springMessageText("userProfile.connectedorganizations.accesstoken", "Access Token")</b></td>
-                <td>
-                  <span class="label">
-                    <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
-                  </span>
-                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
-                </td>
-              </tr>
-              #end
-              #foreach($token in $relyingPartyRefreshTokens.get($rpId))
-              <tr>
-                <td></td>
-                <td><b>#springMessageText("userProfile.connectedorganizations.refreshtoken", "Refresh Token")</b></td>
-                <td>
-                  <span class="label">
-                    <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
-                    <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
-                  </span>
-                  <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
-                </td>
-              </tr>
-              #end
-            </tr>
+              <td class="dropdown-container" colspan="3">
+              <input id="dropdown-toggle-$rpId" class="dropdown-toggle" type="checkbox">
+              <label class="dropdown-label" for="dropdown-toggle-$rpId">
+                <img src="/idp/icons/fppp-logo.svg">
+              </label>
+              <div class="dropdown-box">
+                <table>
+                <tr>
+                  <td colspan="3" class="mainline"><span class="mainlabel">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getName())</span></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><b>#springMessageText("userProfile.connectedorganizations.columntimes", "Times")</b>:</td>
+                  <td><span class="label">$encoder.encodeForHTMLAttribute($connectedOrganizations.get($rpId).getTimes())</span></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><b>#springMessageText("userProfile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
+                  <td>
+                    #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
+                      <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
+                    #end
+                  </td>
+                  <td></td>
+                  #foreach($token in $relyingPartyAccessTokens.get($rpId))
+                  <tr>
+                    <td></td>
+                    <td><b>#springMessageText("userProfile.connectedorganizations.accesstoken", "Access Token")</b></td>
+                    <td>
+                      <span class="label">
+                        <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                      </span>
+                      <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
+                    </td>
+                  </tr>
+                  #end
+                  #foreach($token in $relyingPartyRefreshTokens.get($rpId))
+                  <tr>
+                    <td></td>
+                    <td><b>#springMessageText("userProfile.connectedorganizations.refreshtoken", "Refresh Token")</b></td>
+                    <td>
+                      <span class="label">
+                        <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
+                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
+                      </span>
+                      <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
+                    </td>
+                  </tr>
+                  #end
+                </tr>
+                </table>
+            </div>
+            </td>
             #end
           </table>
         </form>  
