@@ -297,6 +297,11 @@ table {
   min-width: 75%;
 }
 
+table.connected-orgs {
+  min-width: 100%;
+  min-height: 75%;
+}
+
 th {
   text-align:left;
   padding:0.5em;
