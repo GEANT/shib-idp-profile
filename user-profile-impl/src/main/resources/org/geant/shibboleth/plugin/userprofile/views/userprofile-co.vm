@@ -129,6 +129,8 @@
                         <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
                         <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                       </span>
+                    </td>
+                    <td>
                       <button class="delete" type="submit" name="_eventId_revokeToken" value="$token.getTokenId()" onClick="this.childNodes[0].nodeValue='#springMessageText("userProfile.revoking", "Revoking token, please wait...")'">#springMessageText("userProfile.connectedorganizations.columntoken", "Revoke now")</button>
                     </td>
                   </tr>
