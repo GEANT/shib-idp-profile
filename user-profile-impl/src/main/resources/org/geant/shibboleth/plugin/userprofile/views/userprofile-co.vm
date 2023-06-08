@@ -99,12 +99,11 @@
                 <tr>
                   <td></td>
                   <td><b>#springMessageText("userProfile.connectedorganizations.columnattrbutes", "Last Attributes")</b></td>
-                  <td>
+                  <td colspan="2">
                     #foreach($attribute in $connectedOrganizations.get($rpId).getLastAttributes())
                       <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
                     #end
                   </td>
-                  <td></td>
                   #foreach($token in $relyingPartyAccessTokens.get($rpId))
                   <tr>
                     <td></td>
@@ -112,7 +111,7 @@
                     <td>
                       <span class="label">
                         <b>#springMessageText("userProfile.connectedorganizations.tokenexpiration", "Token Expiration")</b>: $encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($token.getExp())) 
-                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope())
+                        <b>#springMessageText("userProfile.connectedorganizations.columntoken", "Scope")</b>: $encoder.encodeForHTMLAttribute($token.getScope()) <br/>
                         <b>#springMessageText("userProfile.connectedorganizations.columntoken", "ID")</b>: $encoder.encodeForHTMLAttribute($token.getTokenId())
                       </span>
                     </td>
