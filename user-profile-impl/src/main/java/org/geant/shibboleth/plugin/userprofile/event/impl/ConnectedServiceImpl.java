@@ -50,8 +50,8 @@ public class ConnectedServiceImpl implements ConnectedService {
     /**
      * Constructor.
      * 
-     * @param id   Relying party id of the connected service.
-     * @param name Name of the connected service.
+     * @param id   relying party id of the connected service
+     * @param name name of the connected service
      */
     public ConnectedServiceImpl(String id, String name) {
         this.id = id;
@@ -63,10 +63,10 @@ public class ConnectedServiceImpl implements ConnectedService {
     /**
      * Constructor for json representation.
      * 
-     * @param id             Relying party id of the connected service.
-     * @param name           Name of the connected service.
-     * @param lastAttributes Attributes sent in last authentication.
-     * @param times          Number of times authenticated to connected service.
+     * @param id             relying party id of the connected service
+     * @param name           name of the connected service
+     * @param lastAttributes attributes sent in last authentication
+     * @param times          number of times authenticated to connected service
      */
     @JsonCreator
     private ConnectedServiceImpl(@JsonProperty("id") String id, @JsonProperty("name") String name,
@@ -119,10 +119,10 @@ public class ConnectedServiceImpl implements ConnectedService {
     /**
      * Parse instance from json representation.
      * 
-     * @param connectedService Json representation
+     * @param connectedService json representation
      * @return ConnectedServiceImpl parsed from json representation
-     * @throws JsonMappingException    Json contained illegal fields
-     * @throws JsonProcessingException Json is not json at all
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all
      */
     public static ConnectedServiceImpl parse(String connectedService)
             throws JsonMappingException, JsonProcessingException {

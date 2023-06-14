@@ -24,20 +24,43 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Class providing serialization and deserialization for access tokens
+ * {@link AccessTokenImpl}. Access tokens are stored to user profile storage by
+ * key {@link AccessTokens.ENTRY_NAME}
+ */
 public class AccessTokens {
 
+    /** Entry name in user profile storage. */
     public final static String ENTRY_NAME = "org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens";
 
+    /** Access tokens. */
     private List<AccessTokenImpl> accessTokens = new ArrayList<AccessTokenImpl>();
 
-    public List<AccessTokenImpl> getAccessTokens() {
-        return accessTokens;
-    }
-
+    /**
+     * Constructor.
+     */
     public AccessTokens() {
 
     }
 
+    /**
+     * Get access tokens.
+     * 
+     * @return access tokens
+     */
+    public List<AccessTokenImpl> getAccessTokens() {
+        return accessTokens;
+    }
+
+    /**
+     * Parse instance from json representation.
+     * 
+     * @param tokens json representation.
+     * @return AccessTokens parsed from json representation.
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all.
+     */
     public static AccessTokens parse(String tokens) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         AccessTokenImpl[] accessTokens = objectMapper.readValue(tokens, AccessTokenImpl[].class);
@@ -46,10 +69,14 @@ public class AccessTokens {
         return accTokens;
     }
 
+    /**
+     * Serialize instance to json string.
+     * 
+     * @return json string representing the instance.
+     * @throws JsonProcessingException something went wrong.
+     */
     public String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(getAccessTokens());
-
     }
-
 }

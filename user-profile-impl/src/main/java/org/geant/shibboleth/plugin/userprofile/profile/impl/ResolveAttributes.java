@@ -44,7 +44,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
- * Action resolves attributes for relying party.
+ * Action resolves attributes and stores them
+ * {@link UserProfileContext#setAttributeContext(String, AttributeContext)} per
+ * relying party.
  */
 public class ResolveAttributes extends AbstractProfileAction {
 
@@ -100,7 +102,7 @@ public class ResolveAttributes extends AbstractProfileAction {
     /** For obtaining user principal name. */
     private SubjectContext subjectContext;
 
-    /** Context for User Profile . */
+    /** Context for user profile . */
     private UserProfileContext userProfileContext;
 
     /** Context for attribute resolution . */
@@ -138,8 +140,11 @@ public class ResolveAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy Strategy used to locate or create the
+     *                 {@link UserProfileContext} to populate.
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -163,8 +168,9 @@ public class ResolveAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set Lookup strategy for subject context.
      * 
-     * @param strategy
+     * @param strategy lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
@@ -253,12 +259,11 @@ public class ResolveAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        // Initialize AttributeResolutionContext
         attributeResolutionContext.setAttributeIssuerID(
                 issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null);
         // TODO: Set Group id to resolution context.
         attributeResolutionContext.setAttributeRecipientID(rpContext.getRelyingPartyId());
-        // We set the User we resolve attributes for.
+        // We set the user we resolve attributes for.
         attributeResolutionContext.setPrincipal(subjectContext.getPrincipalName());
         attributeResolutionContext.resolveAttributes(attributeResolverService);
         attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
@@ -271,7 +276,8 @@ public class ResolveAttributes extends AbstractProfileAction {
         parent.removeSubcontext(attributeResolutionContext);
         parent = attributeCtx.getParent();
         parent.removeSubcontext(attributeCtx);
-        // We store the result to UserProfileContext
+        // We store the result. Note that relying party identifier may be null. That is
+        // the case when resolving 'personal data'.
         userProfileContext.setAttributeContext(rpContext.getRelyingPartyId(), attributeCtx);
     }
 }

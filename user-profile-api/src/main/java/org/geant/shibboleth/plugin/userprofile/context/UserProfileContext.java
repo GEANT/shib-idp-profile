@@ -37,45 +37,42 @@ import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Context for User Profile.
+ * The context carrying user profile information.
  */
 public final class UserProfileContext extends BaseContext {
-
-    /** Attribute Context per Relying Party. */
-    @Nonnull
-    private final Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
-
-    /** access tokens generated per Relying Party.. */
-    @Nonnull
-    private final Map<String, List<AccessToken>> accessTokens = new HashMap<String, List<AccessToken>>();
-
-    /** refresh tokens generated per Relying Party.. */
-    @Nonnull
-    private final Map<String, List<Token>> refreshTokens = new HashMap<String, List<Token>>();
-
-    /** Connected Organizations.. */
-    @Nonnull
-    private final Map<String, ConnectedService> connectedOrganizations = new HashMap<String, ConnectedService>();
 
     /** Attributes presented as users personal data. */
     @Nonnull
     private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
 
-    /** Users login events. */
+    /** Connected organizations information. */
+    @Nonnull
+    private final Map<String, ConnectedService> connectedOrganizations = new HashMap<String, ConnectedService>();
+
+    /** Access tokens per relying party. */
+    @Nonnull
+    private final Map<String, List<AccessToken>> accessTokens = new HashMap<String, List<AccessToken>>();
+
+    /** Refresh tokens per relying party. */
+    @Nonnull
+    private final Map<String, List<Token>> refreshTokens = new HashMap<String, List<Token>>();
+
+    /** Activity page information i.e. login events. */
     @Nonnull
     private final List<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
 
-    /** Relying Party UI Context per Relying Party. */
-    /** Note! Only used by (the most) experimental All Services - page. */
+    /** Attribute context per relying party. */
+    /** Note! Only used by (the most) experimental all services - page. */
+    @Nonnull
+    private final Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
+
+    /** Relying party ui context per relying party. */
+    /** Note! Only used by (the most) experimental all services - page. */
     @Nonnull
     private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
 
-    /** OIDC transcodable attributes resolved for Relying Party. */
-    /**
-     * NOTE! TBD! Currently only OIDC transcodable attributes are shown as resolved
-     * attributes for both SAML2 and OIDC clients!
-     */
-    /** Note! Only used by (the most) experimental All Services - page. */
+    /** Attributes resolved per relying party. */
+    /** Note! Only used by (the most) experimental all services - page. */
     @Nonnull
     private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
 
@@ -84,19 +81,9 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Get Relying Party UI Context per Relying Party.
+     * Get connected organizations information.
      * 
-     * @return Relying Party UI Context per Relying Party
-     */
-    @Nonnull
-    public Map<String, RelyingPartyUIContext> getRelyingParties() {
-        return relyingParties;
-    }
-
-    /**
-     * Get Attributes presented as users personal data.
-     * 
-     * @return Attributes presented as users personal data
+     * @return connected organizations information
      */
     @Nonnull
     public List<IdPAttribute> getIdPUserAttributes() {
@@ -104,54 +91,19 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Set Attribute Context for Relying Party.
+     * Get Connected Organizations per Relying Party.
      * 
-     * @param rpId Relying Party Id
-     * @param ctx  Attribute Context
+     * @return connected Organizations per Relying Party.
      */
-    public void setAttributeContext(@Nullable String rpId, @Nonnull AttributeContext ctx) {
-        rpAttributeContext.put(rpId, Constraint.isNotNull(ctx, "Relying Party Attribute Context be null"));
+    public Map<String, ConnectedService> getConnectedOrganizations() {
+        return connectedOrganizations;
     }
 
     /**
-     * Get Attribute Context per Relying Party.
+     * Set access token for relying party.
      * 
-     * @return Attribute Context per Relying Party
-     */
-    @Nonnull
-    public Map<String, AttributeContext> getRPAttributeContext() {
-        return rpAttributeContext;
-    }
-
-    /**
-     * Set resolved attribute for Relying Party.
-     * 
-     * @param rpId      Relying Party Id
-     * @param attribute Attribute resolved
-     */
-    public void setEncodedJSONAttribute(@Nonnull String rpId, @Nonnull IdPAttribute attribute) {
-        if (rpEncodedJSONAttributes.get(rpId) == null) {
-            rpEncodedJSONAttributes.put(rpId, new ArrayList<IdPAttribute>());
-        }
-        rpEncodedJSONAttributes.get(Constraint.isNotNull(rpId, "Relying Party Id cannot be null"))
-                .add(Constraint.isNotNull(attribute, "Attribute cannot be null"));
-    }
-
-    /**
-     * Get OIDC transcodable attributes resolved for Relying Party.
-     * 
-     * @return OIDC transcodable attributes resolved for Relying Party
-     */
-    @Nonnull
-    public Map<String, List<IdPAttribute>> getRPEncodedJSONAttributes() {
-        return rpEncodedJSONAttributes;
-    }
-
-    /**
-     * Set access token generated for Relying Party.
-     * 
-     * @param rpId  Relying Party Id
-     * @param token as AccessToken
+     * @param rpId  relying party identifier
+     * @param token access token
      */
     public void addAccessToken(@Nonnull String rpId, @Nonnull AccessToken token) {
         if (!accessTokens.containsKey(rpId)) {
@@ -161,19 +113,19 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Get access tokens generated per Relying Party.
+     * Get access tokens per relying party.
      * 
-     * @return tokens generated per Relying Party.
+     * @return access tokens per relying party
      */
     public @Nonnull Map<String, List<AccessToken>> getAccessTokens() {
         return accessTokens;
     }
 
     /**
-     * Set refresh token generated for Relying Party.
+     * Set refresh token for relying party.
      * 
-     * @param rpId  Relying Party Id
-     * @param token as Token
+     * @param rpId  relying party identifier
+     * @param token refresh token
      */
     public void addRefreshToken(@Nonnull String rpId, @Nonnull Token token) {
         if (!refreshTokens.containsKey(rpId)) {
@@ -183,30 +135,75 @@ public final class UserProfileContext extends BaseContext {
     }
 
     /**
-     * Get refresh tokens generated per Relying Party.
+     * Get refresh tokens per relying party.
      * 
-     * @return tokens generated per Relying Party.
+     * @return refresh tokens per relying party
      */
     public @Nonnull Map<String, List<Token>> getRefreshTokens() {
         return refreshTokens;
     }
 
     /**
-     * Get Connected Organizations per Relying Party.
+     * Get activity page information i.e. login events.
      * 
-     * @return Connected Organizations per Relying Party.
-     */
-    public Map<String, ConnectedService> getConnectedOrganizations() {
-        return connectedOrganizations;
-    }
-
-    /**
-     * Get Users login events.
-     * 
-     * @return users login events
+     * @return activity page information i.e. login events
      */
     public List<LoginEvent> getLoginEvents() {
         return loginEvents;
+    }
+
+    /**
+     * Set attribute context for relying party.
+     * 
+     * @param rpId relying party identifier
+     * @param ctx  attribute context
+     */
+    public void setAttributeContext(@Nullable String rpId, @Nonnull AttributeContext ctx) {
+        rpAttributeContext.put(rpId, Constraint.isNotNull(ctx, "Relying party attribute context be null"));
+    }
+
+    /**
+     * Get attribute contexts per relying party.
+     * 
+     * @return attribute contexts per relying party.
+     */
+    @Nonnull
+    public Map<String, AttributeContext> getRPAttributeContext() {
+        return rpAttributeContext;
+    }
+
+    /**
+     * Get relying party ui context per relying party.
+     * 
+     * @return relying party ui context per relying party.
+     */
+    @Nonnull
+    public Map<String, RelyingPartyUIContext> getRelyingParties() {
+        return relyingParties;
+    }
+
+    /**
+     * Add attribute resolved for relying party.
+     * 
+     * @param rpId      relying party identifier
+     * @param attribute attribute resolved
+     */
+    public void setEncodedJSONAttribute(@Nonnull String rpId, @Nonnull IdPAttribute attribute) {
+        if (rpEncodedJSONAttributes.get(rpId) == null) {
+            rpEncodedJSONAttributes.put(rpId, new ArrayList<IdPAttribute>());
+        }
+        rpEncodedJSONAttributes.get(Constraint.isNotNull(rpId, "Relying party identfier cannot be null"))
+                .add(Constraint.isNotNull(attribute, "Attribute cannot be null"));
+    }
+
+    /**
+     * Get attributes resolved per relying party.
+     * 
+     * @return attributes resolved per relying party.
+     */
+    @Nonnull
+    public Map<String, List<IdPAttribute>> getRPEncodedJSONAttributes() {
+        return rpEncodedJSONAttributes;
     }
 
 }

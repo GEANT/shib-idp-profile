@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Authentication Context initialization for User Profile flow. There is not
- * much to do as there is no client.
+ * Authentication context initialization for user profile flow. Sets the flag of
+ * forced authentication.
  */
 public class InitializeAuthenticationContext extends AbstractProfileAction {
 
@@ -75,5 +75,4 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
         profileRequestContext.addSubcontext(authnCtx, true);
         log.debug("{} Created authentication context: {}", getLogPrefix(), authnCtx);
     }
-
 }

@@ -59,7 +59,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
- * Updates called connected organizations data.
+ * Updates connected organizations data in user profile cache.
  */
 public class UpdateConnectedOrganizations extends AbstractProfileAction {
 
@@ -67,7 +67,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(UpdateConnectedOrganizations.class);
 
-    /** Function used to obtain the requester ID. */
+    /** Function used to obtain the requester identifier. */
     @Nullable
     private Function<ProfileRequestContext, String> requesterLookupStrategy;
 
@@ -76,7 +76,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     private SubjectContext subjectContext;
 
     /**
-     * Lookup strategy for Subject Context.
+     * Lookup strategy for subject context.
      */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
@@ -93,7 +93,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     private AttributeContext attributeCtx;
 
     /**
-     * User Profile Cache.
+     * User profile cache.
      */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
@@ -109,22 +109,26 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @Nullable
     private List<String> fallbackLanguages;
 
+    /** Function to resolve attribute description. */
     @NonnullAfterInit
     private AttributeDisplayDescriptionFunction attributeDisplayDescriptionFunction;
 
+    /** Function to resolve attribute name. */
     @NonnullAfterInit
     private AttributeDisplayNameFunction attributeDisplayNameFunction;
 
+    /** Whether to collect attribute values. */
     @Nonnull
     private Predicate<ProfileRequestContext> collectAttributeValues;
-    
+
     /**
-     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a given
-     * {@link ProfileRequestContext}.
+     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a
+     * given {@link ProfileRequestContext}.
      */
     @Nonnull
     private Function<ProfileRequestContext, RelyingPartyUIContext> relyingPartyUIContextLookupStrategy;
-    
+
+    /** Relying party ui context. */
     private RelyingPartyUIContext rpUIContext;
 
     /** Constructor. */
@@ -140,9 +144,9 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     }
 
     /**
-     * Set Lookup strategy for Subject Context.
+     * Set lookup strategy for subject context.
      * 
-     * @param strategy Lookup strategy for Subject Context
+     * @param strategy lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
@@ -151,9 +155,9 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     }
 
     /**
-     * Set User Profile Cache.
+     * Set user profile cache.
      * 
-     * @param cache User Profile Cache
+     * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -161,7 +165,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     }
 
     /**
-     * Set the strategy used to locate the requester ID.
+     * Set the strategy used to locate the requester identifier.
      * 
      * @param strategy lookup strategy
      */
@@ -217,7 +221,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     public void setCollectAttributeValues(Predicate<ProfileRequestContext> collect) {
         collectAttributeValues = collect;
     }
-    
+
     /**
      * Set the strategy used to return {@link RelyingPartyContext} .
      * 
@@ -265,7 +269,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
             log.debug("{} No AttributeSubcontext available, nothing to do", getLogPrefix());
             return false;
         }
-        
+
         rpUIContext = relyingPartyUIContextLookupStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
             log.debug("{} Unable to locate RelyingPartyUIContext", getLogPrefix());
@@ -275,6 +279,13 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         return true;
     }
 
+    /**
+     * Transform IdPAttribute to AttributeImpl.
+     * 
+     * @param entry                 IdPAttribute to be transformed
+     * @param profileRequestContext current profile context
+     * @return AttributeImpl to be stored to user profile cache.
+     */
     private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         List<String> values;
@@ -296,8 +307,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
         Event event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME);
         ConnectedServices organizations;
         try {
-            organizations = event != null ? ConnectedServices.parse(event.getValue())
-                    : new ConnectedServices();
+            organizations = event != null ? ConnectedServices.parse(event.getValue()) : new ConnectedServices();
             log.debug("Connected organizations {}", organizations.serialize());
             String rpId = requesterLookupStrategy.apply(profileRequestContext);
             ConnectedServiceImpl organization = organizations.getConnectedServices().containsKey(rpId)
@@ -314,7 +324,5 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
             log.error("{} Failed parsing connected organizations", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
-
     }
-
 }

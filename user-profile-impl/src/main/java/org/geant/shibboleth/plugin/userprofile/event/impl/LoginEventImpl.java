@@ -48,10 +48,10 @@ public class LoginEventImpl implements LoginEvent {
     /**
      * Constructor
      * 
-     * @param id         Relying party id of the connected service.
-     * @param name       Name of the connected service.
-     * @param time       Authentication time as seconds from epoch.
-     * @param attributes Attributes sent.
+     * @param id         relying party id of the connected service
+     * @param name       name of the connected service
+     * @param time       authentication time as seconds from epoch
+     * @param attributes attributes sent
      */
     public LoginEventImpl(String id, String name, long time, List<AttributeImpl> attributes) {
         this.id = id;
@@ -63,10 +63,10 @@ public class LoginEventImpl implements LoginEvent {
     /**
      * Constructor for json representation.
      * 
-     * @param id         Relying party id of the connected service.
-     * @param name       Name of the connected service.
-     * @param attributes Attributes sent.
-     * @param time       Authentication time as seconds from epoch.
+     * @param id         relying party id of the connected service
+     * @param name       name of the connected service
+     * @param attributes attributes sent
+     * @param time       authentication time as seconds from epoch
      */
     @JsonCreator
     private LoginEventImpl(@JsonProperty("id") String id, @JsonProperty("name") String name,
@@ -100,10 +100,10 @@ public class LoginEventImpl implements LoginEvent {
     /**
      * Parse instance from json representation.
      * 
-     * @param loginEvent Json representation
-     * @return Parsed from json representation.
-     * @throws JsonMappingException    Json contained illegal fields
-     * @throws JsonProcessingException Json is not json at all
+     * @param loginEvent json representation
+     * @return LoginEventImpl parsed from json representation.
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all
      */
     public static LoginEventImpl parse(String loginEvent) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

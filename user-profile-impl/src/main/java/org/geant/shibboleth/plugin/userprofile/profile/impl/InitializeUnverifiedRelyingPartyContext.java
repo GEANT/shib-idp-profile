@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Relying Party Context initialization for User Profile flow. There is not much
+ * Relying party context initialization for user profile flow. There is not much
  * to do as there is no client.
  */
 public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileAction {
@@ -76,5 +76,4 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
         }
         log.debug("{} new RelyingPartyContext successfully created and attached", getLogPrefix());
     }
-
 }

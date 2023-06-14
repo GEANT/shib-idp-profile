@@ -58,7 +58,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 /**
- * Stores login information.
+ * Updates login events data in user profile cache.
  */
 public class UpdateLoginEvents extends AbstractProfileAction {
 
@@ -74,13 +74,13 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     private SubjectContext subjectContext;
 
     /**
-     * Lookup strategy for Subject Context.
+     * Lookup strategy for subject context.
      */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
 
     /**
-     * User Profile Cache.
+     * User profile cache.
      */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
@@ -92,7 +92,7 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     @Nonnull
     private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
 
-    /** AttributeContext to use. */
+    /** Attribute context. */
     @Nullable
     private AttributeContext attributeCtx;
 
@@ -100,13 +100,12 @@ public class UpdateLoginEvents extends AbstractProfileAction {
      * Strategy used to locate or create the {@link RelyingPartyContext} to
      * populate.
      */
-    //TODO REMOVE
     @Nonnull
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextCreationStrategy;
-    
+
     /**
-     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a given
-     * {@link ProfileRequestContext}.
+     * Strategy used to locate the {@link RelyingPartyUIContext} associated with a
+     * given {@link ProfileRequestContext}.
      */
     @Nonnull
     private Function<ProfileRequestContext, RelyingPartyUIContext> relyingPartyUIContextLookupStrategy;
@@ -122,17 +121,21 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     @Nullable
     private List<String> fallbackLanguages;
 
+    /** Function to resolve attribute description. */
     @NonnullAfterInit
     private AttributeDisplayDescriptionFunction attributeDisplayDescriptionFunction;
 
+    /** Function to resolve attribute name. */
     @NonnullAfterInit
     private AttributeDisplayNameFunction attributeDisplayNameFunction;
 
     /** Relying party id. */
     private String rpId;
-    
+
+    /** Relying party ui context. */
     private RelyingPartyUIContext rpUIContext;
 
+    /** Whether to collect attribute values. */
     @Nonnull
     private Predicate<ProfileRequestContext> collectAttributeValues;
 
@@ -142,7 +145,7 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
-        //TODO remove
+        // TODO remove
         relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
                 .compose(new ChildContextLookup<>(AuthenticationContext.class));
@@ -159,9 +162,9 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     }
 
     /**
-     * Set Lookup strategy for Subject Context.
+     * Set Lookup strategy for subject context.
      * 
-     * @param strategy Lookup strategy for Subject Context
+     * @param strategy lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
@@ -170,9 +173,9 @@ public class UpdateLoginEvents extends AbstractProfileAction {
     }
 
     /**
-     * Set User Profile Cache.
+     * Set user profile cache.
      * 
-     * @param cache User Profile Cache
+     * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -199,14 +202,13 @@ public class UpdateLoginEvents extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    //TODO: remove
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the strategy used to return {@link RelyingPartyContext} .
      * 
@@ -218,8 +220,6 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         relyingPartyUIContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyUIContext lookup strategy cannot be null");
     }
-    
-    
 
     /**
      * Sets the registry of transcoding rules to apply to supply attribute display
@@ -300,7 +300,7 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             log.debug("{} Relying party id missing", getLogPrefix());
             return false;
         }
-        
+
         rpUIContext = relyingPartyUIContextLookupStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
             log.debug("{} Unable to locate RelyingPartyUIContext", getLogPrefix());
@@ -310,6 +310,13 @@ public class UpdateLoginEvents extends AbstractProfileAction {
         return true;
     }
 
+    /**
+     * Transform IdPAttribute to AttributeImpl.
+     * 
+     * @param entry                 IdPAttribute to be transformed
+     * @param profileRequestContext current profile context
+     * @return AttributeImpl to be stored to user profile cache.
+     */
     private AttributeImpl toAttributeImpl(Entry<String, IdPAttribute> entry,
             @Nonnull final ProfileRequestContext profileRequestContext) {
         List<String> values;
@@ -333,7 +340,8 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             List<AttributeImpl> attributes = new ArrayList<AttributeImpl>();
             attributeCtx.getIdPAttributes().entrySet()
                     .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
-            LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(), System.currentTimeMillis() / 1000, attributes);
+            LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(),
+                    System.currentTimeMillis() / 1000, attributes);
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
             userProfileCache.setSingleEvent(user, LoginEvents.ENTRY_NAME, events.serialize());
@@ -342,7 +350,5 @@ public class UpdateLoginEvents extends AbstractProfileAction {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
-
     }
-
 }

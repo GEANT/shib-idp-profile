@@ -19,22 +19,46 @@ package org.geant.shibboleth.plugin.userprofile.storage;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Events stored to user profile storage.
+ */
 public class Events {
 
+    /** Map of events, instances by name. */
+    @Nonnull
     private Map<String, Event> events = new HashMap<String, Event>();
 
+    /**
+     * Constructor.
+     */
+    Events() {
+    }
+
+    /**
+     * Get map of events, instances by name.
+     *
+     * @return map of events, instances by name
+     */
+    @Nonnull
     public Map<String, Event> getEvents() {
         return events;
     }
 
-    Events() {
-    }
-
+    /**
+     * Parse instance from json string representation.
+     * 
+     * @param tokens json string representation
+     * @return event instance parsed from json string representation
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json string is most likely malformatted
+     */
     public static Events parse(String tokens) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         TypeReference<HashMap<String, Event>> typeRef = new TypeReference<HashMap<String, Event>>() {
@@ -45,6 +69,12 @@ public class Events {
         return eventsObject;
     }
 
+    /**
+     * Serialize the instance to json string.
+     * 
+     * @return json string representation
+     * @throws JsonProcessingException mapping instance values to json failed
+     */
     public String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(getEvents());

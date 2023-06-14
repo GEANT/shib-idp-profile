@@ -46,10 +46,11 @@ public class LoginEvents {
     public LoginEvents() {
 
     }
-    
+
     /**
      * Set max number of items serialized.
-     * @param maxEntries Max number of items serialized.
+     * 
+     * @param maxEntries max number of items serialized.
      */
     public void setMaxEntries(long maxEntries) {
         this.maxEntries = maxEntries;
@@ -57,6 +58,7 @@ public class LoginEvents {
 
     /**
      * Get list of login events.
+     * 
      * @return list of login events.
      */
     public List<LoginEventImpl> getLoginEvents() {
@@ -66,10 +68,10 @@ public class LoginEvents {
     /**
      * Parse instance from json representation.
      * 
-     * @param loginEvents Json representation.
+     * @param loginEvents json representation.
      * @return LoginEvents parsed from json representation.
-     * @throws JsonMappingException    Json contained illegal fields
-     * @throws JsonProcessingException Json is not json at all
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all
      */
     public static LoginEvents parse(String loginEvents) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -93,5 +95,4 @@ public class LoginEvents {
         return objectMapper.writeValueAsString(getLoginEvents());
 
     }
-
 }

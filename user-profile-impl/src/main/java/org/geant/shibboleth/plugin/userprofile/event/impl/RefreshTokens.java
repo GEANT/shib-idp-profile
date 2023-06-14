@@ -24,20 +24,43 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Class providing serialization and deserialization for refresh tokens
+ * {@link RefreshTokenImpl}. Access tokens are stored to user profile storage by
+ * key {@link RefreshTokens.ENTRY_NAME}
+ */
 public class RefreshTokens {
 
+    /** Entry name in user profile storage. */
     public final static String ENTRY_NAME = "org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens";
 
+    /** Refresh tokens. */
     private List<RefreshTokenImpl> refreshTokens = new ArrayList<RefreshTokenImpl>();
 
-    public List<RefreshTokenImpl> getRefreshTokens() {
-        return refreshTokens;
-    }
-
+    /**
+     * Constructor.
+     */
     public RefreshTokens() {
 
     }
 
+    /**
+     * Get refresh tokens.
+     * 
+     * @return refresh tokens
+     */
+    public List<RefreshTokenImpl> getRefreshTokens() {
+        return refreshTokens;
+    }
+
+    /**
+     * Parse instance from json representation.
+     * 
+     * @param tokens json representation.
+     * @return RefreshTokens parsed from json representation.
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all.
+     */
     public static RefreshTokens parse(String tokens) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         RefreshTokenImpl[] refreshTokens = objectMapper.readValue(tokens, RefreshTokenImpl[].class);
@@ -46,10 +69,15 @@ public class RefreshTokens {
         return refTokens;
     }
 
+    /**
+     * Serialize instance to json string.
+     * 
+     * @return json string representing the instance.
+     * @throws JsonProcessingException something went wrong.
+     */
     public String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(getRefreshTokens());
 
     }
-
 }

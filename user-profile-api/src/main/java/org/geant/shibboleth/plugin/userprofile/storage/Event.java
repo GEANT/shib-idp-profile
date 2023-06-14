@@ -22,52 +22,78 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Event stored to user profile storage.
+ */
 public class Event {
 
     /** Event value. */
     private final String value;
-    /** Event time. */
+
+    /** Event time as seconds from epoch. */
     private final long time;
 
     /**
-     * Get event value.
+     * Constructor.
      * 
-     * @return Event value
+     * @param value event value
+     * @param time  event time as seconds from epoch
      */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * Get event time.
-     * 
-     * @return Event time
-     */
-    public long getTime() {
-        return time;
-    }
-
-    /** Constructor. */
-    Event(String value) {
-        this.value = value;
-        time = System.currentTimeMillis() / 1000;
-    }
-
-    /** Constructor. */
     @JsonCreator
     private Event(@JsonProperty("value") String value, @JsonProperty("time") long time) {
         this.value = value;
         this.time = time;
     }
 
+    /**
+     * Get event value.
+     * 
+     * @return event value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Get event time as seconds from epoch.
+     * 
+     * @return event time
+     */
+    public long getTime() {
+        return time;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param value event value
+     */
+    Event(String value) {
+        this.value = value;
+        time = System.currentTimeMillis() / 1000;
+    }
+
+    /**
+     * Parse instance from json string representation.
+     * 
+     * @param token json string representation
+     * @return event instance parsed from json string representation
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json string is most likely malformatted
+     */
     static Event parse(String token) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(token, Event.class);
     }
 
+    /**
+     * Serialize the instance to json string.
+     * 
+     * @return json string representation
+     * @throws jsonProcessingException Mapping instance values to json failed.
+     */
     String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);
     }
-
 }

@@ -28,15 +28,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 
+/**
+ * Class for serializing OP module's OAuth2 access token information.
+ */
 public class AccessTokenImpl extends AbstractTokenImpl implements AccessToken {
 
+    /** Audience of the token. */
     private final List<String> audience;
 
+    /**
+     * Constructor.
+     * 
+     * @param token access token
+     */
     public AccessTokenImpl(AccessTokenClaimsSet token) {
         super(token);
         audience = token.getAudience();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param tokenId     token identifier
+     * @param tokenRootId token root identifier
+     * @param clientId    client identifier the token is minted for
+     * @param audience    audience of the token
+     * @param scope       scopes of token
+     * @param exp         token expiration as seconds from epoch
+     */
     @JsonCreator
     private AccessTokenImpl(@JsonProperty("tokenId") String tokenId, @JsonProperty("tokenRootId") String tokenRootId,
             @JsonProperty("clientId") String clientId, @JsonProperty("audience") List<String> audience,
@@ -46,10 +65,23 @@ public class AccessTokenImpl extends AbstractTokenImpl implements AccessToken {
 
     }
 
+    /**
+     * Get audience of the token.
+     * 
+     * @return audience of the token
+     */
     public List<String> getAudience() {
         return audience;
     }
 
+    /**
+     * Parse instance from json representation.
+     * 
+     * @param token json string representing the instance
+     * @return AccessTokenImpl parsed from json representation
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all
+     */
     public static AccessTokenImpl parse(String token) throws JsonMappingException, JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(token, AccessTokenImpl.class);

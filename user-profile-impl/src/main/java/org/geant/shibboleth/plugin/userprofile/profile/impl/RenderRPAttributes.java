@@ -48,9 +48,12 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Action transcodes attributes per relying party. The purpose is to verify
- * which of the resolved and filtered attributes have transcoding result and
- * thus reach the user.
+ * which of the resolved and filtered attributes have transcoding and thus would
+ * actually reach the user. The list of such attributes is stored to
+ * {@link UserProfileContext#getRPEncodedJSONAttributes()}
  * 
+ * TODO: The actions now assumes all relying parties to be of type oidc.
+ * Existence of transcoding should be checked per relying party type.
  */
 public class RenderRPAttributes extends AbstractProfileAction {
 
@@ -75,7 +78,7 @@ public class RenderRPAttributes extends AbstractProfileAction {
     @NonnullAfterInit
     private ReloadableService<AttributeTranscoderRegistry> transcoderRegistry;
 
-    /** Relying Party Id we resolve attributes for. */
+    /** Relying party identifier we resolved attributes for. */
     private String rpId;
 
     /** Context for User Profile . */

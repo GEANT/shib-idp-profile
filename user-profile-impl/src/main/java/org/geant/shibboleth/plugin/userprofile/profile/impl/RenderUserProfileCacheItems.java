@@ -47,9 +47,8 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Renders information to user profile context.
- * 
- * TODO TESTS
+ * Actions reads token, connected organization and login events from user
+ * profile cache. The data is stored to {@link UserProfileContext}
  */
 public class RenderUserProfileCacheItems extends AbstractProfileAction {
 
@@ -62,7 +61,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     private SubjectContext subjectContext;
 
     /**
-     * Lookup strategy for Subject Context.
+     * Lookup strategy for subject context.
      */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
@@ -72,12 +71,12 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     private RevocationCache revocationCache;
 
     /**
-     * User Profile Cache.
+     * User profile cache.
      */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
 
-    /** Context for User Profile . */
+    /** Context for user profile . */
     private UserProfileContext userProfileContext;
 
     /**
@@ -94,9 +93,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     }
 
     /**
-     * Set Lookup strategy for Subject Context.
+     * Set Lookup strategy for subject context.
      * 
-     * @param strategy Lookup strategy for Subject Context
+     * @param strategy Lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
@@ -115,9 +114,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     }
 
     /**
-     * Set User Profile Cache.
+     * Set user profile cache.
      * 
-     * @param cache User Profile Cache
+     * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -125,8 +124,11 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy Strategy used to locate or create the
+     *                 {@link UserProfileContext} to populate.
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -184,7 +186,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             tokens.getAccessTokens().removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
-            // TODO: Now remove all revoked tokens from tokens displayed.
+            // Remove all revoked tokens from tokens displayed.
             tokens.getAccessTokens().removeIf(accessToken -> revocationCache
                     .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, accessToken.getTokenId()));
             tokens.getAccessTokens().removeIf(accessToken -> revocationCache
@@ -205,7 +207,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
                     .removeIf(refreshToken -> refreshToken.getExp() < System.currentTimeMillis() / 1000);
             userProfileCache.setSingleEvent(user, RefreshTokens.ENTRY_NAME, tokens.serialize());
             log.debug("{} Updated refresh tokens {} ", getLogPrefix(), tokens.serialize());
-            // TODO: Now remove all revoked tokens from tokens displayed.
+            // Remove all revoked tokens from tokens displayed.
             tokens.getRefreshTokens().removeIf(refreshToken -> revocationCache
                     .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, refreshToken.getTokenId()));
             tokens.getRefreshTokens().removeIf(refreshToken -> revocationCache
@@ -237,7 +239,5 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             log.error("{} Failed processing connected organizations.", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
         }
-
     }
-
 }

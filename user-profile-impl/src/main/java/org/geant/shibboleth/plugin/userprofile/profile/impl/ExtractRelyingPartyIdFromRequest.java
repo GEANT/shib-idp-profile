@@ -38,7 +38,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * An action that extracts a relying party id from HTTP form. The extracted
- * relying party id is first verified and then set to Relying Party Context.
+ * relying party id is first verified to exist and then set to relying party
+ * context.
  */
 
 public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
@@ -60,7 +61,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
     @Nonnull
     private Function<ProfileRequestContext, UserProfileContext> userProfileContextLookupStrategy;
 
-    /** Parameter name for rpId. */
+    /** Parameter name for relying party identifier. */
     @Nonnull
     @NotEmpty
     private String rpIdFieldName;
@@ -68,10 +69,10 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
     /** For extracting user input. */
     private HttpServletRequest request;
 
-    /** Relying Party Id we resolve attributes for. */
+    /** Relying party identifier we resolve attributes for. */
     private String rpId;
 
-    /** Context for User Profile . */
+    /** context for user profile . */
     private UserProfileContext userProfileContext;
 
     /** Constructor. */
@@ -82,8 +83,9 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
     }
 
     /**
+     * Set parameter name for relying party identifier.
      * 
-     * @param fieldName
+     * @param fieldName parameter name for relying party identifier
      */
     public void setRpIdFieldName(@Nonnull @NotEmpty final String fieldName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -104,8 +106,11 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy strategy used to locate the {@link UserProfileContext} to
+     *                 populate
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {

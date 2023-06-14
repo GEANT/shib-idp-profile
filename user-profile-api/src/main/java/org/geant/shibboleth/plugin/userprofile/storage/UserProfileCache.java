@@ -41,7 +41,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Stores and returns user profile related authentication records.
+ * Stores and returns user profile events.
  * 
  * <p>
  * This class is thread-safe and uses a synchronized method to prevent race
@@ -125,11 +125,13 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     }
 
     /**
+     * Sets event for user by event name. Overwrites any pre-existing event of same
+     * name.
      * 
-     * @param user
-     * @param eventName
-     * @param eventValue
-     * @return
+     * @param user       the user event is stored for
+     * @param eventName  name of the event
+     * @param eventValue value of the event
+     * @return true if event was successfully set
      * @throws IOException
      */
     public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
@@ -141,25 +143,27 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     }
 
     /**
+     * Get event of user by event name.
      * 
-     * @param user
-     * @param eventType
-     * @return
+     * @param user      the user event is stored for
+     * @param eventName name of the event
+     * @return event if such exists
      */
 
     @Nullable
     @NotEmpty
     public synchronized Event getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
-            @Nonnull @NotEmpty String eventType) {
+            @Nonnull @NotEmpty String eventName) {
         Events events = getEvents(getKey(user));
-        return events.getEvents().get(eventType);
+        return events.getEvents().get(eventName);
     }
 
     /**
+     * Sets events.
      * 
-     * @param key
-     * @param events
-     * @return
+     * @param key    the key events are stored by.
+     * @param events the events to be stored.
+     * @return true if operation was success.
      */
 
     private boolean setEvents(@Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final Events events) {
@@ -175,11 +179,11 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     }
 
     /**
+     * Get events.
      * 
-     * @param key
-     * @return
+     * @param key the key events are stored by.
+     * @return events if such exist.
      */
-
     @Nonnull
     private Events getEvents(@Nonnull @NotEmpty final String key) {
         // TODO: Add optional symmetric encryption for record.
@@ -198,9 +202,10 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     }
 
     /**
+     * Get storage key by user.
      * 
-     * @param user
-     * @return
+     * @param user user
+     * @return key
      */
 
     @Nonnull
@@ -213,7 +218,5 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
         } else {
             return user.getName();
         }
-
     }
-
 }

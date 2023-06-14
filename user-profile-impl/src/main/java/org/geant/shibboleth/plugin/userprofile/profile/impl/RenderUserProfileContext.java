@@ -75,8 +75,11 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
- * Actions merges SAML2 and OIDC based relying parties to single list. For each
- * party Relying Party UI Context is created.
+ * Actions merges saml2 and oidc relying parties to single list. For each party
+ * relying party ui context is created.
+ * 
+ * TODO: action supports now only ClientInformationResolver as oidc relying
+ * party source.
  */
 public class RenderUserProfileContext extends AbstractProfileAction {
 
@@ -84,6 +87,9 @@ public class RenderUserProfileContext extends AbstractProfileAction {
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(RenderUserProfileContext.class);
 
+    /**
+     * Strategy used to locate or create the {@link UserProfileContext} to populate.
+     */
     @NonnullAfterInit
     private Function<ProfileRequestContext, UserProfileContext> userProfileContextLookupStrategy;
 
@@ -98,7 +104,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
     private List<String> fallbackLanguages;
 
     /**
-     * OIDC Json based client information resolver.
+     * OIDC json based client information resolver.
      */
     @NonnullAfterInit
     private ClientInformationResolver clientResolver;
@@ -111,9 +117,9 @@ public class RenderUserProfileContext extends AbstractProfileAction {
     private MetadataResolver metadataResolver;
 
     /**
-     * Set OIDC Json based client information resolver.
+     * Set oidc json based client information resolver.
      * 
-     * @param resolver OIDC Json based client information resolver
+     * @param resolver oidc json based client information resolver
      */
     public void setClientInformationResolver(@Nonnull final ClientInformationResolver resolver) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -161,7 +167,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
     /**
      * Set the default language when it has not been defined in the metadata.
      * 
-     * @param language What to set.
+     * @param language to set.
      */
     public void setDefaultLanguage(@Nonnull final String language) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

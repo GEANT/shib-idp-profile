@@ -46,13 +46,14 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * Profile Configuration for the User Profile.
- * 
- * Still mostly copy of Shibboleth SSO Profile implementation.
- * 
+ * Profile configuration for the user profile. Copy of shibboleth sso profile.
  */
 public class UserProfileConfiguration extends AbstractProfileConfiguration
         implements ProfileConfiguration, AuthenticationProfileConfiguration {
+
+    @Nonnull
+    @NotEmpty
+    public static final String PROFILE_ID = "http://geant.org/ns/profiles/userprofile/sso/browser";
 
     /** Lookup function to supply default authentication methods. */
     @Nonnull
@@ -89,10 +90,6 @@ public class UserProfileConfiguration extends AbstractProfileConfiguration
         forceAuthnPredicate = Predicates.alwaysFalse();
         proxyCountLookupStrategy = FunctionSupport.constant(null);
     }
-
-    @Nonnull
-    @NotEmpty
-    public static final String PROFILE_ID = "http://geant.org/ns/profiles/userprofile/sso/browser";
 
     /** {@inheritDoc} */
     @Nonnull

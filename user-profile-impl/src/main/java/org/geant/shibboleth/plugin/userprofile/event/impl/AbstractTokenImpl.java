@@ -25,14 +25,31 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.shibboleth.idp.plugin.oidc.op.token.support.TokenClaimsSet;
 
+/**
+ * Abstract class for classes serializing OP module's OAuth2 token information.
+ */
 public abstract class AbstractTokenImpl implements Token {
 
+    /** Token identifier. */
     private final String tokenId;
+
+    /** Token root identifier. */
     private final String tokenRootId;
+
+    /** Client identifier the token is minted for. */
     private final String clientId;
+
+    /** Scopes of token. */
     private final List<String> scope;
+
+    /** Token expiration as seconds from epoch. */
     private final long exp;
 
+    /**
+     * Constructor.
+     * 
+     * @param token token
+     */
     protected AbstractTokenImpl(TokenClaimsSet token) {
         tokenId = token.getID();
         tokenRootId = token.getRootTokenIdentifier();
@@ -41,6 +58,15 @@ public abstract class AbstractTokenImpl implements Token {
         exp = token.getExp().getEpochSecond();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param tokenId     token identifier
+     * @param tokenRootId token root identifier
+     * @param clientId    client identifier the token is minted for
+     * @param scope       scopes of token
+     * @param exp         token expiration as seconds from epoch
+     */
     protected AbstractTokenImpl(String tokenId, String tokenRootId, String clientId, List<String> scope, long exp) {
         this.tokenId = tokenId;
         this.tokenRootId = tokenRootId;
@@ -49,26 +75,57 @@ public abstract class AbstractTokenImpl implements Token {
         this.exp = exp;
     }
 
+    /**
+     * Get token identifier.
+     * 
+     * @return token identifier
+     */
     public String getTokenId() {
         return tokenId;
     }
 
+    /**
+     * Get token root identifier.
+     * 
+     * @return token root identifier
+     */
     public String getTokenRootId() {
         return tokenRootId;
     }
 
+    /**
+     * Get client identifier the token is minted for.
+     * 
+     * @return client identifier the token is minted for
+     */
     public String getClientId() {
         return clientId;
     }
 
+    /**
+     * Get scopes of token.
+     * 
+     * @return scopes of token
+     */
     public List<String> getScope() {
         return scope;
     }
 
+    /**
+     * Get token expiration as seconds from epoch.
+     * 
+     * @return token expiration as seconds from epoch
+     */
     public long getExp() {
         return exp;
     }
 
+    /**
+     * Get json representation of the token
+     * 
+     * @return json representation of the token
+     * @throws JsonProcessingException if error occurs
+     */
     public String serialize() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(this);

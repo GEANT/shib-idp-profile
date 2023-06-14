@@ -23,7 +23,7 @@ import java.util.List;
  */
 public interface AccessToken extends Token {
 
-    /** audience of access token. */
+    /** Audience of access token. */
     public List<String> getAudience();
 
 }

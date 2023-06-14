@@ -52,9 +52,7 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 /**
- * Stores Access Token information if available.
- * 
- * TODO TESTS TODO Whether to execution to be configurable.
+ * Updates access token information in user profile cache.
  */
 public class StoreToken extends AbstractProfileAction {
 
@@ -83,13 +81,13 @@ public class StoreToken extends AbstractProfileAction {
     private SubjectContext subjectContext;
 
     /**
-     * Lookup strategy for Subject Context.
+     * Lookup strategy for subject context.
      */
     @Nonnull
     private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
 
     /**
-     * User Profile Cache.
+     * User profile cache.
      */
     @NonnullAfterInit
     private UserProfileCache userProfileCache;
@@ -127,9 +125,9 @@ public class StoreToken extends AbstractProfileAction {
     }
 
     /**
-     * Set Lookup strategy for Subject Context.
+     * Set Lookup strategy for subject context.
      * 
-     * @param strategy Lookup strategy for Subject Context
+     * @param strategy lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
@@ -138,9 +136,9 @@ public class StoreToken extends AbstractProfileAction {
     }
 
     /**
-     * Set User Profile Cache.
+     * Set user profile cache.
      * 
-     * @param cache User Profile Cache
+     * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -234,7 +232,5 @@ public class StoreToken extends AbstractProfileAction {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
-
     }
-
 }

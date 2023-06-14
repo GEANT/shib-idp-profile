@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
 /**
- * Initializes User Profile Context.
+ * Initializes user profile context.
  */
 public class InitializeUserProfileContext extends AbstractProfileAction {
 

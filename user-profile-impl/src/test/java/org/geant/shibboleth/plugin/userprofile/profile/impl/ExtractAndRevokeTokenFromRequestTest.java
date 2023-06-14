@@ -133,7 +133,7 @@ public class ExtractAndRevokeTokenFromRequestTest {
 
     @Test
     public void testParameterNameChange() throws ComponentInitializationException {
-        action.setAccessTokenIdFieldName("_eventId_revokeToken2");
+        action.setTokenIdFieldName("_eventId_revokeToken2");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("_eventId_revokeToken2", "_2345");
         action.initialize();
         final Event event = action.execute(src);

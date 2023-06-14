@@ -100,10 +100,10 @@ public class FilterRPAttributes extends AbstractProfileAction {
     /** For obtaining user principal name. */
     private SubjectContext subjectContext;
 
-    /** Relying Party Id we resolve attributes for. */
+    /** Relying party identifier we resolve attributes for. */
     private String rpId;
 
-    /** Context for User Profile . */
+    /** Context for user profile . */
     private UserProfileContext userProfileContext;
 
     /** Relying party context we manipulate for attribute resolving/filtering. */
@@ -148,8 +148,11 @@ public class FilterRPAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy strategy used to locate the {@link UserProfileContext} to
+     *                 populate
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -173,8 +176,9 @@ public class FilterRPAttributes extends AbstractProfileAction {
     }
 
     /**
+     * Set Lookup strategy for subject context.
      * 
-     * @param strategy
+     * @param strategy lookup strategy for subject context
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {

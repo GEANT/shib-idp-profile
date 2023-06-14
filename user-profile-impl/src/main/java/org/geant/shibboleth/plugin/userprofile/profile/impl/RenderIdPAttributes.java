@@ -36,7 +36,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * Action sets the 'Personal Data' attributes of user.
+ * Action sets the 'personal data' attributes of user to
+ * {@link UserProfileContext}.
  */
 public class RenderIdPAttributes extends AbstractProfileAction {
 
@@ -50,10 +51,10 @@ public class RenderIdPAttributes extends AbstractProfileAction {
     @Nonnull
     private Function<ProfileRequestContext, UserProfileContext> userProfileContextLookupStrategy;
 
-    /** Context for User Profile . */
+    /** Context for user profile . */
     private UserProfileContext userProfileContext;
 
-    /** Attribute Id's of 'Personal Data' attributes. */
+    /** Attribute identifiers of 'personal data' attributes. */
     private Collection<String> idPAttributes;
 
     /** Constructor. */
@@ -76,9 +77,9 @@ public class RenderIdPAttributes extends AbstractProfileAction {
     }
 
     /**
-     * Set attribute Id's of 'Personal Data' attributes.
+     * Set attribute identifiers of 'personal data' attributes.
      * 
-     * @param attributes Attribute Id's of 'Personal Data' attributes
+     * @param attributes attribute identifiers of 'personal data' attributes
      */
     public void setIdPUserAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         if (attributes != null) {

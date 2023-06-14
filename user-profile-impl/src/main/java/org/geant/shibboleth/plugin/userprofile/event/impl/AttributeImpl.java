@@ -27,60 +27,93 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Class implementing {@link Attribute} and providing serialization and
+ * deserialization.
+ */
 public class AttributeImpl implements Attribute {
 
+    /** Attribute id. */
     private final String id;
+
+    /** Attribute name. */
     private final String name;
+
+    /** Attribute description. */
     private final String description;
+
+    /** Attribute values. */
     private final List<String> values;
 
-    public AttributeImpl(String id, String name, String description, List<String> values) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.values = values;
-    }
-
+    /**
+     * Constructor.
+     * 
+     * @param id          attribute id
+     * @param name        attribute name
+     * @param description attribute description
+     * @param values      attribute values
+     */
     @JsonCreator
-    private AttributeImpl(@JsonProperty("id") String id, @JsonProperty("name") String name,
-            @JsonProperty("description") String description, @JsonProperty("values") List<String> values,
-            @JsonProperty("time") long time) {
+    public AttributeImpl(@JsonProperty("id") String id, @JsonProperty("name") String name,
+            @JsonProperty("description") String description, @JsonProperty("values") List<String> values) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.values = values;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public String getId() {
         return id;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public String getName() {
         return name;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public String getDescription() {
         return description;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public List<String> getValues() {
         return values;
     }
 
-    public static AttributeImpl parse(String token) throws JsonMappingException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(token, AttributeImpl.class);
-    }
-
-    public String serialize() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(this);
-    }
-
+    /** {@inheritDoc} */
     @Override
     @JsonIgnore
     public String getDisplayValue() {
         return values != null ? name + " [ " + String.join(",", values) + " ] " : name;
     }
 
+    /**
+     * Parse instance from json representation.
+     * 
+     * @param attribute json string representing the instance
+     * @return AttributeImpl parsed from json representation
+     * @throws JsonMappingException    json contained illegal fields
+     * @throws JsonProcessingException json is not json at all
+     */
+    public static AttributeImpl parse(String attribute) throws JsonMappingException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(attribute, AttributeImpl.class);
+    }
+
+    /**
+     * Serialize instance to json string.
+     * 
+     * @return json string representing the instance.
+     * @throws JsonProcessingException something went wrong.
+     */
+    public String serialize() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(this);
+    }
 }

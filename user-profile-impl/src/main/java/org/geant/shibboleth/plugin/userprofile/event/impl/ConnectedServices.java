@@ -46,7 +46,7 @@ public class ConnectedServices {
     /**
      * Get map of connected services record per relying party.
      * 
-     * @return Map of connected services record per relying party.
+     * @return map of connected services record per relying party.
      */
     public Map<String, ConnectedServiceImpl> getConnectedServices() {
         return connectedServices;
@@ -55,10 +55,10 @@ public class ConnectedServices {
     /**
      * Parse instance from json representation.
      * 
-     * @param connectedServices Json representation.
+     * @param connectedServices json representation.
      * @return ConnectedServices parsed from json representation.
-     * @throws JsonMappingException    Json contained illegal fields.
-     * @throws JsonProcessingException Json is not json at all.
+     * @throws JsonMappingException    json contained illegal fields.
+     * @throws JsonProcessingException json is not json at all.
      */
     public static ConnectedServices parse(String connectedServices)
             throws JsonMappingException, JsonProcessingException {

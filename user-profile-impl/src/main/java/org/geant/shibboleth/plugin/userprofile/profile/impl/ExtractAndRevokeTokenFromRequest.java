@@ -44,8 +44,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
- * An action that extracts a access token id from HTTP form. The extracted
- * access token id is first verified and then to {@link UserProfileContext}.
+ * An action that extracts a token id from HTTP form. The extracted token id is
+ * first verified to be user's and then revoked.
  */
 
 public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
@@ -71,15 +71,15 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     @Nonnull
     private Function<ProfileRequestContext, UserProfileContext> userProfileContextLookupStrategy;
 
-    /** Parameter name for access token id. */
+    /** Parameter name for token id. */
     @Nonnull
     @NotEmpty
-    private String accessTokenIdFieldName;
+    private String tokenIdFieldName;
 
     /** For extracting user input. */
     private HttpServletRequest request;
 
-    /** Context for User Profile . */
+    /** Context for user profile . */
     private UserProfileContext userProfileContext;
 
     /** Extracted token. */
@@ -87,7 +87,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
 
     /** Constructor. */
     ExtractAndRevokeTokenFromRequest() {
-        accessTokenIdFieldName = "_eventId_revokeToken";
+        tokenIdFieldName = "_eventId_revokeToken";
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         clockSkew = Duration.ofMinutes(5);
     }
@@ -104,7 +104,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     /**
      * Set the revocation cache instance to use.
      * 
-     * @param cache The revocationCache to set.
+     * @param cache revocation cache
      */
     public void setRevocationCache(@Nonnull final RevocationCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -112,18 +112,22 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     }
 
     /**
+     * Set parameter name for token id.
      * 
-     * @param fieldName
+     * @param fieldName parameter name for token id
      */
-    public void setAccessTokenIdFieldName(@Nonnull @NotEmpty final String fieldName) {
+    public void setTokenIdFieldName(@Nonnull @NotEmpty final String fieldName) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        accessTokenIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
+        tokenIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
                 "Access token id field name cannot be null or empty.");
     }
 
     /**
+     * Set strategy used to locate or create the {@link UserProfileContext} to
+     * populate.
      * 
-     * @param strategy
+     * @param strategy strategy used to locate the {@link UserProfileContext} to
+     *                 populate
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
@@ -154,7 +158,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        String tokenId = request.getParameter(accessTokenIdFieldName);
+        String tokenId = request.getParameter(tokenIdFieldName);
         if (tokenId == null || tokenId.isBlank()) {
             log.debug("{} Access token id extraction failed", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

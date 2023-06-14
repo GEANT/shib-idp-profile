@@ -21,11 +21,11 @@
 
     <properties>
         <idp.groupId>net.shibboleth.idp</idp.groupId>
-        <idp.version>4.2.0</idp.version>
+        <idp.version>4.3.1</idp.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
-        <opensaml.version>4.1.0</opensaml.version>
-        <oidc.common.version>2.1.0</oidc.common.version>
-        <oidc.op.version>3.3.0</oidc.op.version>
+        <opensaml.version>4.3.0</opensaml.version>
+        <oidc.common.version>2.2.0</oidc.common.version>
+        <oidc.op.version>3.4.0</oidc.op.version>
         <java-support.version>8.3.1</java-support.version>
         <checkstyle.configLocation>${project.basedir}/checkstyle.xml</checkstyle.configLocation>
     </properties>
