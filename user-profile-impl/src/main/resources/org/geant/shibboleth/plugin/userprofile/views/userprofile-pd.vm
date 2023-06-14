@@ -86,7 +86,7 @@
         <tr>
           <td class="personaldata">$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
           <div class="popup" onclick="doPopup('popup-${attribute.getId()}')"><img class="information-icon" src="/idp/icons/i.svg"/>
-            <span class="popuptext" id="popup-${attribute.getId()}">#springMessageText("userProfile.attribute_help.surname",$attributeDisplayDescriptionFunction.apply($attribute))</span>
+            <span class="popuptext" id="popup-${attribute.getId()}">$encoder.encodeForHTMLAttribute($attributeDisplayDescriptionFunction.apply($attribute))</span>
           </div> 
           </td>
           <td class="personaldata">
