@@ -12,6 +12,7 @@
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
 ## attributeDisplayNameFunction - function to display attribute name
+## attributeDisplayDescriptionFunction - function to display attribute description
 ## showActivityPage - whether to show Connected Services
 ## showAllServices - whether to show All Services
 ##

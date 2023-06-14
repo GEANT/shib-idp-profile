@@ -103,6 +103,8 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
                                                                                                result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
@@ -124,6 +126,8 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
                                                                                                result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
@@ -145,6 +149,8 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
                                                                                                result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
@@ -165,6 +171,8 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
                                                                                                result="viewScope.attributeDisplayNameFunction" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction(flowRequestContext.getExternalContext().getNativeRequest(), FallbackLanguages, flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.AttributeRegistryService'))"
+                                                                                               result="viewScope.attributeDisplayDescriptionFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
