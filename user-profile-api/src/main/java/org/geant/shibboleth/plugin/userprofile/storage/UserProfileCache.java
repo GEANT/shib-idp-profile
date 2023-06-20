@@ -193,7 +193,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
                 log.debug("No User Profile Record for  '{}'", key);
                 return new Events();
             }
-            log.debug("Located User Profile Record '{}' for user '{}'", entry.getValue(), key);
+            log.trace("Located User Profile Record '{}' for user '{}'", entry.getValue(), key);
             return Events.parse(entry.getValue());
         } catch (final IOException e) {
             log.error("Exception reading from storage service, user '{}'. Empty record is created.", e, key);
