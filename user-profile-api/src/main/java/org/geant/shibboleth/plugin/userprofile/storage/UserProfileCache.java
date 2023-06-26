@@ -143,6 +143,33 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     }
 
     /**
+     * Sets event for user by event name. Overwrites any pre-existing event of same
+     * name.
+     * 
+     * @param eventName   name of the event
+     * @param eventValue  value of the event
+     * @param eventsCache cache for events
+     * @return true if event was successfully set
+     * @throws IOException
+     */
+    public void setSingleEvent(@Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final String eventValue,
+            @Nonnull EventsCache eventsCache) {
+        eventsCache.getEvents().getEvents().put(eventName, new Event(eventValue));
+    }
+
+    /**
+     * Commit events to storage.
+     * 
+     * @param user        the user events are stored for
+     * @param eventsCache cache for events
+     * @return
+     */
+    public synchronized boolean commitEventsCache(@Nonnull @NotEmpty final UsernamePrincipal user,
+            @Nonnull EventsCache eventsCache) {
+        return setEvents(getKey(user), eventsCache.getEvents());
+    }
+
+    /**
      * Get event of user by event name.
      * 
      * @param user      the user event is stored for
@@ -156,6 +183,24 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
             @Nonnull @NotEmpty String eventName) {
         Events events = getEvents(getKey(user));
         return events.getEvents().get(eventName);
+    }
+
+    /**
+     * Get event of user by event name.
+     * 
+     * @param user        the user event is stored for
+     * @param eventName   name of the event
+     * @param eventsCache cache for events
+     * @return event if such exists
+     */
+    @Nullable
+    @NotEmpty
+    public Event getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user, @Nonnull @NotEmpty String eventName,
+            @Nonnull EventsCache eventsCache) {
+        if (eventsCache.getEvents() == null) {
+            eventsCache.setEvents(getEvents(getKey(user)));
+        }
+        return eventsCache.getEvents().getEvents().get(eventName);
     }
 
     /**
@@ -185,7 +230,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      * @return events if such exist.
      */
     @Nonnull
-    private Events getEvents(@Nonnull @NotEmpty final String key) {
+    private synchronized Events getEvents(@Nonnull @NotEmpty final String key) {
         // TODO: Add optional symmetric encryption for record.
         try {
             final StorageRecord<?> entry = storage.read(context, key);

@@ -27,7 +27,6 @@ import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokenImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
-import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -37,13 +36,11 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -54,7 +51,7 @@ import net.shibboleth.utilities.java.support.security.DataSealerException;
 /**
  * Updates access token information in user profile cache.
  */
-public class StoreToken extends AbstractProfileAction {
+public class StoreToken extends AbstractUserProfileInterceptorAction {
 
     /** Class logger. */
     @Nonnull
@@ -76,29 +73,12 @@ public class StoreToken extends AbstractProfileAction {
     @Nullable
     private AccessTokenContext tokenCtx;
 
-    /** Subject context. */
-    @Nonnull
-    private SubjectContext subjectContext;
-
-    /**
-     * Lookup strategy for subject context.
-     */
-    @Nonnull
-    private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
-
-    /**
-     * User profile cache.
-     */
-    @NonnullAfterInit
-    private UserProfileCache userProfileCache;
-
     /** Constructor. */
     public StoreToken() {
         super();
         accessTokenContextLookupStrategy = new ChildContextLookup<>(AccessTokenContext.class)
                 .compose(new ChildContextLookup<>(OIDCAuthenticationResponseContext.class)
                         .compose(new OutboundMessageContextLookup()));
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
     /**
@@ -124,34 +104,10 @@ public class StoreToken extends AbstractProfileAction {
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
-    /**
-     * Set Lookup strategy for subject context.
-     * 
-     * @param strategy lookup strategy for subject context
-     */
-    public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
-    }
-
-    /**
-     * Set user profile cache.
-     * 
-     * @param cache user profile cache
-     */
-    public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
-    }
-
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (userProfileCache == null) {
-            throw new ComponentInitializationException("UserProfileCache cannot be null");
-        }
         if (dataSealer == null) {
             throw new ComponentInitializationException("DataSealer cannot be null");
         }
@@ -178,17 +134,13 @@ public class StoreToken extends AbstractProfileAction {
 
         final MessageContext outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageCtx == null) {
-            log.debug("{} No outbound message context", getLogPrefix());
-            return false;
-        }
-        oidcResponseContext = outboundMessageCtx.getSubcontext(OIDCAuthenticationResponseContext.class);
-        if (oidcResponseContext == null) {
-            log.debug("{} No OIDC response context", getLogPrefix());
+            log.warn("{} No outbound message context", getLogPrefix());
             return false;
         }
 
-        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectContext == null || subjectContext.getPrincipalName() == null) {
+        oidcResponseContext = outboundMessageCtx.getSubcontext(OIDCAuthenticationResponseContext.class);
+        if (oidcResponseContext == null) {
+            log.warn("{} No OIDC response context", getLogPrefix());
             return false;
         }
 
@@ -200,7 +152,7 @@ public class StoreToken extends AbstractProfileAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
         try {
-            Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME);
+            Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME, userProfileCacheContext);
             AccessTokens accessTokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
             // TODO: take clockSkew into consideration
             accessTokens.getAccessTokens()
@@ -209,14 +161,14 @@ public class StoreToken extends AbstractProfileAction {
                     ? AccessTokenClaimsSet.parse(tokenCtx.getJWT().getJWTClaimsSet().toString())
                     : AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer);
             accessTokens.getAccessTokens().add(new AccessTokenImpl(accessToken));
-            userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, accessTokens.serialize());
+            userProfileCache.setSingleEvent(AccessTokens.ENTRY_NAME, accessTokens.serialize(), userProfileCacheContext);
             log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.serialize());
 
             String refreshToken = oidcResponseContext.getRefreshToken() != null
                     ? oidcResponseContext.getRefreshToken().getValue()
                     : null;
             if (refreshToken != null) {
-                event = userProfileCache.getSingleEvent(user, RefreshTokens.ENTRY_NAME);
+                event = userProfileCache.getSingleEvent(user, RefreshTokens.ENTRY_NAME, userProfileCacheContext);
                 RefreshTokens refreshTokens = event != null ? RefreshTokens.parse(event.getValue())
                         : new RefreshTokens();
                 // TODO: take clockSkew into consideration
@@ -224,7 +176,8 @@ public class StoreToken extends AbstractProfileAction {
                         .removeIf(refToken -> refToken.getExp() < System.currentTimeMillis() / 1000);
                 refreshTokens.getRefreshTokens()
                         .add(new RefreshTokenImpl(RefreshTokenClaimsSet.parse(refreshToken, dataSealer)));
-                userProfileCache.setSingleEvent(user, RefreshTokens.ENTRY_NAME, refreshTokens.serialize());
+                userProfileCache.setSingleEvent(RefreshTokens.ENTRY_NAME, refreshTokens.serialize(),
+                        userProfileCacheContext);
                 log.debug("{} Updated refresh tokens {} ", getLogPrefix(), refreshTokens.serialize());
             }
 

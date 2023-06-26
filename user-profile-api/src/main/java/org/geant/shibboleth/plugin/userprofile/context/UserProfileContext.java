@@ -28,7 +28,8 @@ import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
 import org.geant.shibboleth.plugin.userprofile.event.api.ConnectedService;
 import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 import org.geant.shibboleth.plugin.userprofile.event.api.Token;
-
+import org.geant.shibboleth.plugin.userprofile.storage.Events;
+import org.geant.shibboleth.plugin.userprofile.storage.EventsCache;
 import org.opensaml.messaging.context.BaseContext;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -39,7 +40,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /**
  * The context carrying user profile information.
  */
-public final class UserProfileContext extends BaseContext {
+public final class UserProfileContext extends BaseContext implements EventsCache {
 
     /** Attributes presented as users personal data. */
     @Nonnull
@@ -75,6 +76,9 @@ public final class UserProfileContext extends BaseContext {
     /** Note! Only used by (the most) experimental all services - page. */
     @Nonnull
     private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
+
+    /** Cached user profile events. */
+    private Events cachedEvents;
 
     /** Constructor. */
     public UserProfileContext() {
@@ -204,6 +208,18 @@ public final class UserProfileContext extends BaseContext {
     @Nonnull
     public Map<String, List<IdPAttribute>> getRPEncodedJSONAttributes() {
         return rpEncodedJSONAttributes;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setEvents(Events events) {
+        cachedEvents = events;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Events getEvents() {
+        return cachedEvents;
     }
 
 }

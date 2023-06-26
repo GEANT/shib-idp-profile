@@ -29,7 +29,6 @@ import org.geant.shibboleth.plugin.userprofile.event.impl.AttributeImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServiceImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServices;
 import org.geant.shibboleth.plugin.userprofile.storage.Event;
-import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -42,11 +41,9 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
@@ -61,7 +58,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 /**
  * Updates connected organizations data in user profile cache.
  */
-public class UpdateConnectedOrganizations extends AbstractProfileAction {
+public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptorAction {
 
     /** Class logger. */
     @Nonnull
@@ -70,16 +67,6 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     /** Function used to obtain the requester identifier. */
     @Nullable
     private Function<ProfileRequestContext, String> requesterLookupStrategy;
-
-    /** Subject context. */
-    @Nonnull
-    private SubjectContext subjectContext;
-
-    /**
-     * Lookup strategy for subject context.
-     */
-    @Nonnull
-    private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
 
     /**
      * Strategy used to locate the {@link AttributeContext} associated with a given
@@ -91,12 +78,6 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     /** AttributeContext to use. */
     @Nullable
     private AttributeContext attributeCtx;
-
-    /**
-     * User profile cache.
-     */
-    @NonnullAfterInit
-    private UserProfileCache userProfileCache;
 
     /** Transcoder registry service object. */
     @NonnullAfterInit
@@ -134,34 +115,12 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     /** Constructor. */
     public UpdateConnectedOrganizations() {
         super();
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
         relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
                 .compose(new ChildContextLookup<>(AuthenticationContext.class));
         collectAttributeValues = Predicates.alwaysFalse();
-    }
-
-    /**
-     * Set lookup strategy for subject context.
-     * 
-     * @param strategy lookup strategy for subject context
-     */
-    public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
-    }
-
-    /**
-     * Set user profile cache.
-     * 
-     * @param cache user profile cache
-     */
-    public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
     }
 
     /**
@@ -238,9 +197,6 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (userProfileCache == null) {
-            throw new ComponentInitializationException("UserProfileCache cannot be null");
-        }
         if (transcoderRegistry == null) {
             throw new ComponentInitializationException("transcoderRegistry cannot be null");
         }
@@ -258,21 +214,15 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
             return false;
         }
 
-        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectContext == null || subjectContext.getPrincipalName() == null) {
-            log.debug("{} No principal name available.", getLogPrefix());
-            return false;
-        }
-
         attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {
-            log.debug("{} No AttributeSubcontext available, nothing to do", getLogPrefix());
+            log.debug("{} No attribute context available, nothing to do", getLogPrefix());
             return false;
         }
 
         rpUIContext = relyingPartyUIContextLookupStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
-            log.debug("{} Unable to locate RelyingPartyUIContext", getLogPrefix());
+            log.debug("{} Unable to locate relying party ui context", getLogPrefix());
             return false;
         }
 
@@ -303,8 +253,7 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
-
-        Event event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME);
+        Event event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME, userProfileCacheContext);
         ConnectedServices organizations;
         try {
             organizations = event != null ? ConnectedServices.parse(event.getValue()) : new ConnectedServices();
@@ -318,11 +267,13 @@ public class UpdateConnectedOrganizations extends AbstractProfileAction {
             attributeCtx.getIdPAttributes().entrySet().forEach(
                     entry -> organization.getLastAttributesImpl().add(toAttributeImpl(entry, profileRequestContext)));
             organizations.getConnectedServices().put(rpId, organization);
-            userProfileCache.setSingleEvent(user, ConnectedServices.ENTRY_NAME, organizations.serialize());
+            userProfileCache.setSingleEvent(ConnectedServices.ENTRY_NAME, organizations.serialize(),
+                    userProfileCacheContext);
             log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
         } catch (JsonProcessingException e) {
             log.error("{} Failed parsing connected organizations", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
     }
+
 }

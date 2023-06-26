@@ -17,6 +17,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <bean id="shibboleth.PropertySourcesPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
             p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
+        <bean id="InitializeUserProfileCacheContext"
+            class="org.geant.shibboleth.plugin.userprofile.intercept.impl.InitializeUserProfileCacheContext" scope="prototype"/>
+
         <bean id="UpdateLoginEvents"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateLoginEvents" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
@@ -65,5 +68,9 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                 </bean>
             </property>
         </bean>
-    
+
+        <bean id="CommitUserProfileEvents"
+            class="org.geant.shibboleth.plugin.userprofile.intercept.impl.CommitUserProfileEvents" scope="prototype"
+            p:userProfileCache-ref="userProfile.Cache"/>        
+
 </beans>
