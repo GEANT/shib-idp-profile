@@ -60,7 +60,7 @@
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeAuthenticationContext" scope="prototype" />
 
     <bean id="PopulateUserAgentContext" class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext"
-        scope="prototype" p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        scope="prototype" p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" />
 
     <bean id="PopulatePostAuthnInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
@@ -100,7 +100,7 @@
 
     <bean id="RenderUserProfileContext"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileContext"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" p:clientInformationResolver-ref="shibboleth.ClientInformationResolver"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" p:clientInformationResolver-ref="shibboleth.ClientInformationResolver"
         p:metadataResolver-ref="shibboleth.MetadataResolver" scope="prototype" >
         <property name="fallbackLanguages">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
@@ -109,7 +109,7 @@
 
     <bean id="ExtractRelyingPartyIdFromRequest"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractRelyingPartyIdFromRequest"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" scope="prototype" />
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" scope="prototype" />
 
     <bean id="ResolveAttributes"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ResolveAttributes"
@@ -138,7 +138,7 @@
     
     <bean id="ExtractAndRevokeTokenFromRequest"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractAndRevokeTokenFromRequest"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
         p:revocationCache-ref="shibboleth.oidc.RevocationCache"/>
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
