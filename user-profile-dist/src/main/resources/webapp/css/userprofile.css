@@ -401,6 +401,44 @@ table.detail td {
   display: block;
 }
 
+/* ================== */
+/* Actions button     */
+/* ================== */
+
+.actionsbutton {
+  background-color: #3C4A94;
+  color: var(--main-bg-c);
+  font-family: var(--main-font-family);
+  padding: 0.4em;
+  font-size: 80%;
+  position: absolute;
+  right: 10em;
+  width: 10em;
+  text-align: center;
+}
+
+.actions-list {
+  background-color: #3C4A94;
+  color: var(--main-bg-c);
+  font-family: var(--main-font-family);
+  padding: 0.4em;
+    padding-bottom: 0.4em;
+  font-size: 80%;
+  position: absolute;
+  right: 10em;
+  width: 10em;
+  text-align: center;
+  padding-bottom: 0.7em;
+}
+
+.actions-list > hr {
+  color: var(--main-bg-c);
+}
+
+.abutton {
+  text-align: center;
+}
+
 /* ======================= */
 /*     Popup               */
 /* ======================= */

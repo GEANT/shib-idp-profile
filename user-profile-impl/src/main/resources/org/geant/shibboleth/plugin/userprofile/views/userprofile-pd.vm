@@ -80,7 +80,16 @@
         <!-- fixed table header -->
         <tr>
             <th>Attribute</th>
-            <th>Your value</th>
+            <th>Your value
+              <label for="actions-toggle"><span class="actionsbutton">Actions ▾</span></label>
+              <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
+              <div class="dropdown-box actions-list">
+                <hr>
+                <span class="abutton">Download data</span>
+                <hr>
+                <span class="abutton">Custom action</span>
+              </div>            
+            </th>
         </tr>
         #foreach($attribute in $userAttributes)
         <tr>
