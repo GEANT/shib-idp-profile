@@ -22,6 +22,10 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import org.testng.annotations.BeforeMethod;
 
+import java.util.List;
+
+import org.geant.shibboleth.plugin.userprofile.event.api.AccessToken;
+import org.geant.shibboleth.plugin.userprofile.event.api.Token;
 import org.testng.Assert;
 
 /**
@@ -37,18 +41,20 @@ public class UserProfileContextTest {
     }
 
     @Test
-    public void testRPRelyingPartyUIContextes() {
-        Assert.assertNotNull(ctx.getRelyingParties());
-    }
-
-    @Test
-    public void testIdPUserAttributes() {
+    public void testInitialState() {
         Assert.assertNotNull(ctx.getIdPUserAttributes());
+        Assert.assertNotNull(ctx.getConnectedOrganizations());
+        Assert.assertNotNull(ctx.getAccessTokens());
+        Assert.assertNotNull(ctx.getRefreshTokens());
+        Assert.assertNotNull(ctx.getLoginEvents());
+        Assert.assertNotNull(ctx.getRPAttributeContext());
+        Assert.assertNotNull(ctx.getRelyingParties());
+        Assert.assertNotNull(ctx.getRPEncodedJSONAttributes());
+        Assert.assertNull(ctx.getEvents());
     }
 
     @Test
     public void testRPAttributeContext() {
-        Assert.assertNotNull(ctx.getRPAttributeContext());
         ctx.setAttributeContext("id-1", new AttributeContext());
         ctx.setAttributeContext("id-2", new AttributeContext());
         Assert.assertEquals(ctx.getRPAttributeContext().size(), 2);
@@ -56,10 +62,91 @@ public class UserProfileContextTest {
 
     @Test
     public void testEncodedJSONAttribute() {
-        Assert.assertNotNull(ctx.getRPEncodedJSONAttributes());
         ctx.setEncodedJSONAttribute("id-1", new IdPAttribute("attrId-1"));
         ctx.setEncodedJSONAttribute("id-2", new IdPAttribute("attrId-2"));
         Assert.assertEquals(ctx.getRPEncodedJSONAttributes().size(), 2);
+    }
+
+    @Test
+    public void testTokenAdd() {
+        ctx.addAccessToken("rpId", new mockAccessToken());
+        Assert.assertEquals(ctx.getAccessTokens().size(), 1);
+        ctx.addRefreshToken("rpId", new mockRefreshToken());
+        Assert.assertEquals(ctx.getRefreshTokens().size(), 1);
+    }
+
+    public class mockAccessToken implements AccessToken {
+
+        @Override
+        public String getTokenId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getTokenRootId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getClientId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<String> getScope() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public long getExp() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<String> getAudience() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    }
+
+    public class mockRefreshToken implements Token {
+
+        @Override
+        public String getTokenId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getTokenRootId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getClientId() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<String> getScope() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public long getExp() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
 }

@@ -28,12 +28,28 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class ConnectedOrganizationImplTest {
 
     @Test
-    public void test() throws JsonMappingException, JsonProcessingException {
-        ConnectedServiceImpl connectedOrganization = ConnectedServiceImpl.parse(
+    public void testParse() throws JsonMappingException, JsonProcessingException {
+        ConnectedServiceImpl service = ConnectedServiceImpl.parse(
                 " {\"id\":\"foo\",\"name\":\"fooName\",\"times\":2,\"lastAttributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id2\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}]} ");
-        connectedOrganization = ConnectedServiceImpl.parse(connectedOrganization.serialize());
-        Assert.assertEquals(connectedOrganization.getId(), "foo");
-        Assert.assertEquals(connectedOrganization.getTimes(), 2);
-        Assert.assertEquals(connectedOrganization.getLastAttributes().size(), 2);
+        service = ConnectedServiceImpl.parse(service.serialize());
+        Assert.assertEquals(service.getId(), "foo");
+        Assert.assertEquals(service.getTimes(), 2);
+        Assert.assertEquals(service.getLastAttributes().size(), 2);
+    }
+
+    @Test
+    public void testConstructor() {
+        ConnectedServiceImpl service = new ConnectedServiceImpl("id", "name");
+        Assert.assertEquals(service.getId(), "id");
+        Assert.assertEquals(service.getName(), "name");
+        Assert.assertNotNull(service.getLastAttributes());
+    }
+
+    @Test
+    public void testCount() {
+        ConnectedServiceImpl service = new ConnectedServiceImpl("id", "name");
+        Assert.assertEquals(service.getTimes(), 0);
+        service.addCount();
+        Assert.assertEquals(service.getTimes(), 1);
     }
 }
