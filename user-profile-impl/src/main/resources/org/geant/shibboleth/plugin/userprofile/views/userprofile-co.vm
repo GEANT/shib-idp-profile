@@ -68,6 +68,21 @@
         <div>
           #springMessageText("userProfile.connectedorganizations.heading", "Connected Organizations")
         </div>
+        <div>
+          <script>
+          $(function() {
+            $("#search").on("keyup", function() {
+              var val = $.trim(this.value);
+              if (val) {
+                val = val.toLowerCase();
+                $('div:contains("'+val+'")').css('background-color', 'red');
+              }
+            });
+          });
+          </script>
+          <b style="margin-top: auto;margin-bottom: auto;">Filter:</b>
+          <input type="text" id="search" placeholder="enter terms here...">
+        </div>
     </section>
     <section id="main">
       <div id="connected_organizations">
