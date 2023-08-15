@@ -105,7 +105,8 @@ public class RenderRPAttributesTest {
         relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(), true);
         relyingPartyContext.setRelyingPartyId("rpId");
 
-        AttributeContext attributeContext = new AttributeContext();
+        AttributeContext attributeContext = (AttributeContext) relyingPartyContext.addSubcontext(new AttributeContext(),
+                true);
         IdPAttribute idPAttribute_0 = new IdPAttribute("attribute_0");
         idPAttribute_0.setValues(Arrays.asList(new StringAttributeValue("a")));
         IdPAttribute idPAttribute_1 = new IdPAttribute("attribute_1");
