@@ -1,0 +1,175 @@
+/*
+ * Copyright (c) 2022-2023, GÉANT
+ *
+ * Licensed under the Apache License, Version 2.0 (the “License”); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an “AS IS” BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.geant.shibboleth.plugin.userprofile.intercept.impl;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
+
+import org.geant.shibboleth.plugin.userprofile.context.UserProfileCacheContext;
+import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
+import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
+import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.impl.MemoryStorageService;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.id.ClientID;
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
+
+import net.shibboleth.ext.spring.resource.ResourceHelper;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
+import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
+import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
+import net.shibboleth.idp.plugin.oidc.op.token.support.TokenClaimsSet;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.profile.testing.ActionTestingSupport;
+import net.shibboleth.idp.profile.testing.RequestContextBuilder;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.security.DataSealer;
+import net.shibboleth.utilities.java.support.security.DataSealerException;
+import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
+
+/**
+ * Unit tests for {@link StoreToken}.
+ */
+public class StoreTokenTest {
+
+    private DataSealer dataSealer;
+
+    private MemoryStorageService storageService;
+
+    private UserProfileCache userProfileCache;
+
+    private RequestContext src;
+
+    private ProfileRequestContext prc;
+
+    private StoreToken action;
+
+    private UserProfileCacheContext userProfileCacheContext;
+
+    private SubjectContext subjectContext;
+
+    private DataSealer getDataSealer() throws ComponentInitializationException, NoSuchAlgorithmException {
+        if (dataSealer == null) {
+            dataSealer = initializeDataSealer();
+        }
+        return dataSealer;
+    }
+
+    private static DataSealer initializeDataSealer() throws ComponentInitializationException, NoSuchAlgorithmException {
+        final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
+        strategy.setKeystoreResource(ResourceHelper.of(new ClassPathResource("credentials/sealer.jks")));
+        strategy.setKeyVersionResource(ResourceHelper.of(new ClassPathResource("credentials/sealer.kver")));
+        strategy.setKeystorePassword("password");
+        strategy.setKeyAlias("secret");
+        strategy.setKeyPassword("password");
+        strategy.initialize();
+        final DataSealer dataSealer = new DataSealer();
+        dataSealer.setKeyStrategy(strategy);
+        dataSealer.setRandom(SecureRandom.getInstance("SHA1PRNG"));
+        dataSealer.initialize();
+        return dataSealer;
+
+    }
+
+    @BeforeMethod
+    public void initTests() throws ComponentInitializationException, JsonProcessingException, NoSuchAlgorithmException,
+            URISyntaxException, DataSealerException {
+        storageService = new MemoryStorageService();
+        storageService.setId("test");
+        storageService.initialize();
+
+        userProfileCache = new UserProfileCache();
+        userProfileCache.setRecordExpiration(Duration.ofMillis(500));
+        userProfileCache.setStorage(storageService);
+        userProfileCache.setId("id");
+        userProfileCache.initialize();
+        // addLoginEvents();
+
+        src = (new RequestContextBuilder()).buildRequestContext();
+        prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
+
+        action = new StoreToken();
+        action.setUserProfileCache(userProfileCache);
+
+        src = (new RequestContextBuilder()).buildRequestContext();
+        prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
+
+        RelyingPartyContext relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(),
+                true);
+        relyingPartyContext.setRelyingPartyId("rpId");
+
+        userProfileCacheContext = (UserProfileCacheContext) prc.addSubcontext(new UserProfileCacheContext(), true);
+        subjectContext = (SubjectContext) prc.addSubcontext(new SubjectContext(), true);
+        subjectContext.setPrincipalName("name");
+        MessageContext outboundMessageContext = new MessageContext();
+        AccessTokenContext accessTokenContext = (AccessTokenContext) outboundMessageContext
+                .addSubcontext(new OIDCAuthenticationResponseContext(), true).addSubcontext(new AccessTokenContext());
+        prc.setOutboundMessageContext(outboundMessageContext);
+        final TokenClaimsSet claims = new AccessTokenClaimsSet.Builder().setJWTID("101").setClientID(new ClientID())
+                .setIssuer("issuer").setSubject("subject").setIssuedAt(Instant.now())
+                .setExpiresAt(Instant.now().plusSeconds(1)).setAuthenticationTime(Instant.now())
+                .setRedirectURI(new URI("http://example.com")).setScope(new Scope()).build();
+        final BearerAccessToken token = new BearerAccessToken(claims.serialize(getDataSealer()));
+        accessTokenContext.setOpaque(token.getValue());
+        action.setDataSealer(getDataSealer());
+
+    }
+
+    @AfterMethod
+    protected void tearDown() {
+        userProfileCache.destroy();
+        userProfileCache = null;
+
+        storageService.destroy();
+        storageService = null;
+
+    }
+
+    @Test
+    public void testSuccess() throws ComponentInitializationException, JsonMappingException, JsonProcessingException {
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
+                userProfileCacheContext);
+        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache
+                .getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()), AccessTokens.ENTRY_NAME);
+        AccessTokens accessToken = AccessTokens.parse(events.getValue());
+        Assert.assertEquals(accessToken.getAccessTokens().size(), 1);
+        Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
+    }
+}
