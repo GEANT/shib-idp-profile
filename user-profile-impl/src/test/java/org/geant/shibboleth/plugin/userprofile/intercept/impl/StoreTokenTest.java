@@ -25,6 +25,7 @@ import java.time.Instant;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileCacheContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
+import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -50,6 +51,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
+import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.TokenClaimsSet;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -140,11 +142,15 @@ public class StoreTokenTest {
                 .addSubcontext(new OIDCAuthenticationResponseContext(), true).addSubcontext(new AccessTokenContext());
         prc.setOutboundMessageContext(outboundMessageContext);
         final TokenClaimsSet claims = new AccessTokenClaimsSet.Builder().setJWTID("101").setClientID(new ClientID())
-                .setIssuer("issuer").setSubject("subject").setIssuedAt(Instant.now())
+                .setIssuer("issuer").setPrincipal("name").setSubject("subject").setIssuedAt(Instant.now())
                 .setExpiresAt(Instant.now().plusSeconds(1)).setAuthenticationTime(Instant.now())
                 .setRedirectURI(new URI("http://example.com")).setScope(new Scope()).build();
-        final BearerAccessToken token = new BearerAccessToken(claims.serialize(getDataSealer()));
-        accessTokenContext.setOpaque(token.getValue());
+        // set refresh token
+        prc.getOutboundMessageContext().getSubcontext(OIDCAuthenticationResponseContext.class)
+                .setRefreshToken(new RefreshTokenClaimsSet.Builder(claims, Instant.now(), Instant.now().plusSeconds(1))
+                        .build().serialize(getDataSealer()));
+        // set access token
+        accessTokenContext.setOpaque(claims.serialize(getDataSealer()));
         action.setDataSealer(getDataSealer());
 
     }
@@ -160,9 +166,10 @@ public class StoreTokenTest {
     }
 
     @Test
-    public void testSuccess() throws ComponentInitializationException, JsonMappingException, JsonProcessingException {
+    public void testSuccess() throws ComponentInitializationException, JsonMappingException, JsonProcessingException,
+            InterruptedException {
         action.initialize();
-        final Event event = action.execute(src);
+        Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
                 userProfileCacheContext);
@@ -171,5 +178,26 @@ public class StoreTokenTest {
         AccessTokens accessToken = AccessTokens.parse(events.getValue());
         Assert.assertEquals(accessToken.getAccessTokens().size(), 1);
         Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+                RefreshTokens.ENTRY_NAME);
+        RefreshTokens refreshToken = RefreshTokens.parse(events.getValue());
+        Assert.assertEquals(refreshToken.getRefreshTokens().size(), 1);
+        Assert.assertEquals(refreshToken.getRefreshTokens().get(0).getTokenId(), "101");
+
+        // Second add
+        event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
+                userProfileCacheContext);
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+                AccessTokens.ENTRY_NAME);
+        accessToken = AccessTokens.parse(events.getValue());
+        Assert.assertEquals(accessToken.getAccessTokens().size(), 2);
+        Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+                RefreshTokens.ENTRY_NAME);
+        refreshToken = RefreshTokens.parse(events.getValue());
+        Assert.assertEquals(refreshToken.getRefreshTokens().size(), 2);
+        Assert.assertEquals(refreshToken.getRefreshTokens().get(0).getTokenId(), "101");
     }
 }
