@@ -19,6 +19,8 @@ package org.geant.shibboleth.plugin.userprofile.profile.impl;
 import java.util.Arrays;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,6 +35,8 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * Unit tests for {@link RenderIdPAttributes}.
@@ -74,5 +78,22 @@ public class RenderIdPAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(userProfileContext.getIdPUserAttributes().size(), 1);
     }
+    
+    public void testFailInvalidProfileContext() throws ComponentInitializationException  {
+        prc.removeSubcontext(UserProfileContext.class);
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+    }
 
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testFailPostInitSet() throws ComponentInitializationException  {
+        action.initialize();
+        action.setUserProfileContextLookupStrategy(new ChildContextLookup<>(UserProfileContext.class));
+    }
+    
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testFailNull() throws ComponentInitializationException {
+        action.setUserProfileContextLookupStrategy(null);
+    }
 }
