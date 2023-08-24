@@ -49,7 +49,6 @@ public class UserProfileContextTest {
         Assert.assertNotNull(ctx.getLoginEvents());
         Assert.assertNotNull(ctx.getRPAttributeContext());
         Assert.assertNotNull(ctx.getRelyingParties());
-        Assert.assertNotNull(ctx.getRPEncodedJSONAttributes());
         Assert.assertNull(ctx.getEvents());
     }
 
@@ -58,13 +57,6 @@ public class UserProfileContextTest {
         ctx.setAttributeContext("id-1", new AttributeContext());
         ctx.setAttributeContext("id-2", new AttributeContext());
         Assert.assertEquals(ctx.getRPAttributeContext().size(), 2);
-    }
-
-    @Test
-    public void testEncodedJSONAttribute() {
-        ctx.setEncodedJSONAttribute("id-1", new IdPAttribute("attrId-1"));
-        ctx.setEncodedJSONAttribute("id-2", new IdPAttribute("attrId-2"));
-        Assert.assertEquals(ctx.getRPEncodedJSONAttributes().size(), 2);
     }
 
     @Test

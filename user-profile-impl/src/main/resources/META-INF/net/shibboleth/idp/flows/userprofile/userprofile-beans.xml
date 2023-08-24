@@ -126,10 +126,6 @@
         p:metadataResolver-ref="shibboleth.MetadataResolver" scope="prototype">
         <constructor-arg index="0" ref="shibboleth.AttributeFilterService"/>
     </bean>
-
-    <bean id="RenderRPAttributes"
-        class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderRPAttributes"
-        p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"/>
         
     <bean id="RenderUserProfileCacheItems"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileCacheItems"

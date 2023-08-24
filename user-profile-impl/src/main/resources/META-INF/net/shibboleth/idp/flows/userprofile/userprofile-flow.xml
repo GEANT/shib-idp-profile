@@ -188,7 +188,6 @@
         <evaluate expression="ExtractRelyingPartyIdFromRequest" />
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterRPAttributes" />
-        <evaluate expression="RenderRPAttributes" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="UserProfileViewAllOrganizations" />
     </action-state>

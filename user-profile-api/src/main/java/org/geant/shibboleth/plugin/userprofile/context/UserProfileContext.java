@@ -72,11 +72,6 @@ public final class UserProfileContext extends BaseContext implements EventsCache
     @Nonnull
     private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
 
-    /** Attributes resolved per relying party. */
-    /** Note! Only used by (the most) experimental all services - page. */
-    @Nonnull
-    private final Map<String, List<IdPAttribute>> rpEncodedJSONAttributes = new HashMap<String, List<IdPAttribute>>();
-
     /** Cached user profile events. */
     private Events cachedEvents;
 
@@ -184,30 +179,6 @@ public final class UserProfileContext extends BaseContext implements EventsCache
     @Nonnull
     public Map<String, RelyingPartyUIContext> getRelyingParties() {
         return relyingParties;
-    }
-
-    /**
-     * Add attribute resolved for relying party.
-     * 
-     * @param rpId      relying party identifier
-     * @param attribute attribute resolved
-     */
-    public void setEncodedJSONAttribute(@Nonnull String rpId, @Nonnull IdPAttribute attribute) {
-        if (rpEncodedJSONAttributes.get(rpId) == null) {
-            rpEncodedJSONAttributes.put(rpId, new ArrayList<IdPAttribute>());
-        }
-        rpEncodedJSONAttributes.get(Constraint.isNotNull(rpId, "Relying party identfier cannot be null"))
-                .add(Constraint.isNotNull(attribute, "Attribute cannot be null"));
-    }
-
-    /**
-     * Get attributes resolved per relying party.
-     * 
-     * @return attributes resolved per relying party.
-     */
-    @Nonnull
-    public Map<String, List<IdPAttribute>> getRPEncodedJSONAttributes() {
-        return rpEncodedJSONAttributes;
     }
 
     /** {@inheritDoc} */
