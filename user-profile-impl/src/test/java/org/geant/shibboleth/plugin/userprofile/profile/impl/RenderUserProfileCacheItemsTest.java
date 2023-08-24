@@ -28,6 +28,10 @@ import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
 import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokenImpl;
 import org.geant.shibboleth.plugin.userprofile.event.impl.RefreshTokens;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -48,6 +52,8 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * Unit tests for {@link RenderUserProfileCacheItems}.
@@ -126,6 +132,64 @@ public class RenderUserProfileCacheItemsTest {
         Assert.assertEquals(userProfileContext.getRefreshTokens().get("foo").size(), 2);
     }
 
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testFailPostInitSetUserProfileContextLookupStrategy() throws ComponentInitializationException {
+        action.initialize();
+        action.setUserProfileContextLookupStrategy(new ChildContextLookup<>(UserProfileContext.class));
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testFailNullUserProfileContextLookupStrategy() throws ComponentInitializationException {
+        action.setUserProfileContextLookupStrategy(null);
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testFailPostInitSetSubjectContextLookupStrategy() throws ComponentInitializationException {
+        action.initialize();
+        action.setSubjectContextLookupStrategy(new ChildContextLookup<>(SubjectContext.class));
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testFailNullSubjectContextLookupStrategy() throws ComponentInitializationException {
+        action.setSubjectContextLookupStrategy(null);
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testFailPostInitSetRevocationCache() throws ComponentInitializationException {
+        action.initialize();
+        action.setRevocationCache(revocationCache);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testFailNullRevocationCache() throws ComponentInitializationException {
+        action.setRevocationCache(null);
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testFailPostInitSetUserProfileCache() throws ComponentInitializationException {
+        action.initialize();
+        action.setUserProfileCache(userProfileCache);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testFailNullUserProfileCache() throws ComponentInitializationException {
+        action.setUserProfileCache(null);
+    }
+
+    public void testFailInvalidProfileContext() throws ComponentInitializationException {
+        prc.removeSubcontext(UserProfileContext.class);
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+    }
+
+    public void testFailInvalidProfileContext2() throws ComponentInitializationException {
+        action.setUserProfileContextLookupStrategy(new mockLookUp<ProfileRequestContext, UserProfileContext>());
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
+    }
+
     private void addLoginEvents() throws JsonProcessingException {
         LoginEvents events = new LoginEvents();
         events.getLoginEvents().add(new LoginEventImpl("rpId", "ServiceName", System.currentTimeMillis() / 1000, null));
@@ -185,6 +249,16 @@ public class RenderUserProfileCacheItemsTest {
                         + (currentTime + 10) + "} "));
         userProfileCache.setSingleEvent(new UsernamePrincipal("name"), RefreshTokens.ENTRY_NAME,
                 refreshTokens.serialize());
+    }
+
+    public class mockLookUp<ParentContext extends BaseContext, ChildContext extends BaseContext>
+            implements ContextDataLookupFunction<ParentContext, ChildContext> {
+
+        @Override
+        public ChildContext apply(ParentContext t) {
+            return null;
+        }
+
     }
 
 }
