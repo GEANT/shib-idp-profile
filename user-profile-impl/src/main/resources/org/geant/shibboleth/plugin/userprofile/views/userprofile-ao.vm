@@ -16,7 +16,7 @@
 ## showActivityPage - whether to show Activity Page
 ##
 ##
-#set ($encodedJSONAttributes = $userProfileContext.getRPEncodedJSONAttributes())
+#set ($attributecontexts = $userProfileContext.getRPAttributeContext())
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 <!DOCTYPE html>
 <html>
@@ -75,10 +75,10 @@
           <tr>
             <td>$encoder.encodeForHTMLAttribute($relyingParties[$rpId].serviceName)</td>
             <td>
-            #if ($encodedJSONAttributes.containsKey($rpId))
+            #if ($attributecontexts.containsKey($rpId))
             <table>
-              #set ($rpEncodedJSONAttributes = $encodedJSONAttributes[$rpId])
-              #foreach($attribute in $rpEncodedJSONAttributes)
+              #set ($attributecontext = $attributecontexts[$rpId])
+              #foreach($attribute in $attributecontext.getIdPAttributes().values())
               <tr>
                 <td>$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))</td>
                 <td>
