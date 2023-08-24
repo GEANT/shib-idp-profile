@@ -16,6 +16,8 @@
 
 package org.geant.shibboleth.plugin.userprofile.profile.impl;
 
+import org.opensaml.messaging.context.BaseContext;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,6 +25,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -53,6 +56,24 @@ public class InitializeUnverifiedRelyingPartyContextTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(prc.getSubcontext(RelyingPartyContext.class));
+    }
+
+    @Test
+    public void testFailedRelyingPartyContextCreation() throws ComponentInitializationException {
+        action.setRelyingPartyContextCreationStrategy(new mockLookUp<>());
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
+    }
+
+    public class mockLookUp<ParentContext extends BaseContext, ChildContext extends BaseContext>
+            implements ContextDataLookupFunction<ParentContext, ChildContext> {
+
+        @Override
+        public ChildContext apply(ParentContext t) {
+            return null;
+        }
+
     }
 
 }
