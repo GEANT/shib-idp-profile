@@ -30,6 +30,7 @@
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+       <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
   </head>
   <body>
 
