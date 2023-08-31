@@ -92,7 +92,7 @@
                   $('#csvDisplay').val(csvData);
                   $('#csvModal').show();
 
-                  $('.close').on('click', function() {
+                  $('#close').on('click', function() {
                       $('#csvModal').hide();
                   });
 
@@ -109,7 +109,10 @@
 
                         // Iterate over each row containing personal data
                         $('td.personaldata').each(function() {
-                            let attributeName = $(this).text().trim();
+                            let attributeName = $(this).contents().filter(function() {
+                                return this.nodeType === 3; // Node type 3 is a text node
+                            }).first().text().trim();
+
                             let attributeValue = $(this).closest('tr').find('span.label').text().trim();
                             csvData += `"${attributeName}","${attributeValue}"\n`;
                         });
@@ -121,9 +124,9 @@
                 <span id="download" class="abutton">Download data</span>
                 <div id="csvModal" class="modal">
                     <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <textarea id="csvDisplay" rows="10" cols="50"></textarea>
+                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
                         <button id="copyToClipboard">Copy to Clipboard</button>
+                        <button id="close">Close</button>
                     </div>
                 </div>
 
