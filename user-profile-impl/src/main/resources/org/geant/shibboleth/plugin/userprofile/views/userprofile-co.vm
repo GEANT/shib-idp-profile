@@ -89,9 +89,9 @@
                 $('td.mainline:icontains("'+val+'")').parent().next().find('td.dropdown-container').show();
 
                 //in case the attributes contain the value, open up the dropdown and the header too
-                $('div.attribute-container:icontains("'+val+'")').parent().parent().show();
-                $('div.attribute-container:icontains("'+val+'")').parent().parent().prevAll().find('.dropdown-container').show();
-                $('div.attribute-container:icontains("'+val+'")').parent().parent().parent().prev().show();
+                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().show();
+                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().prevAll().find('.dropdown-container').show();
+                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().parent().prev().show();
               }
               else {
                 $('td.mainline').show();

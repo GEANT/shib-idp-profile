@@ -248,11 +248,11 @@ nav > ul > li > a {
   background-color: var(--link-c);
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-  width: 25%;
+  width: 25vh;
   margin-left: auto;
   margin-right: 0.5em;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
+  padding-left: auto;
+  padding-right: 0.75em;
   padding-bottom: 0.5em;
   padding-top: 0.5em;
   text-align: center;

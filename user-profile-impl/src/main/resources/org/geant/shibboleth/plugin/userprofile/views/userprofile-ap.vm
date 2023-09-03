@@ -28,6 +28,7 @@
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+      <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
   </head>
   <body>
 
@@ -65,6 +66,36 @@
         <!-- TODO explanatory message -->
         <div>
           #springMessageText("userProfile.allActivity.heading", "All Activity")
+        </div>
+        <div class="search">
+          <script>
+          $(function() {
+            jQuery.expr[':'].icontains = function(a, i, m) {
+              return jQuery(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+              };
+            $("#search").off();
+            $("#search").on("keyup", function() {
+              var val = $.trim(this.value);
+              if (val.length > 0) {
+                $('td.mainline').hide();
+                $('td.mainline').parent().hide();
+
+                //in case the service title contains the string
+                $('span.small-label:icontains("'+val+'")').show();
+                $('span.small-label:icontains("'+val+'")').parent().show();
+                $('span.small-label:icontains("'+val+'")').parent().parent().show();
+                
+              }
+              else {
+                $('td.mainline').show();
+                $('td.mainline').parent().hide();
+              }
+            });
+          });
+          </script>
+          <b style="margin-top: auto;margin-bottom: auto;">Filter:</b>
+          <input type="text" id="search" placeholder="enter terms here...">
         </div>
     </section>
     <section id="main">
