@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
@@ -36,7 +37,6 @@ import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -61,8 +61,8 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     @Nonnull
     private Duration clockSkew;
 
-    /** Message revocation cache instance to use. */
-    @NonnullAfterInit
+    /** Token revocation cache instance to use. */
+    @Nullable
     private RevocationCache revocationCache;
 
     /**
@@ -108,7 +108,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      */
     public void setRevocationCache(@Nonnull final RevocationCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        revocationCache = Constraint.isNotNull(cache, "RevocationCache cannot be null");
+        revocationCache = cache;
     }
 
     /**
@@ -134,16 +134,6 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (revocationCache == null) {
-            throw new ComponentInitializationException("RevocationCache cannot be null");
-        }
     }
 
     /** {@inheritDoc} */

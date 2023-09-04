@@ -160,11 +160,6 @@ public class RenderUserProfileCacheItemsTest {
         action.setRevocationCache(revocationCache);
     }
 
-    @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testFailNullRevocationCache() throws ComponentInitializationException {
-        action.setRevocationCache(null);
-    }
-
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testFailPostInitSetUserProfileCache() throws ComponentInitializationException {
         action.initialize();
