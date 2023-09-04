@@ -9,11 +9,26 @@
         <!-- Rudimentary impediment to direct execution of subflow. -->
         <input name="calledAsSubflow" type="boolean" required="true" />
 
-        <action-state id="SetEvent">
+        <action-state id="SetEvents">
            <evaluate expression="InitializeUserProfileCacheContext" />
            <evaluate expression="UpdateLoginEvents" />
-           <evaluate expression="UpdateConnectedOrganizations" />     
+           <evaluate expression="UpdateConnectedOrganizations" />
+           <evaluate expression="'proceed'" />
+           <transition on="proceed" to="CheckTokenFlow" />
+        </action-state>
+
+        <decision-state id="CheckTokenFlow">
+            <if test="opensamlProfileRequestContext.getProfileId().equals('http://shibboleth.net/ns/profiles/oidc/sso/browser') || opensamlProfileRequestContext.getProfileId().equals('http://shibboleth.net/ns/profiles/oauth2/token')"
+                then="SetTokenEvent" else="SetFinalEvents" />
+        </decision-state>
+
+        <action-state id="SetTokenEvent">
            <evaluate expression="StoreToken" />
+           <evaluate expression="'proceed'" />
+           <transition on="proceed" to="SetFinalEvents" />
+        </action-state>
+
+        <action-state id="SetFinalEvents">
            <evaluate expression="CommitUserProfileEvents" />        
            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('userProfile.setEventsFunction') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('userProfile.setEventsFunction').apply(opensamlProfileRequestContext):'proceed'" />
            <evaluate expression="'proceed'" />
