@@ -130,12 +130,12 @@
     <bean id="RenderUserProfileCacheItems"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.RenderUserProfileCacheItems"
         p:userProfileCache-ref="userProfile.Cache"
-        p:revocationCache-ref="shibboleth.oidc.RevocationCache"/>
+        p:revocationCache="#{getObject('shibboleth.oidc.RevocationCache')}"/>
     
     <bean id="ExtractAndRevokeTokenFromRequest"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractAndRevokeTokenFromRequest"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
-        p:revocationCache-ref="shibboleth.oidc.RevocationCache"/>
+        p:revocationCache="#{getObject('shibboleth.oidc.RevocationCache')}"/>
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
