@@ -29,10 +29,6 @@
         </action-state>
 
         <action-state id="SetFinalEvents">
-           <evaluate expression="InitializeUserProfileCacheContext" />
-           <evaluate expression="UpdateLoginEvents" />
-           <evaluate expression="UpdateConnectedOrganizations" />     
-           <evaluate expression="StoreToken" />
            <evaluate expression="CommitUserProfileEvents" />        
            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('userProfile.setEventsFunction') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('userProfile.setEventsFunction').apply(opensamlProfileRequestContext):'proceed'" />
            <evaluate expression="'proceed'" />
