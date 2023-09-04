@@ -13,6 +13,7 @@
            <evaluate expression="InitializeUserProfileCacheContext" />
            <evaluate expression="UpdateLoginEvents" />
            <evaluate expression="UpdateConnectedOrganizations" />
+           <evaluate expression="'proceed'" />
            <transition on="proceed" to="CheckTokenFlow" />
         </action-state>
 
