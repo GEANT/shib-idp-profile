@@ -74,15 +74,8 @@
         <div>
           #springMessageText("userProfile.personaldata.heading", "Personal Data")
         </div>
-    </section>
-    <section id="main">
-      <div id="personal_data">
-      <table>
-        <!-- fixed table header -->
-        <tr>
-            <th>Attribute</th>
-            <th>Your value
-              <label for="actions-toggle"><span class="actionsbutton">Actions ▾</span></label>
+        <div class="search">
+        <label for="actions-toggle"><span class="actionsbutton">#springMessageText("userProfile.personaldata.actionsbutton", "Actions ▾")</span></label>
               <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
               <div class="dropdown-box actions-list">
                 <!-- download data button -->
@@ -99,7 +92,7 @@
                   $('#copyToClipboard').on('click', function() {
                       $('#csvDisplay').select();
                       document.execCommand('copy');
-                      alert('CSV copied to clipboard!');
+                      alert(#springMessageText('userProfile.personaldata.csvcoped', 'CSV copied to clipboard!'));
                   });
                 }
 
@@ -121,20 +114,28 @@
                     });
                 });
                 </script>
-                <span id="download" class="abutton">Download data</span>
+                <span id="download" class="abutton">#springMessageText('userProfile.personaldata.downloaddata', 'Download data')</span>
                 <div id="csvModal" class="modal">
                     <div class="modal-content">
                         <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
-                        <button id="copyToClipboard">Copy to Clipboard</button>
-                        <button id="close">Close</button>
+                        <button id="copyToClipboard">#springMessageText('userProfile.personaldata.copytoclipboard','Copy to Clipboard')</button>
+                        <button id="close">#springMessageText('userProfile.personaldata.close','Close')</button>
                     </div>
                 </div>
 
                 <!-- custom button -->
                 <hr>
                 <span class="abutton">Custom action</span>
-              </div>            
-            </th>
+              </div>
+          </div>
+    </section>
+    <section id="main">
+      <div id="personal_data">
+      <table>
+        <!-- fixed table header -->
+        <tr>
+            <th>Attribute</th>
+            <th>Your value</th>
         </tr>
         #foreach($attribute in $userAttributes)
         <tr>

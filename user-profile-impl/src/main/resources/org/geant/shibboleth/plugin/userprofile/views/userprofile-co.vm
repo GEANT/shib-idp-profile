@@ -82,26 +82,21 @@
               if (val.length > 0) {
                 $('td.mainline').hide();
                 $('td.dropdown-container').hide();
-                $('div.dropdown-box').hide();
+                $('input.dropdown.toggle').prop('checked', false); // closes all accordions
 
                 //in case the service title contains the string
                 $('td.mainline:icontains("'+val+'")').show();
                 $('td.mainline:icontains("'+val+'")').parent().next().find('td.dropdown-container').show();
 
-                //in case the attributes contain the value, open up the dropdown and the header too
-                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().show();
-                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().prevAll().find('.dropdown-container').show();
-                $('div.attribute-container span:icontains("'+val+'")').parent().parent().parent().parent().prev().show();
               }
               else {
                 $('td.mainline').show();
-                $('td.dropdown-container').show();
               }
             });
           });
           </script>
-          <b style="margin-top: auto;margin-bottom: auto;">Filter:</b>
-          <input type="text" id="search" placeholder="enter terms here...">
+          <b style="margin-top: auto;margin-bottom: auto;">#springMessageText("userProfile.connectedorganizations.findservice", "Find service:")</b>
+          <input type="text" id="search" placeholder="#springMessageText("userProfile.connectedorganizations.search", "Search...")">
         </div>
     </section>
     <section id="main">

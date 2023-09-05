@@ -81,20 +81,20 @@
                 $('td.mainline').hide();
                 $('td.mainline').parent().hide();
 
-                //in case the service title contains the string
                 $('span.small-label:icontains("'+val+'")').show();
                 $('span.small-label:icontains("'+val+'")').parent().show();
+                $('span.small-label:icontains("'+val+'")').parent().siblings().show();
                 $('span.small-label:icontains("'+val+'")').parent().parent().show();
                 
               }
               else {
                 $('td.mainline').show();
-                $('td.mainline').parent().hide();
+                $('td.mainline').parent().show();
               }
             });
           });
           </script>
-          <b style="margin-top: auto;margin-bottom: auto;">Filter:</b>
+          <b style="margin-top: auto;margin-bottom: auto;">#springMessageText("userProfile.allActivity.filter", "Filter:")</b>
           <input type="text" id="search" placeholder="enter terms here...">
         </div>
     </section>
