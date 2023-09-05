@@ -74,19 +74,19 @@
         <div>
           #springMessageText("userProfile.personaldata.heading", "Personal Data")
         </div>
-        <div class="buttons">
-        <label for="actions-toggle"><span class="actionsbutton">#springMessageText("userProfile.personaldata.actionsbutton", "Actions ▾")</span></label>
+    </section>
+    <section id="main">
+      <div id="personal_data">
+      <table>
+        <!-- fixed table header -->
+        <tr>
+            <th>Attribute</th>
+            <th>Your value
+              <label for="actions-toggle"><span class="actionsbutton">Actions ▾</span></label>
               <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
               <div class="dropdown-box actions-list">
                 <!-- download data button -->
-                <span id="download" class="abutton">#springMessageText('userProfile.personaldata.downloaddata', 'Download data')</span>
-                <div id="csvModal" class="modal">
-                    <div class="modal-content">
-                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
-                        <button id="copyToClipboard">#springMessageText('userProfile.personaldata.copytoclipboard','Copy to Clipboard')</button>
-                        <button id="close">#springMessageText('userProfile.personaldata.close','Close')</button>
-                    </div>
-                </div>
+                <hr>
                 <script>
                 function displayModal(csvData) {
                   $('#csvDisplay').val(csvData);
@@ -99,7 +99,7 @@
                   $('#copyToClipboard').on('click', function() {
                       $('#csvDisplay').select();
                       document.execCommand('copy');
-                      alert('CSV Copied to cliplboard');
+                      alert('CSV copied to clipboard!');
                   });
                 }
 
@@ -120,21 +120,21 @@
                         displayModal(csvData);
                     });
                 });
-
                 </script>
+                <span id="download" class="abutton">Download data</span>
+                <div id="csvModal" class="modal">
+                    <div class="modal-content">
+                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
+                        <button id="copyToClipboard">Copy to Clipboard</button>
+                        <button id="close">Close</button>
+                    </div>
+                </div>
+
                 <!-- custom button -->
                 <hr>
                 <span class="abutton">Custom action</span>
-              </div>
-          </div>
-    </section>
-    <section id="main">
-      <div id="personal_data">
-      <table>
-        <!-- fixed table header -->
-        <tr>
-            <th>Attribute</th>
-            <th>Your value</th>
+              </div>            
+            </th>
         </tr>
         #foreach($attribute in $userAttributes)
         <tr>
