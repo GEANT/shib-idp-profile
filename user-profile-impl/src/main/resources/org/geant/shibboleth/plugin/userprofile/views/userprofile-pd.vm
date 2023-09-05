@@ -121,7 +121,7 @@
                     });
                 });
                 </script>
-                <span id="download" class="abutton">Download data</span>
+                <span id="download" class="abutton">Export data</span>
                 <div id="csvModal" class="modal">
                     <div class="modal-content">
                         <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
@@ -131,8 +131,10 @@
                 </div>
 
                 <!-- custom button -->
+                <!--
                 <hr>
                 <span class="abutton">Custom action</span>
+                -->
               </div>            
             </th>
         </tr>
