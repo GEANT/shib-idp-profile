@@ -74,7 +74,7 @@
         <div>
           #springMessageText("userProfile.personaldata.heading", "Personal Data")
         </div>
-        <div class="button">
+        <div class="buttons">
         <label for="actions-toggle"><span class="actionsbutton">#springMessageText("userProfile.personaldata.actionsbutton", "Actions ▾")</span></label>
               <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
               <div class="dropdown-box actions-list">
@@ -99,7 +99,7 @@
                   $('#copyToClipboard').on('click', function() {
                       $('#csvDisplay').select();
                       document.execCommand('copy');
-                      alert(#springMessageText('userProfile.personaldata.csvcoped', 'CSV copied to clipboard!'));
+                      alert('CSV Copied to cliplboard');
                   });
                 }
 
@@ -120,7 +120,8 @@
                         displayModal(csvData);
                     });
                 });
-                </script>,,
+
+                </script>
                 <!-- custom button -->
                 <hr>
                 <span class="abutton">Custom action</span>
