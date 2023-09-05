@@ -250,7 +250,21 @@ nav > ul > li > a {
   margin-bottom: 0.5em;
   width: 25vh;
   margin-left: auto;
-  margin-right: 0.5em;
+  margin-right: 0.75em;
+  padding-left: auto;
+  padding-right: 0.75em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  text-align: center;
+  font-size: 80%;
+}
+
+#banner div.buttons {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  width: 25vh;
+  margin-left: auto;
+  margin-right: 0.75em;
   padding-left: auto;
   padding-right: 0.75em;
   padding-bottom: 0.5em;
