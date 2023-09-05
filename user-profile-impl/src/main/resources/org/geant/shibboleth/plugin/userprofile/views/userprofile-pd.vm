@@ -74,12 +74,19 @@
         <div>
           #springMessageText("userProfile.personaldata.heading", "Personal Data")
         </div>
-        <div class="search">
+        <div class="button">
         <label for="actions-toggle"><span class="actionsbutton">#springMessageText("userProfile.personaldata.actionsbutton", "Actions ▾")</span></label>
               <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
               <div class="dropdown-box actions-list">
                 <!-- download data button -->
-                <hr>
+                <span id="download" class="abutton">#springMessageText('userProfile.personaldata.downloaddata', 'Download data')</span>
+                <div id="csvModal" class="modal">
+                    <div class="modal-content">
+                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
+                        <button id="copyToClipboard">#springMessageText('userProfile.personaldata.copytoclipboard','Copy to Clipboard')</button>
+                        <button id="close">#springMessageText('userProfile.personaldata.close','Close')</button>
+                    </div>
+                </div>
                 <script>
                 function displayModal(csvData) {
                   $('#csvDisplay').val(csvData);
@@ -113,16 +120,7 @@
                         displayModal(csvData);
                     });
                 });
-                </script>
-                <span id="download" class="abutton">#springMessageText('userProfile.personaldata.downloaddata', 'Download data')</span>
-                <div id="csvModal" class="modal">
-                    <div class="modal-content">
-                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
-                        <button id="copyToClipboard">#springMessageText('userProfile.personaldata.copytoclipboard','Copy to Clipboard')</button>
-                        <button id="close">#springMessageText('userProfile.personaldata.close','Close')</button>
-                    </div>
-                </div>
-
+                </script>,,
                 <!-- custom button -->
                 <hr>
                 <span class="abutton">Custom action</span>
