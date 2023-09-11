@@ -35,7 +35,7 @@
         p:browserProfile-ref="shibboleth.userprofile.browserProfile" />
 
     <bean id="InitializeRelyingPartyContext"
-        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUnverifiedRelyingPartyContext" scope="prototype" />
+        class="org.geant.shibboleth.plugin.userprofile.profile.impl.InitializeUnverifiedRelyingPartyContext" p:rpId="%{userProfile.relyingPartyIdentifier:}" scope="prototype" />
 
     <bean id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
