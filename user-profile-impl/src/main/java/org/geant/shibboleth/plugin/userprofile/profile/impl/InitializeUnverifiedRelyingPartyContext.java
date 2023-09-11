@@ -19,6 +19,7 @@ package org.geant.shibboleth.plugin.userprofile.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -29,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Relying party context initialization for user profile flow. There is not much
@@ -41,6 +44,13 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
     /** Class logger. */
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(InitializeUnverifiedRelyingPartyContext.class);
+
+    /**
+     * Relying party identifier. Despite not really having such in this case some
+     * authentication flow implementation rely on value existing.
+     */
+    @Nullable
+    private String rpId = null;
 
     /** Strategy that will return or create a {@link RelyingPartyContext}. */
     @Nonnull
@@ -64,6 +74,16 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
                 "RelyingPartyContext creation strategy cannot be null");
     }
 
+    /**
+     * Set Relying party identifier. Despite not really having such in this case
+     * some authentication flow implementation rely on value existing.
+     *
+     * @param identifier relying party identifier
+     */
+    public void setRpId(@Nullable final String identifier) {
+        rpId = identifier;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -74,6 +94,7 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CTX);
             return;
         }
+        rpContext.setRelyingPartyId(rpId);
         log.debug("{} new RelyingPartyContext successfully created and attached", getLogPrefix());
     }
 }
