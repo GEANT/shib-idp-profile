@@ -29,10 +29,11 @@
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
       <script>
         function doPopup(popupId) {
-        var popup = document.getElementById(popupId);
-        popup.classList.toggle("show");
+          var popup = document.getElementById(popupId);
+          popup.classList.toggle("show");
         }
       </script>
+      <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
   </head>
   <body>
 
@@ -84,10 +85,56 @@
               <label for="actions-toggle"><span class="actionsbutton">Actions ▾</span></label>
               <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
               <div class="dropdown-box actions-list">
+                <!-- download data button -->
                 <hr>
-                <span class="abutton">Download data</span>
+                <script>
+                function displayModal(csvData) {
+                  $('#csvDisplay').val(csvData);
+                  $('#csvModal').show();
+
+                  $('#close').on('click', function() {
+                      $('#csvModal').hide();
+                  });
+
+                  $('#copyToClipboard').on('click', function() {
+                      $('#csvDisplay').select();
+                      document.execCommand('copy');
+                      alert('CSV copied to clipboard!');
+                  });
+                }
+
+                $(function() {
+                    $('#download').on('click', function() {
+                        let csvData = 'Attribute,Value\n'; // CSV header
+
+                        // Iterate over each row containing personal data
+                        $('td.personaldata').each(function() {
+                            let attributeName = $(this).contents().filter(function() {
+                                return this.nodeType === 3; // Node type 3 is a text node
+                            }).first().text().trim();
+
+                            let attributeValue = $(this).closest('tr').find('span.label').text().trim();
+                            csvData += `"${attributeName}","${attributeValue}"\n`;
+                        });
+
+                        displayModal(csvData);
+                    });
+                });
+                </script>
+                <span id="download" class="abutton">Export data</span>
+                <div id="csvModal" class="modal">
+                    <div class="modal-content">
+                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
+                        <button id="copyToClipboard">Copy to Clipboard</button>
+                        <button id="close">Close</button>
+                    </div>
+                </div>
+
+                <!-- custom button -->
+                <!--
                 <hr>
                 <span class="abutton">Custom action</span>
+                -->
               </div>            
             </th>
         </tr>

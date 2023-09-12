@@ -28,6 +28,7 @@
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
       <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+      <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
   </head>
   <body>
 
@@ -66,23 +67,53 @@
         <div>
           #springMessageText("userProfile.allActivity.heading", "All Activity")
         </div>
+        <div class="search">
+          <script>
+          $(function() {
+            jQuery.expr[':'].icontains = function(a, i, m) {
+              return jQuery(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+              };
+            $("#search").off();
+            $("#search").on("keyup", function() {
+              var val = $.trim(this.value);
+              if (val.length > 0) {
+                $('td.mainline').hide();
+                $('td.mainline').parent().hide();
+
+                $('span.small-label:icontains("'+val+'")').show();
+                $('span.small-label:icontains("'+val+'")').parent().show();
+                $('span.small-label:icontains("'+val+'")').parent().siblings().show();
+                $('span.small-label:icontains("'+val+'")').parent().parent().show();
+                
+              }
+              else {
+                $('td.mainline').show();
+                $('td.mainline').parent().show();
+              }
+            });
+          });
+          </script>
+          <b style="margin-top: auto;margin-bottom: auto;">#springMessageText("userProfile.allActivity.filter", "Filter:")</b>
+          <input type="text" id="search" placeholder="enter terms here...">
+        </div>
     </section>
     <section id="main">
       <div id="activity_log">
       <table>
         <!-- fixed table header -->
         <tr>
-          <th>#springMessageText("userProfile.allActivity.columntime", "Time")</th>
           <th>#springMessageText("userProfile.allActivity.columnservice", "Service")</th>
+          <th>#springMessageText("userProfile.allActivity.columntime", "Time")</th>
           <th>#springMessageText("userProfile.allActivity.columnattributes", "Attributes")</th>
         </tr>
         #foreach($event in $allActivity)
         <tr>
-          <td class="mainline">$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</td>
-          <td class="mainline">$encoder.encodeForHTMLAttribute($event.getName())</td>
+          <td class="mainline"><span class="small-label">$encoder.encodeForHTMLAttribute($event.getName())</span></td>
+          <td class="mainline"><small>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</small></td>
           <td class="mainline">
           #foreach($attribute in $event.getAttributes())
-          <span class="label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
+          <span class="small-label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
           #end
           </td class="mainline">
         </tr>

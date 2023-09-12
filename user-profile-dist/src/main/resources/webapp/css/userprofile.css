@@ -232,15 +232,45 @@ nav > ul > li > a {
   margin-bottom: 0.5em;
   margin-left: 0.5em;
   margin-right: 0.5em;
-  padding-left: 1em;
-  padding-right: 1em;
-  padding-bottom: 1em;
-  padding-top: 1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
   text-align: center;
   border-width: 1px;
   border-style: solid;
   border-color: var(--link-c);
   font-size: 125%;
+}
+
+#banner div.search {
+  color: var(--main-bg-c);
+  background-color: var(--link-c);
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  width: 25vh;
+  margin-left: auto;
+  margin-right: 0.75em;
+  padding-left: auto;
+  padding-right: 0.75em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  text-align: center;
+  font-size: 80%;
+}
+
+#banner div.buttons {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  width: 25vh;
+  margin-left: auto;
+  margin-right: 0.75em;
+  padding-left: auto;
+  padding-right: 0.75em;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  text-align: center;
+  font-size: 80%;
 }
 
 /* ======================= */
@@ -250,6 +280,7 @@ nav > ul > li > a {
 #main{
   grid-area: main;
   font-size: 100%;
+  min-height: 70vh;
 }
 
 .label {
@@ -267,10 +298,26 @@ nav > ul > li > a {
   border-radius: 0.7em;
 }
 
+.small-label {
+  font-size: 85%;
+  padding-left:0.5em;
+  padding-right: 0.5em;
+  background-color: var(--caption-bg-c);
+  margin-left: 0.3em;
+  margin-right: 0.3em;
+  margin-top: 0.05em;
+  margin-bottom: 0.05em;
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+  display: inline-block;
+  border-radius: 0.3em;
+}
+
 button {
   border: none;
   padding: 0.5em;
   text-decoration: underline;
+  border-radius: 0.7em;
 }
 
 button.delete {
@@ -484,6 +531,30 @@ table.detail td {
 }
 
 /* ======================= */
+/*     Modal               */
+/* ======================= */
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* ======================= */
 /*     Icons               */
 /* ======================= */
 
@@ -532,7 +603,7 @@ footer div {
   }
 
   header {
-      background-color: var(--main-bg-c);
+      background-color: var(--nav-bg-c);
   }
 
   #nav {
@@ -572,6 +643,10 @@ footer div {
 
   .nav-toggle-label {
       display: none;
+  }
+
+  .tokenid{
+    font-size: smaller;
   }
 
 }
