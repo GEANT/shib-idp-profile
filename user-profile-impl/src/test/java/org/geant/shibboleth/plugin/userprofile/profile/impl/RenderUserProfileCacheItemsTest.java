@@ -17,6 +17,7 @@
 package org.geant.shibboleth.plugin.userprofile.profile.impl;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokenImpl;
@@ -45,7 +46,6 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -102,11 +102,10 @@ public class RenderUserProfileCacheItemsTest {
         action = new RenderUserProfileCacheItems();
         action.setUserProfileCache(userProfileCache);
         action.setRevocationCache(revocationCache);
+        action.setUsernameLookupStrategy(new usernameLookupStrategy());
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
-        SubjectContext subjectContext = (SubjectContext) prc.addSubcontext(new SubjectContext(), true);
-        subjectContext.setPrincipalName("name");
     }
 
     @AfterMethod
@@ -146,12 +145,12 @@ public class RenderUserProfileCacheItemsTest {
     @Test(expectedExceptions = UnmodifiableComponentException.class)
     public void testFailPostInitSetSubjectContextLookupStrategy() throws ComponentInitializationException {
         action.initialize();
-        action.setSubjectContextLookupStrategy(new ChildContextLookup<>(SubjectContext.class));
+        action.setUsernameLookupStrategy(new usernameLookupStrategy());
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testFailNullSubjectContextLookupStrategy() throws ComponentInitializationException {
-        action.setSubjectContextLookupStrategy(null);
+        action.setUsernameLookupStrategy(null);
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
@@ -190,13 +189,13 @@ public class RenderUserProfileCacheItemsTest {
         events.getLoginEvents().add(new LoginEventImpl("rpId", "ServiceName", System.currentTimeMillis() / 1000, null));
         events.getLoginEvents()
                 .add(new LoginEventImpl("rpId2", "ServiceName2", System.currentTimeMillis() / 1000, null));
-        userProfileCache.setSingleEvent(new UsernamePrincipal("name"), LoginEvents.ENTRY_NAME, events.serialize());
+        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), LoginEvents.ENTRY_NAME, events.serialize());
     }
 
     private void addConnectedServicesEvents() throws JsonProcessingException {
         ConnectedServices services = new ConnectedServices();
         services.getConnectedServices().put("rpId", new ConnectedServiceImpl("rpId", "ServiceName"));
-        userProfileCache.setSingleEvent(new UsernamePrincipal("name"), ConnectedServices.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), ConnectedServices.ENTRY_NAME,
                 services.serialize());
     }
 
@@ -219,7 +218,7 @@ public class RenderUserProfileCacheItemsTest {
         accessTokens.getAccessTokens().add(AccessTokenImpl.parse(
                 " {\"tokenId\":\"_0104\",\"tokenRootId\":\"_01024\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + (currentTime + 10) + "} "));
-        userProfileCache.setSingleEvent(new UsernamePrincipal("name"), AccessTokens.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), AccessTokens.ENTRY_NAME,
                 accessTokens.serialize());
     }
 
@@ -242,7 +241,7 @@ public class RenderUserProfileCacheItemsTest {
         refreshTokens.getRefreshTokens().add(RefreshTokenImpl.parse(
                 " {\"tokenId\":\"_0204\",\"tokenRootId\":\"_02024\",\"clientId\":\"foo\",\"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + (currentTime + 10) + "} "));
-        userProfileCache.setSingleEvent(new UsernamePrincipal("name"), RefreshTokens.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), RefreshTokens.ENTRY_NAME,
                 refreshTokens.serialize());
     }
 
@@ -252,6 +251,14 @@ public class RenderUserProfileCacheItemsTest {
         @Override
         public ChildContext apply(ParentContext t) {
             return null;
+        }
+
+    }
+
+    public class usernameLookupStrategy implements Function<ProfileRequestContext, String> {
+
+        public String apply(final ProfileRequestContext input) {
+            return "name";
         }
 
     }
