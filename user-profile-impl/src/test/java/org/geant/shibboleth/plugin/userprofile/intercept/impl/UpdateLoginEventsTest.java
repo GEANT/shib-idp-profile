@@ -26,7 +26,6 @@ import java.util.function.Function;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileCacheContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
-import org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizationsTest.usernameLookupStrategy;
 import org.geant.shibboleth.plugin.userprofile.storage.UserProfileCache;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -50,7 +49,6 @@ import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
