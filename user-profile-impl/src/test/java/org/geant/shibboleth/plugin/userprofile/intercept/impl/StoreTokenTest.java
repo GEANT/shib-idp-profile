@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Function;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileCacheContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
@@ -42,11 +43,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.id.ClientID;
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
@@ -57,7 +55,6 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
@@ -81,8 +78,6 @@ public class StoreTokenTest {
     private StoreToken action;
 
     private UserProfileCacheContext userProfileCacheContext;
-
-    private SubjectContext subjectContext;
 
     private DataSealer getDataSealer() throws ComponentInitializationException, NoSuchAlgorithmException {
         if (dataSealer == null) {
@@ -119,13 +114,13 @@ public class StoreTokenTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.setId("id");
         userProfileCache.initialize();
-        // addLoginEvents();
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
 
         action = new StoreToken();
         action.setUserProfileCache(userProfileCache);
+        action.setUsernameLookupStrategy(new usernameLookupStrategy());
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
@@ -135,8 +130,6 @@ public class StoreTokenTest {
         relyingPartyContext.setRelyingPartyId("rpId");
 
         userProfileCacheContext = (UserProfileCacheContext) prc.addSubcontext(new UserProfileCacheContext(), true);
-        subjectContext = (SubjectContext) prc.addSubcontext(new SubjectContext(), true);
-        subjectContext.setPrincipalName("name");
         MessageContext outboundMessageContext = new MessageContext();
         AccessTokenContext accessTokenContext = (AccessTokenContext) outboundMessageContext
                 .addSubcontext(new OIDCAuthenticationResponseContext(), true).addSubcontext(new AccessTokenContext());
@@ -171,14 +164,14 @@ public class StoreTokenTest {
         action.initialize();
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        userProfileCache.commitEventsCache(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
                 userProfileCacheContext);
-        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache
-                .getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()), AccessTokens.ENTRY_NAME);
+        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache.getSingleEvent(
+                new UsernamePrincipal(new usernameLookupStrategy().apply(null)), AccessTokens.ENTRY_NAME);
         AccessTokens accessToken = AccessTokens.parse(events.getValue());
         Assert.assertEquals(accessToken.getAccessTokens().size(), 1);
         Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
                 RefreshTokens.ENTRY_NAME);
         RefreshTokens refreshToken = RefreshTokens.parse(events.getValue());
         Assert.assertEquals(refreshToken.getRefreshTokens().size(), 1);
@@ -187,17 +180,25 @@ public class StoreTokenTest {
         // Second add
         event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        userProfileCache.commitEventsCache(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
                 userProfileCacheContext);
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
                 AccessTokens.ENTRY_NAME);
         accessToken = AccessTokens.parse(events.getValue());
         Assert.assertEquals(accessToken.getAccessTokens().size(), 2);
         Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
                 RefreshTokens.ENTRY_NAME);
         refreshToken = RefreshTokens.parse(events.getValue());
         Assert.assertEquals(refreshToken.getRefreshTokens().size(), 2);
         Assert.assertEquals(refreshToken.getRefreshTokens().get(0).getTokenId(), "101");
+    }
+
+    public class usernameLookupStrategy implements Function<ProfileRequestContext, String> {
+
+        public String apply(final ProfileRequestContext input) {
+            return "name";
+        }
+
     }
 }

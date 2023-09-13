@@ -37,7 +37,7 @@ public class CommitUserProfileEvents extends AbstractUserProfileInterceptorActio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (!userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
+        if (!userProfileCache.commitEventsCache(new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext)),
                 userProfileCacheContext)) {
             log.error("{} Failed committing user profile events", getLogPrefix());
         }

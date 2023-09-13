@@ -283,7 +283,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
+        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
         try {
             Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME, userProfileCacheContext);
             LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();

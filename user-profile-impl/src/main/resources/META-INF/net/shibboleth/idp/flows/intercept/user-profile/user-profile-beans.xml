@@ -26,7 +26,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             p:userProfileCache-ref="userProfile.Cache"
             p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
             p:maxEntries="%{userProfile.activityPage.maxEntries:50}"
-            p:collectAttributeValues-ref="%{userProfile.attributeValues.collect:shibboleth.Conditions.FALSE}">
+            p:collectAttributeValues-ref="%{userProfile.attributeValues.collect:shibboleth.Conditions.FALSE}"
+            p:usernameLookupStrategy-ref="%{userProfile.UsernameLookupStrategy:userProfile.UsernameLookupStrategy}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
@@ -46,14 +47,16 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.StoreToken" scope="prototype"
             p:userProfileCache-ref="userProfile.Cache"
             p:dataSealer-ref="#{'%{idp.oidc.tokenSealer:shibboleth.oidc.TokenSealer}'.trim()}"
-            p:activationCondition-ref="%{userProfile.tokens.collect:shibboleth.Conditions.FALSE}"/>
+            p:activationCondition-ref="%{userProfile.tokens.collect:shibboleth.Conditions.FALSE}"
+            p:usernameLookupStrategy-ref="%{userProfile.UsernameLookupStrategy:userProfile.UsernameLookupStrategy}"/>
 
         <bean id="UpdateConnectedOrganizations"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.UpdateConnectedOrganizations" scope="prototype"
             p:transcoderRegistry-ref="shibboleth.AttributeRegistryService"
             p:userProfileCache-ref="userProfile.Cache"
             p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier"
-            p:collectAttributeValues-ref="%{userProfile.attributeValues.collect:shibboleth.Conditions.FALSE}">
+            p:collectAttributeValues-ref="%{userProfile.attributeValues.collect:shibboleth.Conditions.FALSE}"
+            p:usernameLookupStrategy-ref="%{userProfile.UsernameLookupStrategy:userProfile.UsernameLookupStrategy}">
             <property name="fallbackLanguages">
                 <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
             </property>
@@ -71,6 +74,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 
         <bean id="CommitUserProfileEvents"
             class="org.geant.shibboleth.plugin.userprofile.intercept.impl.CommitUserProfileEvents" scope="prototype"
-            p:userProfileCache-ref="userProfile.Cache"/>        
+            p:userProfileCache-ref="userProfile.Cache"
+            p:usernameLookupStrategy-ref="%{userProfile.UsernameLookupStrategy:userProfile.UsernameLookupStrategy}"/>        
 
 </beans>

@@ -150,7 +150,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
+        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
         try {
             Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME, userProfileCacheContext);
             AccessTokens accessTokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();

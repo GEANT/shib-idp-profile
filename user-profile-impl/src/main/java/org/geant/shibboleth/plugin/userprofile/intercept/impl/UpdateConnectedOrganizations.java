@@ -252,7 +252,7 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
+        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
         Event event = userProfileCache.getSingleEvent(user, ConnectedServices.ENTRY_NAME, userProfileCacheContext);
         ConnectedServices organizations;
         try {
