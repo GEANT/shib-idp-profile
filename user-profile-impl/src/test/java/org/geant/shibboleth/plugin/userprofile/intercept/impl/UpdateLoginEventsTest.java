@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileCacheContext;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
@@ -48,8 +49,6 @@ import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -80,8 +79,6 @@ public class UpdateLoginEventsTest {
 
     private UserProfileCacheContext userProfileCacheContext;
 
-    private SubjectContext subjectContext;
-
     @BeforeMethod
     public void initTests() throws ComponentInitializationException, JsonProcessingException {
         storageService = new MemoryStorageService();
@@ -93,13 +90,13 @@ public class UpdateLoginEventsTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.setId("id");
         userProfileCache.initialize();
-        // addLoginEvents();
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
 
         action = new UpdateLoginEvents();
         action.setUserProfileCache(userProfileCache);
+        action.setUsernameLookupStrategy(new usernameLookupStrategy());
 
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");
@@ -152,8 +149,6 @@ public class UpdateLoginEventsTest {
                 .setIdPAttributes(Arrays.asList(idPAttribute_0, idPAttribute_1, idPAttribute_2, idPAttribute_3));
 
         userProfileCacheContext = (UserProfileCacheContext) prc.addSubcontext(new UserProfileCacheContext(), true);
-        subjectContext = (SubjectContext) prc.addSubcontext(new SubjectContext(), true);
-        subjectContext.setPrincipalName("name");
         AuthenticationContext authenticationContext = (AuthenticationContext) prc
                 .addSubcontext(new AuthenticationContext(), true);
         authenticationContext.addSubcontext(new RelyingPartyUIContext(), true);
@@ -180,13 +175,20 @@ public class UpdateLoginEventsTest {
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(subjectContext.getPrincipalName()),
-                userProfileCacheContext);
+        userProfileCache.commitEventsCache(new usernameLookupStrategy().apply(null), userProfileCacheContext);
         org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache
-                .getSingleEvent(new UsernamePrincipal(subjectContext.getPrincipalName()), LoginEvents.ENTRY_NAME);
+                .getSingleEvent(new usernameLookupStrategy().apply(null), LoginEvents.ENTRY_NAME);
         LoginEvents loginEvents = LoginEvents.parse(events.getValue());
         Assert.assertEquals(loginEvents.getLoginEvents().size(), 1);
         Assert.assertEquals(loginEvents.getLoginEvents().get(0).getId(), "rpId");
         Assert.assertEquals(loginEvents.getLoginEvents().get(0).getAttributes().size(), 4);
+    }
+
+    public class usernameLookupStrategy implements Function<ProfileRequestContext, String> {
+
+        public String apply(final ProfileRequestContext input) {
+            return "name";
+        }
+
     }
 }

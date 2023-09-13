@@ -27,7 +27,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -43,15 +42,11 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(AbstractUserProfileInterceptorAction.class);
 
-    /** Subject context. */
-    @Nonnull
-    protected SubjectContext subjectContext;
-
     /**
-     * Lookup strategy for subject context.
+     * Lookup strategy for user name.
      */
-    @Nonnull
-    private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
+    @NonnullAfterInit
+    protected Function<ProfileRequestContext, String> usernameLookupStrategy;
 
     /** User profile cache context. */
     @Nonnull
@@ -72,19 +67,17 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     /** Constructor. */
     public AbstractUserProfileInterceptorAction() {
         super();
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         userProfileCacheContextLookupStrategy = new ChildContextLookup<>(UserProfileCacheContext.class);
     }
- 
+
     /**
-     * Set Lookup strategy for subject context.
+     * Set Lookup strategy for user name.
      * 
-     * @param strategy lookup strategy for subject context
+     * @param strategy lookup strategy for user name
      */
-    public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+    public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+        usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
     /**
@@ -116,6 +109,9 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
         if (userProfileCache == null) {
             throw new ComponentInitializationException("UserProfileCache cannot be null");
         }
+        if (usernameLookupStrategy == null) {
+            throw new ComponentInitializationException("UsernamePrincipal lookup strategy cannot be null");
+        }
     }
 
     /** {@inheritDoc} */
@@ -125,9 +121,9 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectContext == null || subjectContext.getPrincipalName() == null) {
-            log.warn("{} No subject context or no principal name in subject context", getLogPrefix());
+        if (usernameLookupStrategy.apply(profileRequestContext) == null
+                || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
+            log.warn("{} No username", getLogPrefix());
             return false;
         }
         userProfileCacheContext = userProfileCacheContextLookupStrategy.apply(profileRequestContext);

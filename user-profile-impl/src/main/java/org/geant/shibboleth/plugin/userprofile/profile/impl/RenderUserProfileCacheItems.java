@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -57,28 +55,24 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(RenderUserProfileCacheItems.class);
 
-    /** Subject context. */
-    @Nonnull
-    private SubjectContext subjectContext;
-
-    /**
-     * Lookup strategy for subject context.
-     */
-    @Nonnull
-    private Function<ProfileRequestContext, SubjectContext> subjectContextLookupStrategy;
-
     /** Token revocation cache instance to use. */
     @Nullable
     private RevocationCache revocationCache;
+
+    /** Context for user profile . */
+    private UserProfileContext userProfileContext;
+
+    /**
+     * Lookup strategy for user name principal.
+     */
+    @NonnullAfterInit
+    protected Function<ProfileRequestContext, String> usernameLookupStrategy;
 
     /**
      * User profile cache.
      */
     @NonnullAfterInit
-    private UserProfileCache userProfileCache;
-
-    /** Context for user profile . */
-    private UserProfileContext userProfileContext;
+    protected UserProfileCache userProfileCache;
 
     /**
      * Strategy used to locate or create the {@link UserProfileContext} to populate.
@@ -89,19 +83,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     /** Constructor. */
     public RenderUserProfileCacheItems() {
         super();
-        subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
-    }
-
-    /**
-     * Set Lookup strategy for subject context.
-     * 
-     * @param strategy Lookup strategy for subject context
-     */
-    public void setSubjectContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
     /**
@@ -122,6 +104,16 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
+    }
+
+    /**
+     * Set Lookup strategy for user name.
+     * 
+     * @param strategy lookup strategy for user name
+     */
+    public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
     /**
@@ -155,17 +147,15 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             return false;
         }
 
-        subjectContext = subjectContextLookupStrategy.apply(profileRequestContext);
-        if (subjectContext == null || subjectContext.getPrincipalName() == null) {
-            log.error("{} No principal name available.", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-
         userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
         if (userProfileContext == null) {
             log.error("{} No UserProfileContext name available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
+        }
+        
+        if (usernameLookupStrategy.apply(profileRequestContext) == null || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
+            log.warn("{} No username", getLogPrefix());
             return false;
         }
 
@@ -175,7 +165,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(subjectContext.getPrincipalName());
+        String user = usernameLookupStrategy.apply(profileRequestContext);
         Event event = null;
         // If there is no token revocation cache we ignore tokens.
         if (revocationCache != null) {

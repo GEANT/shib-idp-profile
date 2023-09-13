@@ -26,7 +26,11 @@
        
        <!-- Profile configuration. -->
        <bean id="USERPROFILE.SSO"  lazy-init="true"
-               class="org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration"/>
+           class="org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration"/>
+
+       <!-- Default username comes from subject context. -->
+       <bean id="userProfile.UsernameLookupStrategy" parent="shibboleth.Functions.Compose" 
+           c:g-ref="shibboleth.PrincipalNameLookup.Subject" c:f-ref="shibboleth.ChildLookup.SubjectContext" />
 
        <!-- Indices we use to store metadata by for User Profile. -->
        <util:set id="userProfile.metadataIndices">

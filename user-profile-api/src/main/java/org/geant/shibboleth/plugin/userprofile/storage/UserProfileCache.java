@@ -31,7 +31,6 @@ import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
@@ -134,7 +133,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      * @return true if event was successfully set
      * @throws IOException
      */
-    public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
+    public synchronized boolean setSingleEvent(@Nonnull @NotEmpty final String user,
             @Nonnull @NotEmpty final String eventName, @Nonnull @NotEmpty final String eventValue) {
         final String key = getKey(user);
         Events events = getEvents(key);
@@ -164,7 +163,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      * @param eventsCache cache for events
      * @return
      */
-    public synchronized boolean commitEventsCache(@Nonnull @NotEmpty final UsernamePrincipal user,
+    public synchronized boolean commitEventsCache(@Nonnull @NotEmpty final String user,
             @Nonnull EventsCache eventsCache) {
         return setEvents(getKey(user), eventsCache.getEvents());
     }
@@ -179,7 +178,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
 
     @Nullable
     @NotEmpty
-    public synchronized Event getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user,
+    public synchronized Event getSingleEvent(@Nonnull @NotEmpty final String user,
             @Nonnull @NotEmpty String eventName) {
         Events events = getEvents(getKey(user));
         return events.getEvents().get(eventName);
@@ -195,7 +194,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      */
     @Nullable
     @NotEmpty
-    public Event getSingleEvent(@Nonnull @NotEmpty final UsernamePrincipal user, @Nonnull @NotEmpty String eventName,
+    public Event getSingleEvent(@Nonnull @NotEmpty final String user, @Nonnull @NotEmpty String eventName,
             @Nonnull EventsCache eventsCache) {
         if (eventsCache.getEvents() == null) {
             eventsCache.setEvents(getEvents(getKey(user)));
@@ -255,13 +254,13 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
 
     @Nonnull
     @NotEmpty
-    private String getKey(@Nonnull @NotEmpty final UsernamePrincipal user) {
+    private String getKey(@Nonnull @NotEmpty final String user) {
         // TODO: Key user with salted hash. Basic precaution.
         final StorageCapabilities caps = storage.getCapabilities();
-        if (user.getName().length() > caps.getKeySize()) {
-            return DigestUtils.sha1Hex(user.getName());
+        if (user.length() > caps.getKeySize()) {
+            return DigestUtils.sha1Hex(user);
         } else {
-            return user.getName();
+            return user;
         }
     }
 }
