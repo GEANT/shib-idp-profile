@@ -46,7 +46,6 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -189,13 +188,14 @@ public class RenderUserProfileCacheItemsTest {
         events.getLoginEvents().add(new LoginEventImpl("rpId", "ServiceName", System.currentTimeMillis() / 1000, null));
         events.getLoginEvents()
                 .add(new LoginEventImpl("rpId2", "ServiceName2", System.currentTimeMillis() / 1000, null));
-        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), LoginEvents.ENTRY_NAME, events.serialize());
+        userProfileCache.setSingleEvent(new usernameLookupStrategy().apply(prc), LoginEvents.ENTRY_NAME,
+                events.serialize());
     }
 
     private void addConnectedServicesEvents() throws JsonProcessingException {
         ConnectedServices services = new ConnectedServices();
         services.getConnectedServices().put("rpId", new ConnectedServiceImpl("rpId", "ServiceName"));
-        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), ConnectedServices.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new usernameLookupStrategy().apply(prc), ConnectedServices.ENTRY_NAME,
                 services.serialize());
     }
 
@@ -218,7 +218,7 @@ public class RenderUserProfileCacheItemsTest {
         accessTokens.getAccessTokens().add(AccessTokenImpl.parse(
                 " {\"tokenId\":\"_0104\",\"tokenRootId\":\"_01024\",\"clientId\":\"foo\",\"audience\":[\"foo\",\"bar\"], \"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + (currentTime + 10) + "} "));
-        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), AccessTokens.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new usernameLookupStrategy().apply(prc), AccessTokens.ENTRY_NAME,
                 accessTokens.serialize());
     }
 
@@ -241,7 +241,7 @@ public class RenderUserProfileCacheItemsTest {
         refreshTokens.getRefreshTokens().add(RefreshTokenImpl.parse(
                 " {\"tokenId\":\"_0204\",\"tokenRootId\":\"_02024\",\"clientId\":\"foo\",\"scope\":[\"openid\",\"profile\"],\"exp\":"
                         + (currentTime + 10) + "} "));
-        userProfileCache.setSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(prc)), RefreshTokens.ENTRY_NAME,
+        userProfileCache.setSingleEvent(new usernameLookupStrategy().apply(prc), RefreshTokens.ENTRY_NAME,
                 refreshTokens.serialize());
     }
 

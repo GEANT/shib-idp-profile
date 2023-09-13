@@ -41,7 +41,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction;
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -283,7 +282,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
+        String user = usernameLookupStrategy.apply(profileRequestContext);
         try {
             Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME, userProfileCacheContext);
             LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();

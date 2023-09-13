@@ -49,7 +49,6 @@ import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
@@ -176,10 +175,9 @@ public class UpdateLoginEventsTest {
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                userProfileCacheContext);
-        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache.getSingleEvent(
-                new UsernamePrincipal(new usernameLookupStrategy().apply(null)), LoginEvents.ENTRY_NAME);
+        userProfileCache.commitEventsCache(new usernameLookupStrategy().apply(null), userProfileCacheContext);
+        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache
+                .getSingleEvent(new usernameLookupStrategy().apply(null), LoginEvents.ENTRY_NAME);
         LoginEvents loginEvents = LoginEvents.parse(events.getValue());
         Assert.assertEquals(loginEvents.getLoginEvents().size(), 1);
         Assert.assertEquals(loginEvents.getLoginEvents().get(0).getId(), "rpId");

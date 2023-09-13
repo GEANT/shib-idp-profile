@@ -22,8 +22,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-
 /**
  * Stores user profile events to user profile cache.
  */
@@ -37,7 +35,7 @@ public class CommitUserProfileEvents extends AbstractUserProfileInterceptorActio
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        if (!userProfileCache.commitEventsCache(new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext)),
+        if (!userProfileCache.commitEventsCache(usernameLookupStrategy.apply(profileRequestContext),
                 userProfileCacheContext)) {
             log.error("{} Failed committing user profile events", getLogPrefix());
         }

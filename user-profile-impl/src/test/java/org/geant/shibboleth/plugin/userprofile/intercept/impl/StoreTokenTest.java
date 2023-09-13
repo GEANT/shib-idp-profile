@@ -45,7 +45,6 @@ import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
@@ -164,15 +163,13 @@ public class StoreTokenTest {
         action.initialize();
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                userProfileCacheContext);
-        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache.getSingleEvent(
-                new UsernamePrincipal(new usernameLookupStrategy().apply(null)), AccessTokens.ENTRY_NAME);
+        userProfileCache.commitEventsCache(new usernameLookupStrategy().apply(null), userProfileCacheContext);
+        org.geant.shibboleth.plugin.userprofile.storage.Event events = userProfileCache
+                .getSingleEvent(new usernameLookupStrategy().apply(null), AccessTokens.ENTRY_NAME);
         AccessTokens accessToken = AccessTokens.parse(events.getValue());
         Assert.assertEquals(accessToken.getAccessTokens().size(), 1);
         Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                RefreshTokens.ENTRY_NAME);
+        events = userProfileCache.getSingleEvent(new usernameLookupStrategy().apply(null), RefreshTokens.ENTRY_NAME);
         RefreshTokens refreshToken = RefreshTokens.parse(events.getValue());
         Assert.assertEquals(refreshToken.getRefreshTokens().size(), 1);
         Assert.assertEquals(refreshToken.getRefreshTokens().get(0).getTokenId(), "101");
@@ -180,15 +177,12 @@ public class StoreTokenTest {
         // Second add
         event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        userProfileCache.commitEventsCache(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                userProfileCacheContext);
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                AccessTokens.ENTRY_NAME);
+        userProfileCache.commitEventsCache(new usernameLookupStrategy().apply(null), userProfileCacheContext);
+        events = userProfileCache.getSingleEvent(new usernameLookupStrategy().apply(null), AccessTokens.ENTRY_NAME);
         accessToken = AccessTokens.parse(events.getValue());
         Assert.assertEquals(accessToken.getAccessTokens().size(), 2);
         Assert.assertEquals(accessToken.getAccessTokens().get(0).getTokenId(), "101");
-        events = userProfileCache.getSingleEvent(new UsernamePrincipal(new usernameLookupStrategy().apply(null)),
-                RefreshTokens.ENTRY_NAME);
+        events = userProfileCache.getSingleEvent(new usernameLookupStrategy().apply(null), RefreshTokens.ENTRY_NAME);
         refreshToken = RefreshTokens.parse(events.getValue());
         Assert.assertEquals(refreshToken.getRefreshTokens().size(), 2);
         Assert.assertEquals(refreshToken.getRefreshTokens().get(0).getTokenId(), "101");

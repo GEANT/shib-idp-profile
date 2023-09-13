@@ -43,7 +43,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     private final Logger log = LoggerFactory.getLogger(AbstractUserProfileInterceptorAction.class);
 
     /**
-     * Lookup strategy for user name principal.
+     * Lookup strategy for user name.
      */
     @NonnullAfterInit
     protected Function<ProfileRequestContext, String> usernameLookupStrategy;
@@ -121,7 +121,8 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        if (usernameLookupStrategy.apply(profileRequestContext) == null) {
+        if (usernameLookupStrategy.apply(profileRequestContext) == null
+                || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
             log.warn("{} No username", getLogPrefix());
             return false;
         }

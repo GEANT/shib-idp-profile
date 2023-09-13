@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -154,6 +153,11 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
+        
+        if (usernameLookupStrategy.apply(profileRequestContext) == null || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
+            log.warn("{} No username", getLogPrefix());
+            return false;
+        }
 
         return true;
     }
@@ -161,7 +165,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
+        String user = usernameLookupStrategy.apply(profileRequestContext);
         Event event = null;
         // If there is no token revocation cache we ignore tokens.
         if (revocationCache != null) {

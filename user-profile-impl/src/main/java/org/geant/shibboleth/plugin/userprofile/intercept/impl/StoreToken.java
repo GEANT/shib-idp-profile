@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
@@ -150,7 +149,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        UsernamePrincipal user = new UsernamePrincipal(usernameLookupStrategy.apply(profileRequestContext));
+        String user = usernameLookupStrategy.apply(profileRequestContext);
         try {
             Event event = userProfileCache.getSingleEvent(user, AccessTokens.ENTRY_NAME, userProfileCacheContext);
             AccessTokens accessTokens = event != null ? AccessTokens.parse(event.getValue()) : new AccessTokens();
