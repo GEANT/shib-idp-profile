@@ -109,6 +109,7 @@
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
+            <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
         </on-entry>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
@@ -131,6 +132,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
+            <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
         </on-entry>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
@@ -154,6 +156,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
+            <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
         </on-entry>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
@@ -176,6 +179,7 @@
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(org.geant.shibboleth.plugin.userprofile.context.UserProfileContext))" result="viewScope.userProfileContext" />
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
+            <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
         </on-entry>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
