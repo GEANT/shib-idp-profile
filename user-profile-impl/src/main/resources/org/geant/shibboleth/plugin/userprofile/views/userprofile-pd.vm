@@ -63,7 +63,9 @@
                 #if ($showAllServices)
                 <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span></a></li>
                 #end
-                <li><a href="#"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
+                #if ($logoutUrl)
+                <li><a href="$logoutUrl"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
+                #end
             </ul>
         </nav>
     </div>

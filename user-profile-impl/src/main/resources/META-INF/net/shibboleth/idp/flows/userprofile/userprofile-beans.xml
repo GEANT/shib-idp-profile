@@ -27,6 +27,7 @@
     <bean id="showConnectedServices" class="java.lang.Boolean" c:_0="%{userProfile.connectedServices.show:false}" />
     <bean id="showActivityPage" class="java.lang.Boolean" c:_0="%{userProfile.activityPage.show:false}" />
     <bean id="showAllServices" class="java.lang.Boolean" c:_0="%{userProfile.allServices.show:false}" />
+    <bean id="logoutUrl" class="java.lang.String" c:_0="%{userProfile.logoutUrl:}" />
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
