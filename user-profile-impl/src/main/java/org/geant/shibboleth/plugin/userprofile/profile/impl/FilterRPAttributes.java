@@ -29,20 +29,20 @@ import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.component.ComponentSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Actions that filters attributes for relying party. TODO: Pass also relying
@@ -119,7 +119,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         attributeResolutionContextLookupStrategy = new ChildContextLookup<>(AttributeResolutionContext.class, true);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         filterContextCreationStrategy = new ChildContextLookup<>(AttributeFilterContext.class, true)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
     }
@@ -284,10 +284,6 @@ public class FilterRPAttributes extends AbstractProfileAction {
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
 }

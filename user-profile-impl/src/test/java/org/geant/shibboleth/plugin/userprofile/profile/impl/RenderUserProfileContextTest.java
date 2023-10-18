@@ -23,9 +23,7 @@ import java.net.URL;
 import java.util.Collections;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
-import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandlerTest;
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.metadata.resolver.index.MetadataIndex;
 import org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex;
@@ -42,8 +40,8 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.oidc.metadata.impl.FilesystemClientInformationResolver;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.resolver.ResolverException;
 
 /**
  * Unit tests for {@link RenderUserProfileContext}.
@@ -90,6 +88,7 @@ public class RenderUserProfileContextTest extends XMLObjectBaseTestCase {
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         userProfileContext = (UserProfileContext) prc.addSubcontext(new UserProfileContext(), true);
+        
      }
 
     @Test

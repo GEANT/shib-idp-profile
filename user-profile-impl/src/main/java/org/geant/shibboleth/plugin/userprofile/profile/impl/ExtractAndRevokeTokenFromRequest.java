@@ -22,7 +22,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
@@ -31,16 +30,16 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.shibboleth.idp.plugin.oidc.op.profile.OidcEventIds;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.oidc.profile.core.OidcEventIds;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.ComponentSupport;
+import net.shibboleth.shared.logic.Constraint;
+
 import org.opensaml.profile.action.ActionSupport;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**

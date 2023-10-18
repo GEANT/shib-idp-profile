@@ -30,11 +30,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-storage-api</artifactId>
             <scope>provided</scope>
@@ -63,6 +58,12 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- test dependencies -->
+        <!--
+        <dependency>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+          <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
@@ -78,6 +79,7 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
         </dependency>
+        -->    
     </dependencies>
 
     <build>

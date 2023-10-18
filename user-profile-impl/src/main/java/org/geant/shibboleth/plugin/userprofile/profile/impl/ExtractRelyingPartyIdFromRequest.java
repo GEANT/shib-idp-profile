@@ -19,7 +19,6 @@ package org.geant.shibboleth.plugin.userprofile.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -27,13 +26,14 @@ import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.component.ComponentSupport;
+import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**

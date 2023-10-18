@@ -30,11 +30,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.geant.shibboleth.plugin.userprofile</groupId>
             <artifactId>idp-plugin-userprofile-api</artifactId>
             <scope>provided</scope>
@@ -62,16 +57,6 @@
         <dependency>
             <groupId>net.shibboleth.idp</groupId>
             <artifactId>idp-saml-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-attribute-resolver-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-attribute-filter-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -108,7 +93,28 @@
             <artifactId>idp-admin-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+          <groupId>jakarta.servlet</groupId>
+          <artifactId>jakarta.servlet-api</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth.oidc</groupId>
+            <artifactId>oidc-common-profile-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-filter-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.shibboleth</groupId>
+            <artifactId>shib-attribute-resolver-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <!-- test dependencies -->
+        <!--
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-storage-impl</artifactId>
@@ -121,26 +127,9 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <version>6.0.11</version>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-profile-api</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-core</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-saml-impl</artifactId>
-            <scope>test</scope>
-            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>net.shibboleth.oidc</groupId>
@@ -158,22 +147,53 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-attribute-impl</artifactId>
-            <scope>test</scope>
+          <groupId>net.shibboleth.idp</groupId>
+          <artifactId>idp-testing</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>net.shibboleth.ext</groupId>
-            <artifactId>spring-extensions</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+          <groupId>net.shibboleth</groupId>
+          <artifactId>shib-attribute-impl</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-           <groupId>net.shibboleth.utilities</groupId>
-           <artifactId>java-support</artifactId>
-           <type>test-jar</type>
-           <scope>test</scope>
+          <groupId>net.shibboleth.ext</groupId>
+          <artifactId>spring-extensions</artifactId>
+          <version>6.3.0</version>
+          <type>test-jar</type>
+          <scope>test</scope>
         </dependency>
+        -->    
+        <!--
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-storage-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        -->    
+        <!--
+        <dependency>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-core</artifactId>
+          <version>5.0.0</version>
+          <scope>test</scope>
+        </dependency>
+        -->  
+        <!--      
+        <dependency>
+          <groupId>net.shibboleth.utilities</groupId>
+          <artifactId>java-support</artifactId>
+          <version>8.3.1</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>net.shibboleth.utilities</groupId>
+          <artifactId>java-support</artifactId>
+          <version>8.3.1</version>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        -->    
     </dependencies>
 
     <build>

@@ -36,12 +36,12 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.component.ComponentSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.service.ReloadableService;
 
 /**
  * Action resolves attributes and stores them
@@ -121,7 +121,7 @@ public class ResolveAttributes extends AbstractProfileAction {
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         attributeResolutionContextLookupStrategy = new ChildContextLookup<>(AttributeResolutionContext.class, true);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
@@ -266,7 +266,10 @@ public class ResolveAttributes extends AbstractProfileAction {
         // We set the user we resolve attributes for.
         attributeResolutionContext.setPrincipal(subjectContext.getPrincipalName());
         attributeResolutionContext.resolveAttributes(attributeResolverService);
-        attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
+        
+        //TODO: WHY missing in idp5 ? FIND OUT!
+        //attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
+        
         // Store the result.
         attributeCtx.setIdPAttributes(attributeResolutionContext.getResolvedIdPAttributes().values());
         attributeCtx.setUnfilteredIdPAttributes(attributeResolutionContext.getResolvedIdPAttributes().values());

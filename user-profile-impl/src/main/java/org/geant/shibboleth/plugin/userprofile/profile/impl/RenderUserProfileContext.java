@@ -65,14 +65,14 @@ import com.nimbusds.openid.connect.sdk.rp.OIDCClientMetadata;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.oidc.metadata.ClientInformationResolver;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentSupport;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 /**
  * Actions merges saml2 and oidc relying parties to single list. For each party
