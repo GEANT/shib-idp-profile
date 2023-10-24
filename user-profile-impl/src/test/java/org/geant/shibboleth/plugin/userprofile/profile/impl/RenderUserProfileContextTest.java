@@ -42,7 +42,8 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.oidc.metadata.impl.FilesystemClientInformationResolver;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.resolver.ResolverException;
-
+import org.opensaml.core.testing.XMLObjectBaseTestCase;
+import org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandlerTest;
 /**
  * Unit tests for {@link RenderUserProfileContext}.
  */

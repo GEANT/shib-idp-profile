@@ -42,7 +42,6 @@ import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -92,7 +91,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
      * @param cache The revocationCache to set.
      */
     public void setRevocationCache(@Nonnull final RevocationCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         revocationCache = cache;
     }
 
@@ -102,7 +101,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
      * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
     }
 
@@ -112,7 +111,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
      * @param strategy lookup strategy for user name
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -125,7 +124,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }

@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 /**
@@ -76,7 +75,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
      * @param strategy lookup strategy for user name
      */
     public void setUsernameLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         usernameLookupStrategy = Constraint.isNotNull(strategy, "Username lookup strategy cannot be null");
     }
 
@@ -87,7 +86,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
      */
     public void setUserProfileCacheContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileCacheContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         userProfileCacheContextLookupStrategy = Constraint.isNotNull(strategy,
                 "UserProfileCacheContext lookup strategy cannot be null");
     }
@@ -98,7 +97,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
      * @param cache user profile cache
      */
     public void setUserProfileCache(@Nonnull final UserProfileCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         userProfileCache = Constraint.isNotNull(cache, "UserProfileCache cannot be null");
     }
 

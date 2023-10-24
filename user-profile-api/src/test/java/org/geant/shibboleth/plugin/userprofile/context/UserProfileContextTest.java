@@ -18,7 +18,6 @@ package org.geant.shibboleth.plugin.userprofile.context;
 
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import org.testng.annotations.BeforeMethod;
 

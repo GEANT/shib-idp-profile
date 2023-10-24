@@ -41,7 +41,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.servlet.http.HttpServletRequest;
-import net.shibboleth.ext.spring.testing.MockApplicationContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -60,8 +59,8 @@ import net.shibboleth.oidc.attribute.transcoding.impl.OIDCStringAttributeTransco
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
-import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
-
+import net.shibboleth.shared.testing.MockApplicationContext;
+import net.shibboleth.shared.testing.MockReloadableService;
 /**
  * Unit tests for {@link UpdateLoginEvents}.
  */
@@ -133,7 +132,7 @@ public class UpdateLoginEventsTest {
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
         //TODO WHY?
-        //action.setTranscoderRegistry(new MockReloadableService<>(registry));
+        action.setTranscoderRegistry(new MockReloadableService<>(registry));
 
         RelyingPartyContext relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(),
                 true);

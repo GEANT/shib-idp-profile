@@ -35,7 +35,6 @@ import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.oidc.profile.core.OidcEventIds;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -106,7 +105,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      * @param cache revocation cache
      */
     public void setRevocationCache(@Nonnull final RevocationCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         revocationCache = cache;
     }
 
@@ -116,7 +115,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      * @param fieldName parameter name for token id
      */
     public void setTokenIdFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         tokenIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
                 "Access token id field name cannot be null or empty.");
     }
@@ -130,7 +129,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }

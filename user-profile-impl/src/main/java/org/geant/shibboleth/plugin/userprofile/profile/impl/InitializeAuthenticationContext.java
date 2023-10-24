@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.authn.config.navigate.ForceAuthnProfileConfigPredicate;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -60,8 +59,7 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
      * @since 3.1.0
      */
     public void setForceAuthnPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         forceAuthnPredicate = Constraint.isNotNull(condition, "Forced authentication predicate cannot be null");
     }
 

@@ -24,7 +24,6 @@ import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokenImpl;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.RevocationCache;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.opensaml.storage.impl.StorageServiceRevocationCache;
 import org.springframework.webflow.execution.Event;

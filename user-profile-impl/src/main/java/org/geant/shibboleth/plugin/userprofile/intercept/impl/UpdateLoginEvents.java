@@ -48,7 +48,6 @@ import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -149,8 +148,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
      */
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
     }
@@ -162,7 +160,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
      */
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -174,7 +172,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
      */
     public void setRelyingPartyUIContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         relyingPartyUIContextLookupStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyUIContext lookup strategy cannot be null");
     }
@@ -186,8 +184,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         transcoderRegistry = registry;
     }
 
@@ -197,8 +194,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 

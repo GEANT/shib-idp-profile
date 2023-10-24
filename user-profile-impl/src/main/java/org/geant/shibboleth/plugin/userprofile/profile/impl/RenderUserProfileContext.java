@@ -68,7 +68,6 @@ import net.shibboleth.oidc.metadata.ClientInformationResolver;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
@@ -122,7 +121,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
      * @param resolver oidc json based client information resolver
      */
     public void setClientInformationResolver(@Nonnull final ClientInformationResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         clientResolver = Constraint.isNotNull(resolver, "ClientInformationResolver cannot be null");
     }
 
@@ -132,7 +131,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
      * @param resolver the resolver to use
      */
     public void setMetadataResolver(@Nonnull final MetadataResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         metadataResolver = Constraint.isNotNull(resolver, "MetadataResolver cannot be null");
     }
 
@@ -148,7 +147,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }
@@ -159,8 +158,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         fallbackLanguages = List.copyOf(StringSupport.normalizeStringCollection(langs));
     }
 
@@ -170,8 +168,7 @@ public class RenderUserProfileContext extends AbstractProfileAction {
      * @param language to set.
      */
     public void setDefaultLanguage(@Nonnull final String language) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         defaultLanguage = Constraint.isNotEmpty(language, "The default language cannot be empty");
     }
 

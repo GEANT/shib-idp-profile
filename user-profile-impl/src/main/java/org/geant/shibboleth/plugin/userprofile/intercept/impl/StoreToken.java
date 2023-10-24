@@ -42,7 +42,6 @@ import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.component.ComponentInitializationException;
-import net.shibboleth.shared.component.ComponentSupport;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
@@ -87,8 +86,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
      */
     public void setAccessTokenContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AccessTokenContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         accessTokenContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AccessTokenContext lookup strategy cannot be null");
     }
@@ -99,7 +97,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
      * @param sealer sealer to use
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 
