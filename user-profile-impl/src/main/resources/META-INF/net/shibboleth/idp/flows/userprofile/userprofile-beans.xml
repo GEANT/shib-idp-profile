@@ -40,7 +40,7 @@
 
     <bean id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
 
     <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
         scope="prototype" />
