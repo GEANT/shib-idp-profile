@@ -29,11 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Relying party context initialization for user profile flow. There is not much
@@ -68,8 +66,7 @@ public class InitializeUnverifiedRelyingPartyContext extends AbstractProfileActi
      */
     public void setRelyingPartyContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext creation strategy cannot be null");
     }

@@ -26,11 +26,13 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonnullSupplier;
 
 /**
  * Unit tests for {@link ExtractRelyingPartyIdFromRequest}.
@@ -48,7 +50,8 @@ public class ExtractRelyingPartyIdFromRequestTest {
     @BeforeMethod
     public void initTests() throws ComponentInitializationException {
         action = new ExtractRelyingPartyIdFromRequest();
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("_eventId_showAttributes", "rpId-1");
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
@@ -67,7 +70,7 @@ public class ExtractRelyingPartyIdFromRequestTest {
 
     @Test
     public void testNoServlet() throws ComponentInitializationException {
-        action.setHttpServletRequest(null);
+        action.setHttpServletRequestSupplier(null);
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
@@ -75,7 +78,8 @@ public class ExtractRelyingPartyIdFromRequestTest {
 
     @Test
     public void testNoParameter() throws ComponentInitializationException {
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);

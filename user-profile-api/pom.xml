@@ -1,127 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- See LICENSE.txt file in the root directory of this repository for the 
     copyright/license information. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>org.geant.shibboleth.plugin.userprofile</groupId>
-        <artifactId>idp-plugin-userprofile</artifactId>
-        <version>0.8.0</version>
-    </parent>
-    
-    <name>Shibboleth IdP :: Plugins :: User Profile API</name>
-    <description>IdP User Profile plugin API.</description>
-    <artifactId>idp-plugin-userprofile-api</artifactId>
-    <packaging>jar</packaging>
-    
-    <properties>
-        <checkstyle.configLocation>${project.basedir}/../checkstyle.xml</checkstyle.configLocation>
-        <automatic.module.name>org.geant.shibboleth.plugin.userprofile.api</automatic.module.name>
-    </properties>
-    
-    <dependencies>
-        <!-- provided dependencies -->
-        <dependency>
-            <groupId>${slf4j.groupId}</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.utilities</groupId>
-            <artifactId>java-support</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>${opensaml.groupId}</groupId>
-            <artifactId>opensaml-storage-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-authn-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.shibboleth.idp</groupId>
-            <artifactId>idp-ui</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>oauth2-oidc-sdk</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>org.opensaml</groupId>
-            <artifactId>opensaml-storage-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.target.directory}</outputDirectory>
-                            <includeScope>runtime</includeScope>
-                            <excludeTransitive>true</excludeTransitive>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId> 
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestSections>
-                            <manifestSection>
-                                <name>org/geant/shibboleth/plugin/userprofile/</name>
-                                <manifestEntries>
-                                    <Implementation-Title>${project.artifactId}</Implementation-Title>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Implementation-Vendor>geant.org</Implementation-Vendor>
-                                </manifestEntries>
-                            </manifestSection>
-                        </manifestSections>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.geant.shibboleth.plugin.userprofile</groupId>
+    <artifactId>idp-plugin-userprofile</artifactId>
+    <version>0.9.0</version>
+  </parent>
+  <name>Shibboleth IdP :: Plugins :: User Profile API</name>
+  <description>IdP User Profile plugin API.</description>
+  <artifactId>idp-plugin-userprofile-api</artifactId>
+  <packaging>jar</packaging>
+  <properties>
+    <checkstyle.configLocation>${project.basedir}/../checkstyle.xml</checkstyle.configLocation>
+    <automatic.module.name>org.geant.shibboleth.plugin.userprofile.api</automatic.module.name>
+  </properties>
+  <dependencies>
+    <!-- provided dependencies -->
+    <dependency>
+      <groupId>${slf4j.groupId}</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${idp.groupId}</groupId>
+      <artifactId>idp-ui</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${opensaml.groupId}</groupId>
+      <artifactId>opensaml-storage-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${opensaml.groupId}</groupId>
+      <artifactId>opensaml-saml-impl</artifactId>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>net.shibboleth.oidc</groupId>
+      <artifactId>oidc-common-metadata-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.target.directory}</outputDirectory>
+              <includeScope>runtime</includeScope>
+              <excludeTransitive>true</excludeTransitive>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestSections>
+              <manifestSection>
+                <name>org/geant/shibboleth/plugin/userprofile/</name>
+                <manifestEntries>
+                  <Implementation-Title>${project.artifactId}</Implementation-Title>
+                  <Implementation-Version>${project.version}</Implementation-Version>
+                  <Implementation-Vendor>geant.org</Implementation-Vendor>
+                </manifestEntries>
+              </manifestSection>
+            </manifestSections>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
+

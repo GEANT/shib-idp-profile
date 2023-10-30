@@ -29,20 +29,19 @@ import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.service.ServiceableComponent;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
 import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext.Direction;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
-import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 /**
  * Actions that filters attributes for relying party. TODO: Pass also relying
@@ -119,7 +118,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         attributeResolutionContextLookupStrategy = new ChildContextLookup<>(AttributeResolutionContext.class, true);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         filterContextCreationStrategy = new ChildContextLookup<>(AttributeFilterContext.class, true)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
     }
@@ -130,8 +129,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 
@@ -142,7 +140,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -156,7 +154,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }
@@ -182,7 +180,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -194,8 +192,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      */
     public void setFilterContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeFilterContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         filterContextCreationStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext creation strategy cannot be null");
     }
@@ -208,8 +205,7 @@ public class FilterRPAttributes extends AbstractProfileAction {
      * @since 3.4.0
      */
     public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         metadataResolver = resolver;
     }
 
@@ -284,10 +280,6 @@ public class FilterRPAttributes extends AbstractProfileAction {
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            }
         }
     }
 }

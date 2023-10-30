@@ -19,7 +19,6 @@ package org.geant.shibboleth.plugin.userprofile.profile.impl;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -27,14 +26,14 @@ import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.action.ActionSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * An action that extracts a relying party id from HTTP form. The extracted
@@ -88,7 +87,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
      * @param fieldName parameter name for relying party identifier
      */
     public void setRpIdFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         rpIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
                 "Relying Party field name cannot be null or empty.");
     }
@@ -100,7 +99,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -114,7 +113,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }

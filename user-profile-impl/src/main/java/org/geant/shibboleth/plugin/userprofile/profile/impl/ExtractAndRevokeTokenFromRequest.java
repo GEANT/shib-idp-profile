@@ -22,7 +22,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.servlet.http.HttpServletRequest;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.RevocationCache;
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
@@ -31,17 +30,16 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.shibboleth.idp.plugin.oidc.op.profile.OidcEventIds;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.oidc.profile.core.OidcEventIds;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.logic.Constraint;
+
 import org.opensaml.profile.action.ActionSupport;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * An action that extracts a token id from HTTP form. The extracted token id is
@@ -107,7 +105,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      * @param cache revocation cache
      */
     public void setRevocationCache(@Nonnull final RevocationCache cache) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         revocationCache = cache;
     }
 
@@ -117,7 +115,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      * @param fieldName parameter name for token id
      */
     public void setTokenIdFieldName(@Nonnull @NotEmpty final String fieldName) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         tokenIdFieldName = Constraint.isNotNull(StringSupport.trimOrNull(fieldName),
                 "Access token id field name cannot be null or empty.");
     }
@@ -131,7 +129,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }

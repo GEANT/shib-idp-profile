@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.util.Collections;
 
 import net.shibboleth.idp.module.IdPModule;
-import net.shibboleth.idp.module.ModuleException;
-import net.shibboleth.idp.plugin.PluginException;
 import net.shibboleth.idp.plugin.PropertyDrivenIdPPlugin;
+import net.shibboleth.profile.module.ModuleException;
+import net.shibboleth.profile.plugin.PluginException;
 
 /**
  * Details about the user profile plugin.
@@ -34,8 +34,9 @@ public class UserProfilePlugin extends PropertyDrivenIdPPlugin {
      * 
      * @throws IOException     if the properties fail to load
      * @throws PluginException if other errors occur
+     * @throws ModuleException 
      */
-    public UserProfilePlugin() throws IOException, PluginException {
+    public UserProfilePlugin() throws IOException, PluginException, ModuleException {
         super(UserProfilePlugin.class);
         try {
             final IdPModule module = new UserProfileModule();
@@ -43,8 +44,6 @@ public class UserProfilePlugin extends PropertyDrivenIdPPlugin {
             setDisableOnRemoval(Collections.singleton(module));
         } catch (final IOException e) {
             throw e;
-        } catch (final ModuleException e) {
-            throw new PluginException(e);
         }
     }
 

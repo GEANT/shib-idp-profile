@@ -18,7 +18,6 @@ package org.geant.shibboleth.plugin.userprofile;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.module.ModuleException;
 import net.shibboleth.idp.module.PropertyDrivenIdPModule;
 
 /**
@@ -29,10 +28,10 @@ public final class UserProfileModule extends PropertyDrivenIdPModule {
     /**
      * Constructor.
      * 
-     * @throws ModuleException on error
      * @throws IOException     on error
+     * @throws net.shibboleth.profile.module.ModuleException 
      */
-    public UserProfileModule() throws IOException, ModuleException {
+    public UserProfileModule() throws IOException, net.shibboleth.profile.module.ModuleException {
         super(UserProfileModule.class);
     }
 

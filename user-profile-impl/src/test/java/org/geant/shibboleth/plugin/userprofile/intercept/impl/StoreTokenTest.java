@@ -44,20 +44,20 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.TokenClaimsSet;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
-import net.shibboleth.utilities.java.support.security.impl.BasicKeystoreKeyStrategy;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.DataSealerException;
+import net.shibboleth.shared.security.impl.BasicKeystoreKeyStrategy;
+import net.shibboleth.shared.spring.resource.ResourceHelper;
 
 /**
  * Unit tests for {@link StoreToken}.
@@ -113,7 +113,7 @@ public class StoreTokenTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.setId("id");
         userProfileCache.initialize();
-
+        
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
 
