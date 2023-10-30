@@ -43,7 +43,7 @@ import net.shibboleth.shared.annotation.constraint.NotLive;
 import net.shibboleth.shared.annotation.constraint.Unmodifiable;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Profile configuration for the user profile. Copy of shibboleth sso profile.

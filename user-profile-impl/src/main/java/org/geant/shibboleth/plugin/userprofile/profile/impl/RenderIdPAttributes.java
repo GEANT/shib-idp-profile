@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Action sets the 'personal data' attributes of user to

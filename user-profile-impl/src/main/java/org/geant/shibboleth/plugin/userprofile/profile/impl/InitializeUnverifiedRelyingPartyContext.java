@@ -31,7 +31,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Relying party context initialization for user profile flow. There is not much

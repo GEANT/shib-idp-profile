@@ -51,7 +51,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Updates connected organizations data in user profile cache.

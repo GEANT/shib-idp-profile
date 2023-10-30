@@ -39,7 +39,7 @@ import net.shibboleth.shared.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
 
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * An action that extracts a token id from HTTP form. The extracted token id is

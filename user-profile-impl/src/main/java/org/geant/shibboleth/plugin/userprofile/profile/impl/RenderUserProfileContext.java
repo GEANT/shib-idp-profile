@@ -71,7 +71,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Actions merges saml2 and oidc relying parties to single list. For each party

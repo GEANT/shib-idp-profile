@@ -33,7 +33,7 @@ import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.profile.context.RelyingPartyContext;
 import net.shibboleth.shared.annotation.constraint.NotEmpty;
 import net.shibboleth.shared.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * An action that extracts a relying party id from HTTP form. The extracted
