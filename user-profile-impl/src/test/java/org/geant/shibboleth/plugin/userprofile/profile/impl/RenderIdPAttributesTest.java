@@ -34,9 +34,9 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.component.UnmodifiableComponentException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
 
 /**
  * Unit tests for {@link RenderIdPAttributes}.

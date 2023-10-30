@@ -17,7 +17,6 @@
 package org.geant.shibboleth.plugin.userprofile.profile.impl;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
-import org.opensaml.core.testing.XMLObjectBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,12 +26,13 @@ import org.testng.annotations.Test;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
+
 
 /**
  * Unit tests for {@link InitializeUserProfileContext}.
  */
-public class InitializeUserProfileContextTest extends XMLObjectBaseTestCase {
+public class InitializeUserProfileContextTest {
 
     private RequestContext src;
 

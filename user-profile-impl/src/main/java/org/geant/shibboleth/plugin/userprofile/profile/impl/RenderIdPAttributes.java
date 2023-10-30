@@ -30,10 +30,9 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Action sets the 'personal data' attributes of user to
@@ -71,7 +70,7 @@ public class RenderIdPAttributes extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }

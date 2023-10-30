@@ -40,12 +40,11 @@ import net.shibboleth.idp.plugin.oidc.op.messaging.context.AccessTokenContext;
 import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 import net.shibboleth.idp.plugin.oidc.op.token.support.AccessTokenClaimsSet;
 import net.shibboleth.idp.plugin.oidc.op.token.support.RefreshTokenClaimsSet;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.DataSealer;
-import net.shibboleth.utilities.java.support.security.DataSealerException;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.security.DataSealer;
+import net.shibboleth.shared.security.DataSealerException;
 
 /**
  * Updates access token information in user profile cache.
@@ -87,8 +86,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
      */
     public void setAccessTokenContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AccessTokenContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         accessTokenContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AccessTokenContext lookup strategy cannot be null");
     }
@@ -99,7 +97,7 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
      * @param sealer sealer to use
      */
     public void setDataSealer(@Nonnull final DataSealer sealer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }
 

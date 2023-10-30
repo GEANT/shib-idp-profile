@@ -36,12 +36,11 @@ import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.IssuerLookupFunction;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.service.ReloadableService;
 
 /**
  * Action resolves attributes and stores them
@@ -121,7 +120,7 @@ public class ResolveAttributes extends AbstractProfileAction {
         userProfileContextLookupStrategy = new ChildContextLookup<>(UserProfileContext.class);
         attributeResolutionContextLookupStrategy = new ChildContextLookup<>(AttributeResolutionContext.class, true);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        issuerLookupStrategy = new IssuerLookupFunction();
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         attributeContextCreationStrategy = new ChildContextLookup<>(AttributeContext.class, true)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
@@ -134,7 +133,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      */
     public void setRelyingPartyContextLookup(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
                 "RelyingPartyContext lookup strategy cannot be null");
     }
@@ -148,7 +147,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      */
     public void setUserProfileContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, UserProfileContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         Constraint.isNotNull(strategy, "UserProfileContext lookup strategy cannot be null");
         userProfileContextLookupStrategy = strategy;
     }
@@ -174,7 +173,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      */
     public void setSubjectContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        checkSetterPreconditions();
         subjectContextLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
@@ -185,8 +184,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      * @param registry registry service interface
      */
     public void setTranscoderRegistry(@Nullable final ReloadableService<AttributeTranscoderRegistry> registry) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         transcoderRegistry = registry;
     }
 
@@ -196,8 +194,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      * @param strategy lookup strategy
      */
     public void setIssuerLookupStrategy(@Nullable final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         issuerLookupStrategy = strategy;
     }
 
@@ -209,8 +206,7 @@ public class ResolveAttributes extends AbstractProfileAction {
      */
     public void setAttributeContextCreationStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
+        checkSetterPreconditions();
         attributeContextCreationStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext creation strategy cannot be null");
     }
@@ -266,7 +262,10 @@ public class ResolveAttributes extends AbstractProfileAction {
         // We set the user we resolve attributes for.
         attributeResolutionContext.setPrincipal(subjectContext.getPrincipalName());
         attributeResolutionContext.resolveAttributes(attributeResolverService);
-        attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
+        
+        //TODO: WHY missing in idp5 ? FIND OUT!
+        //attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
+        
         // Store the result.
         attributeCtx.setIdPAttributes(attributeResolutionContext.getResolvedIdPAttributes().values());
         attributeCtx.setUnfilteredIdPAttributes(attributeResolutionContext.getResolvedIdPAttributes().values());

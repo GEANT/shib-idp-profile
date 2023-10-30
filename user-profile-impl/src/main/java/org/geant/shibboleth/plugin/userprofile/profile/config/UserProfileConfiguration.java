@@ -32,18 +32,18 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Predicates;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.navigate.ProxyAwareDefaultAuthenticationMethodsLookupFunction;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.profile.config.ProfileConfiguration;
+import net.shibboleth.shared.annotation.constraint.NonNegative;
+import net.shibboleth.shared.annotation.constraint.NonnullElements;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.NotLive;
+import net.shibboleth.shared.annotation.constraint.Unmodifiable;
+import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.shared.logic.FunctionSupport;
+import net.shibboleth.shared.primitive.StringSupport;
 
 /**
  * Profile configuration for the user profile. Copy of shibboleth sso profile.

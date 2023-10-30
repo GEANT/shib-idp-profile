@@ -34,8 +34,8 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.RevocationCache;
 import org.opensaml.storage.impl.MemoryStorageService;
+import org.opensaml.storage.impl.StorageServiceRevocationCache;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -50,9 +50,10 @@ import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.component.UnmodifiableComponentException;
+import net.shibboleth.shared.logic.ConstraintViolationException;
+
 
 /**
  * Unit tests for {@link RenderUserProfileCacheItems}.
@@ -63,7 +64,7 @@ public class RenderUserProfileCacheItemsTest {
 
     private UserProfileCache userProfileCache;
 
-    private RevocationCache revocationCache;
+    private StorageServiceRevocationCache revocationCache;
 
     private RequestContext src;
 
@@ -88,8 +89,9 @@ public class RenderUserProfileCacheItemsTest {
         addConnectedServicesEvents();
         addAccessTokenEvents();
         addRefreshTokenEvents();
-
-        revocationCache = new RevocationCache();
+        
+        revocationCache = new StorageServiceRevocationCache();
+        
         revocationCache.setStorage(storageService);
         revocationCache.setId("id");
         revocationCache.initialize();
@@ -262,5 +264,6 @@ public class RenderUserProfileCacheItemsTest {
         }
 
     }
+    
 
 }

@@ -25,19 +25,18 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.opensaml.storage.StorageCapabilities;
-import org.opensaml.storage.StorageCapabilitiesEx;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NotEmpty;
+import net.shibboleth.shared.annotation.constraint.Positive;
+import net.shibboleth.shared.annotation.constraint.ThreadSafeAfterInit;
+import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Stores and returns user profile events.
@@ -110,8 +109,8 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
     public void setStorage(@Nonnull final StorageService storageService) {
         storage = Constraint.isNotNull(storageService, "StorageService cannot be null");
         final StorageCapabilities caps = storage.getCapabilities();
-        if (caps instanceof StorageCapabilitiesEx) {
-            Constraint.isTrue(((StorageCapabilitiesEx) caps).isServerSide(), "StorageService cannot be client-side");
+        if (caps instanceof StorageCapabilities) {
+            Constraint.isTrue(((StorageCapabilities) caps).isServerSide(), "StorageService cannot be client-side");
         }
     }
 

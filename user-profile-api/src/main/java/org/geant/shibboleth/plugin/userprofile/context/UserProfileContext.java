@@ -35,7 +35,7 @@ import org.opensaml.messaging.context.BaseContext;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * The context carrying user profile information.

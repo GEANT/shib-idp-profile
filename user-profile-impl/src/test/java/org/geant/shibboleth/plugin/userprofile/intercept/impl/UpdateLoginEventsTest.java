@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import net.shibboleth.ext.spring.testing.MockApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
@@ -49,7 +49,6 @@ import net.shibboleth.idp.attribute.transcoding.BasicNamingFunction;
 import net.shibboleth.idp.attribute.transcoding.TranscodingRule;
 import net.shibboleth.idp.attribute.transcoding.impl.AttributeTranscoderRegistryImpl;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -57,9 +56,11 @@ import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.oidc.attribute.transcoding.AbstractOIDCAttributeTranscoder;
 import net.shibboleth.oidc.attribute.transcoding.OIDCAttributeTranscoder;
 import net.shibboleth.oidc.attribute.transcoding.impl.OIDCStringAttributeTranscoder;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.test.service.MockReloadableService;
-
+import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.primitive.NonnullSupplier;
+import net.shibboleth.shared.testing.MockApplicationContext;
+import net.shibboleth.shared.testing.MockReloadableService;
 /**
  * Unit tests for {@link UpdateLoginEvents}.
  */
@@ -130,6 +131,7 @@ public class UpdateLoginEventsTest {
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
+        //TODO WHY?
         action.setTranscoderRegistry(new MockReloadableService<>(registry));
 
         RelyingPartyContext relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(),
@@ -153,7 +155,8 @@ public class UpdateLoginEventsTest {
                 .addSubcontext(new AuthenticationContext(), true);
         authenticationContext.addSubcontext(new RelyingPartyUIContext(), true);
 
-        action.setHttpServletRequest(new MockHttpServletRequest());
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
 
         action.setMaxEntries(10);
     }

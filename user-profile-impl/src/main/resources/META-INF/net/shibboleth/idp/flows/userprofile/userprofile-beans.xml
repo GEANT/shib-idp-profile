@@ -12,7 +12,7 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:placeholderPrefix="%{"
         p:placeholderSuffix="}" />
 
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.shared.spring.config.IdentifiableBeanPostProcessor" />
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
     <bean id="shibboleth.userprofile.browserProfile" class="java.lang.Boolean" c:_0="true" />
@@ -40,7 +40,7 @@
 
     <bean id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
-        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyResolverService" />
 
     <bean id="SelectProfileConfiguration" class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
         scope="prototype" />
