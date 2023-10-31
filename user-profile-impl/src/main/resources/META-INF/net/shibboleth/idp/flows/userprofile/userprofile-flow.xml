@@ -17,7 +17,7 @@
 
     <action-state id="DoProfileWork">
         <evaluate expression="InitializeUserProfileContext" />
-        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="ResolveUPAttributes" />
         <evaluate expression="RenderIdPAttributes" />
         <evaluate expression="RenderUserProfileCacheItems" />
         <evaluate expression="'proceed'" />
@@ -120,7 +120,7 @@
 
     <action-state id="ResolveRPAttributes">
         <evaluate expression="ExtractRelyingPartyIdFromRequest" />
-        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="ResolveUPAttributes" />
         <evaluate expression="FilterRPAttributes" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="UserProfileViewAllOrganizations" />

@@ -43,7 +43,7 @@
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ExtractRelyingPartyIdFromRequest"
         p:httpServletRequestSupplier-ref="shibboleth.HttpServletRequestSupplier" scope="prototype" />
 
-    <bean id="ResolveAttributes"
+    <bean id="ResolveUPAttributes"
         class="org.geant.shibboleth.plugin.userprofile.profile.impl.ResolveAttributes"
         scope="prototype">
         <constructor-arg index="0" ref="shibboleth.AttributeResolverService"/>
