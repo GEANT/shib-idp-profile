@@ -13,7 +13,7 @@
         p:placeholderSuffix="}" />
 
     <!--  administrative flow beans. -->
-    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://geant.org/ns/profiles/userprofile/sso/browser" />
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://geant.org/ns/profiles/userprofile" />
 
     <bean id="shibboleth.metrics.ProfileCounter" class="java.lang.String" c:_0="org.geant.shibboleth.profiles.userprofile" />
 

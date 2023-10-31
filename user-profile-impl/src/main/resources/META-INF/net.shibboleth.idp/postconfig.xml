@@ -25,7 +25,7 @@
        <bean id="intercept/user-profile" parent="shibboleth.InterceptFlow" />
 
        <bean parent="shibboleth.AdminFlow"
-         c:id="http://geant.org/ns/profiles/userprofile/sso/browser"
+         c:id="http://geant.org/ns/profiles/userprofile"
          p:loggingId="%{userProfile.logging:UserProfile}"
          p:policyName="%{userProfile.accessPolicy:}"
          p:nonBrowserSupported="%{userProfile.nonBrowserSupported:false}"
