@@ -12,13 +12,14 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" p:placeholderPrefix="%{"
         p:placeholderSuffix="}" />
 
-
-    <!-- Profile ID for flow. -->
+    <!--  administrative flow beans. -->
     <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://geant.org/ns/profiles/userprofile/sso/browser" />
 
-    <!-- Profile counter name. -->
     <bean id="shibboleth.metrics.ProfileCounter" class="java.lang.String" c:_0="org.geant.shibboleth.profiles.userprofile" />
 
+    <bean id="shibboleth.AdminOperationLookupStrategy" parent="shibboleth.Functions.Constant" c:target="userprofile" />
+
+    <!--   user profile flow beans. -->
     <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
 
     <bean id="showConnectedServices" class="java.lang.Boolean" c:_0="%{userProfile.connectedServices.show:false}" />
