@@ -3,89 +3,19 @@
     copyright/license information. -->
 <flow xmlns="http://www.springframework.org/schema/webflow"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="admin.abstract">
 
-    <action-state id="Initialize">
+    <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
-        <evaluate expression="InitializeRelyingPartyContext" />
-        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="FlowStartPopulateAuditContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="SelectConfiguration" />
+        
+        <!-- Branch to determine if authentication is required. -->
+        <transition on="proceed" to="DoAdminPreamble" />
     </action-state>
 
-    <action-state id="SelectConfiguration">
-        <evaluate expression="SelectRelyingPartyConfiguration" />
-        <evaluate expression="SelectProfileConfiguration" />
-        <evaluate expression="PostLookupPopulateAuditContext" />
-        <evaluate expression="PopulateInboundInterceptContext" />
-        <evaluate expression="PopulateUserAgentContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="CheckInboundInterceptContext" />
-    </action-state>
-
-    <decision-state id="CheckInboundInterceptContext">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="PopulateClientStorageLoadContext" else="DoInboundInterceptSubflow" />
-    </decision-state>
-
-    <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="PopulateClientStorageLoadContext" />
-    </subflow-state>
-
-    <action-state id="PopulateClientStorageLoadContext">
-        <evaluate expression="PopulateClientStorageLoadContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ClientStorageLoad" />
-        <transition on="NoLoadNeeded" to="PostInitialSetup" />
-    </action-state>
-
-    <subflow-state id="ClientStorageLoad" subflow="client-storage/read">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="PostInitialSetup" />
-    </subflow-state>
-
-    <action-state id="PostInitialSetup">
-        <evaluate expression="InitializeAuthenticationContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="DoAuthenticationSubflow" />
-    </action-state>
-
-    <subflow-state id="DoAuthenticationSubflow" subflow="authn">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="CheckPostAuthnInterceptContext" />
-        <transition on="RestartAuthentication" to="PostInitialSetup" />
-    </subflow-state>
-
-    <decision-state id="CheckPostAuthnInterceptContext">
-        <if
-            test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="PopulateClientStorageSaveContext" else="DoPostAuthnInterceptSubflow" />
-    </decision-state>
-
-    <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="PopulateClientStorageSaveContext" />
-        <transition on="RestartAuthentication" to="PostInitialSetup" />
-    </subflow-state>
-
-    <action-state id="PopulateClientStorageSaveContext">
-        <evaluate expression="UpdateSessionWithSPSession" />
-        <evaluate expression="PopulateClientStorageSaveContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ClientStorageSave" />
-        <transition on="NoSaveNeeded" to="InitializeUserProfileContext" />
-        <transition to="HandleError" />
-    </action-state>
-
-    <subflow-state id="ClientStorageSave" subflow="client-storage/write">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="InitializeUserProfileContext"/>
-        <transition to="HandleError" />
-    </subflow-state>
-
-    <action-state id="InitializeUserProfileContext">
+    <action-state id="DoProfileWork">
         <evaluate expression="InitializeUserProfileContext" />
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="RenderIdPAttributes" />
@@ -203,67 +133,6 @@
         <transition on="RevocationFailed" to="UserProfileViewConnectedOrganizations" />
         <transition on="proceed" to="UserProfileViewConnectedOrganizations" />
     </action-state>
-
-    <!-- Error views, handling and end states -->
-
-    <!-- Passthrough state if an exception is thrown. -->
-    <action-state id="LogRuntimeException">
-        <on-entry>
-            <evaluate
-                expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
-        </on-entry>
-        <evaluate expression="'RuntimeException'" />
-        <transition to="HandleError" />
-    </action-state>
-
-    <!-- First we check if error is mapped as local audited error -->
-    <decision-state id="HandleError">
-        <if
-            test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').containsKey(currentEvent.id) and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').get(currentEvent.id)"
-            then="AuditedErrorView" else="ErrorView" />
-    </decision-state>
-
-    <end-state id="AuditedErrorView" view="#{MapEventToView.apply(currentEvent)}">
-        <on-entry>
-            <evaluate expression="ErrorViewPopulateAuditContext" />
-            <evaluate expression="WriteAuditLog" />
-            <evaluate expression="environment" result="requestScope.environment" />
-            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)"
-                result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()"
-                result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()"
-                result="requestScope.response" />
-            <evaluate
-                expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null"
-                result="requestScope.custom" />
-        </on-entry>
-        <exception-handler bean="RethrowingFlowExecutionExceptionHandler" />
-    </end-state>
-
-    <end-state id="ErrorView" view="#{MapEventToView.apply(currentEvent)}">
-        <on-entry>
-            <evaluate expression="environment" result="requestScope.environment" />
-            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)"
-                result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()"
-                result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()"
-                result="requestScope.response" />
-            <evaluate
-                expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null"
-                result="requestScope.custom" />
-        </on-entry>
-        <exception-handler bean="RethrowingFlowExecutionExceptionHandler" />
-    </end-state>
-    
-    <!-- all unhandled non proceed results are turned into errors -->
-    <global-transitions>
-        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
-    </global-transitions>
 
     <bean-import resource="userprofile-beans.xml" />
 
