@@ -30,7 +30,7 @@
          p:policyName="%{userProfile.accessPolicy:}"
          p:nonBrowserSupported="false"
          p:authenticated="true"
-         p:resolveAttributes="false"
+         p:resolveAttributes="%{userProfile.resolveAttributes:false}"
          p:forceAuthn="%{userProfile.forceAuthn:false}">
          <property name="authenticationFlows">
            <bean parent="shibboleth.CommaDelimStringArray"
