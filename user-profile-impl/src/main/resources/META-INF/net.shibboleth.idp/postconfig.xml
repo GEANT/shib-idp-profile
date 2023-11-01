@@ -23,10 +23,28 @@
 
        <!-- Interceptor bean definition. -->
        <bean id="intercept/user-profile" parent="shibboleth.InterceptFlow" />
-       
-       <!-- Profile configuration. -->
-       <bean id="USERPROFILE.SSO"  lazy-init="true"
-           class="org.geant.shibboleth.plugin.userprofile.profile.config.UserProfileConfiguration"/>
+
+       <bean parent="shibboleth.AdminFlow"
+         c:id="http://geant.org/ns/profiles/userprofile"
+         p:loggingId="%{userProfile.logging:UserProfile}"
+         p:policyName="%{userProfile.accessPolicy:}"
+         p:nonBrowserSupported="false"
+         p:authenticated="true"
+         p:resolveAttributes="%{userProfile.resolveAttributes:false}"
+         p:forceAuthn="%{userProfile.forceAuthn:false}">
+         <property name="authenticationFlows">
+           <bean parent="shibboleth.CommaDelimStringArray"
+             c:_0="#{'%{userProfile.authenticationFlows:}'.trim()}" />
+          </property>
+         <property name="postAuthenticationFlows">
+           <bean parent="shibboleth.CommaDelimStringArray"
+             c:_0="#{'%{userProfile.postAuthenticationFlows:}'.trim()}" />
+         </property>
+         <property name="defaultAuthenticationMethodsByString">
+           <bean parent="shibboleth.CommaDelimStringArray"
+             c:_0="#{'%{userProfile.defaultAuthenticationMethods:}'.trim()}" />
+          </property>
+       </bean>
 
        <!-- Default username comes from subject context. -->
        <bean id="userProfile.UsernameLookupStrategy" parent="shibboleth.Functions.Compose" 
