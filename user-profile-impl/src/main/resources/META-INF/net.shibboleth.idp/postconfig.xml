@@ -28,13 +28,13 @@
          c:id="http://geant.org/ns/profiles/userprofile"
          p:loggingId="%{userProfile.logging:UserProfile}"
          p:policyName="%{userProfile.accessPolicy:}"
-         p:nonBrowserSupported="%{userProfile.nonBrowserSupported:false}"
+         p:nonBrowserSupported="false"
          p:authenticated="true"
          p:resolveAttributes="false"
          p:forceAuthn="%{userProfile.forceAuthn:false}">
-         <property name="defaultAuthenticationMethods">
+         <property name="authenticationFlows">
            <bean parent="shibboleth.CommaDelimStringArray"
-             c:_0="#{'%{userProfile.defaultAuthenticationMethods:}'.trim()}" />
+             c:_0="#{'%{userProfile.authenticationFlows:}'.trim()}" />
           </property>
          <property name="postAuthenticationFlows">
            <bean parent="shibboleth.CommaDelimStringArray"
