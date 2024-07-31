@@ -69,5 +69,7 @@ public class StoreSAMLAuthContextClassReferencePrincipalName extends AbstractUse
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
                 classRefLookupStrategy.apply(profileRequestContext).getName());
+        log.debug(getLogPrefix(), "ACR stored to context as {}",
+                userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
     }
 }
