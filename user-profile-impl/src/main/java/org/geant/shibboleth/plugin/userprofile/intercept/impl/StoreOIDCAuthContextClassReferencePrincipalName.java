@@ -69,7 +69,7 @@ public class StoreOIDCAuthContextClassReferencePrincipalName extends AbstractUse
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
                 classRefLookupStrategy.apply(profileRequestContext).getName());
-        log.debug(getLogPrefix(), "ACR stored to context as {}",
+        log.debug("{} ACR stored to context as {}", getLogPrefix(),
                 userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
     }
 }
