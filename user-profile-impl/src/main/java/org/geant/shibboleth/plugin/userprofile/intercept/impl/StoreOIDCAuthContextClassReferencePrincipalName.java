@@ -16,18 +16,14 @@
 
 package org.geant.shibboleth.plugin.userprofile.intercept.impl;
 
-import java.util.function.Function;
-
 import javax.annotation.Nonnull;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.impl.DefaultPrincipalDeterminationStrategy;
-import net.shibboleth.oidc.authn.principal.AuthenticationContextClassReferencePrincipal;
-import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.shared.logic.Constraint;
+import net.shibboleth.idp.plugin.oidc.op.messaging.context.OIDCAuthenticationResponseContext;
 
 /**
  * Stores authentication class reference name to
@@ -39,36 +35,34 @@ public class StoreOIDCAuthContextClassReferencePrincipalName extends AbstractUse
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(StoreOIDCAuthContextClassReferencePrincipalName.class);
 
-    /** Strategy used to determine the AuthnContextClassRef. */
-    @NonnullAfterInit
-    private Function<ProfileRequestContext, AuthenticationContextClassReferencePrincipal> classRefLookupStrategy;
+    /** oidc response context. */
+    @Nonnull
+    private OIDCAuthenticationResponseContext oidcResponseContext;
 
-    /** Constructor. */
-    public StoreOIDCAuthContextClassReferencePrincipalName() {
-        super();
-        classRefLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(
-                AuthenticationContextClassReferencePrincipal.class, new AuthenticationContextClassReferencePrincipal(
-                        AuthenticationContextClassReferencePrincipal.UNSPECIFIED));
-    }
+    /** {@inheritDoc} */
+    @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-    /**
-     * Set the strategy function to use to obtain the authentication context class
-     * reference to use.
-     * 
-     * @param strategy authentication context class reference lookup strategy
-     */
-    public void setClassRefLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AuthenticationContextClassReferencePrincipal> strategy) {
-        checkSetterPreconditions();
-        classRefLookupStrategy = Constraint.isNotNull(strategy,
-                "Authentication context class reference strategy cannot be null");
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        final MessageContext outboundMessageCtx = profileRequestContext.getOutboundMessageContext();
+        if (outboundMessageCtx == null) {
+            log.warn("{} No outbound message context", getLogPrefix());
+            return false;
+        }
+        oidcResponseContext = outboundMessageCtx.getSubcontext(OIDCAuthenticationResponseContext.class);
+        if (oidcResponseContext == null) {
+            log.warn("{} No OIDC response context", getLogPrefix());
+            return false;
+        }
+        return true;
     }
 
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
-                classRefLookupStrategy.apply(profileRequestContext).getName());
+        userProfileCacheContext.setAuthnContextClassReferencePrincipalName(oidcResponseContext.getAcr().getValue());
         log.debug("{} ACR stored to context as {}", getLogPrefix(),
                 userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
     }
