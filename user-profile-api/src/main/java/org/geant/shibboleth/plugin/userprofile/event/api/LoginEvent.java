@@ -31,6 +31,9 @@ public interface LoginEvent {
 
     /** Authentication time as seconds from epoch. */
     public long getTime();
+    
+    /** Name of the authentication context class principal. */
+    public String getAcr();
 
     /** Attributes sent. */
     public List<? extends Attribute> getAttributes();
