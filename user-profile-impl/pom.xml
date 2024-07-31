@@ -45,6 +45,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>${idp.groupId}</groupId>
+      <artifactId>idp-authn-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>${idp.groupId}</groupId>
+      <artifactId>idp-authn-impl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>${shib-shared.groupId}.oidc</groupId>
       <artifactId>oidc-common-metadata-api</artifactId>
       <scope>provided</scope>

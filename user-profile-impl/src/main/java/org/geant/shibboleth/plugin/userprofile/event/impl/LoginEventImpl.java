@@ -45,6 +45,9 @@ public class LoginEventImpl implements LoginEvent {
     /** Attributes sent. */
     private List<AttributeImpl> attributes;
 
+    /** Name of the authentication context class principal. */
+    private final String acr;
+
     /**
      * Constructor
      * 
@@ -58,6 +61,24 @@ public class LoginEventImpl implements LoginEvent {
         this.name = name;
         this.time = time;
         this.attributes = attributes;
+        acr = null;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param id         relying party id of the connected service
+     * @param name       name of the connected service
+     * @param time       authentication time as seconds from epoch
+     * @param attributes attributes sent
+     * @param acr        name of the authentication context class principal.
+     */
+    public LoginEventImpl(String id, String name, long time, List<AttributeImpl> attributes, String acr) {
+        this.id = id;
+        this.name = name;
+        this.time = time;
+        this.attributes = attributes;
+        this.acr = acr;
     }
 
     /**
@@ -75,6 +96,7 @@ public class LoginEventImpl implements LoginEvent {
         this.name = name;
         this.time = time;
         this.attributes = attributes;
+        this.acr = null;
     }
 
     /** {@inheritDoc} */
@@ -90,6 +112,11 @@ public class LoginEventImpl implements LoginEvent {
     /** {@inheritDoc} */
     public long getTime() {
         return time;
+    }
+
+    /** {@inheritDoc} */
+    public String getAcr() {
+        return acr;
     }
 
     /** {@inheritDoc} */
