@@ -116,7 +116,7 @@ public class LoginEventImpl implements LoginEvent {
 
     /** {@inheritDoc} */
     public String getAcr() {
-        return acr;
+        return acr != null && !acr.isEmpty() ? acr : "n/a";
     }
 
     /** {@inheritDoc} */

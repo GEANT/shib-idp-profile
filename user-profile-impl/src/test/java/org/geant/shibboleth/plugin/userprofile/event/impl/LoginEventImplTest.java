@@ -33,7 +33,7 @@ public class LoginEventImplTest {
                 "{\"id\":\"id\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
         event = LoginEventImpl.parse(event.serialize());
         Assert.assertEquals(event.getId(), "id");
-        Assert.assertNull(event.getAcr());
+        Assert.assertEquals(event.getAcr(), "n/a");
         Assert.assertEquals(event.getTime(), 500);
         Assert.assertTrue(event.getAttributes().size() == 2);
         Assert.assertEquals(event.getAttributes().get(0).getName(), "name");
