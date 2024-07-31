@@ -286,7 +286,8 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
             attributeCtx.getIdPAttributes().entrySet()
                     .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
             LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(),
-                    System.currentTimeMillis() / 1000, attributes);
+                    System.currentTimeMillis() / 1000, attributes,
+                    userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
             userProfileCache.setSingleEvent(LoginEvents.ENTRY_NAME, events.serialize(), userProfileCacheContext);
