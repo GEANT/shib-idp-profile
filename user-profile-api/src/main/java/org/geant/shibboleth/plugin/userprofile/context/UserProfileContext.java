@@ -180,7 +180,8 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      */
     @Nonnull
     public Map<String, RelyingPartyUIContext> getRelyingParties() {
-        return relyingParties;
+        Map<String, RelyingPartyUIContext> orderedRelyingParties = new TreeMap<String, RelyingPartyUIContext>(relyingParties);
+        return orderedRelyingParties;
     }
 
     /** {@inheritDoc} */
