@@ -155,8 +155,8 @@ public final class UserProfileContext extends BaseContext implements EventsCache
 
         Collections.sort(loginEvents, new Comparator<LoginEvent>() {
             public int compare(LoginEvent o1, LoginEvent o2) {
-                t1 = o1.getTime();
-                t2 = o2.getTime();
+                long t1 = o1.getTime();
+                long t2 = o2.getTime();
                 // reverse order so that most recent on top
                 if (t1 > t2) {
                     return -1;
