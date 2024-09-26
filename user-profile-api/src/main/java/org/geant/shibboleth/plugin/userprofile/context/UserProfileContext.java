@@ -98,8 +98,7 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      * @return connected Organizations per Relying Party.
      */
     public Map<String, ConnectedService> getConnectedOrganizations() {
-        Map<String, ConnectedService> orderedConnectedOrganizations = new TreeMap<String, ConnectedService>(connectedOrganizations);
-        return orderedConnectedOrganizations;
+        return connectedOrganizations;
     }
 
     /**
@@ -198,8 +197,7 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      */
     @Nonnull
     public Map<String, RelyingPartyUIContext> getRelyingParties() {
-        Map<String, RelyingPartyUIContext> orderedRelyingParties = new TreeMap<String, RelyingPartyUIContext>(relyingParties);
-        return orderedRelyingParties;
+        return relyingParties;
     }
 
     /** {@inheritDoc} */
