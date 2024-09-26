@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -150,6 +152,22 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      * @return activity page information i.e. login events
      */
     public List<LoginEvent> getLoginEvents() {
+
+        Collections.sort(loginEvents, new Comparator<LoginEvent>() {
+            public int compare(LoginEvent o1, LoginEvent o2) {
+                t1 = o1.getTime();
+                t2 = o2.getTime();
+                // reverse order so that most recent on top
+                if (t1 > t2) {
+                    return -1;
+                }
+                if (t2 > t1) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+
         return loginEvents;
     }
 
