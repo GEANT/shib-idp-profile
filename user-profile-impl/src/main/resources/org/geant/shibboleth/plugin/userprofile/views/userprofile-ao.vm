@@ -138,6 +138,8 @@
           }
         }
       }
+
+      sortTable();
     </script>
 
   </body>
