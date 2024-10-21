@@ -47,6 +47,9 @@ public class LoginEventImpl implements LoginEvent {
 
     /** Name of the authentication context class principal. */
     private final String acr;
+    
+    /** Client address. */
+    private final String address;
 
     /**
      * Constructor
@@ -62,6 +65,7 @@ public class LoginEventImpl implements LoginEvent {
         this.time = time;
         this.attributes = attributes;
         acr = null;
+        address = null;
     }
 
     /**
@@ -73,12 +77,13 @@ public class LoginEventImpl implements LoginEvent {
      * @param attributes attributes sent
      * @param acr        name of the authentication context class principal.
      */
-    public LoginEventImpl(String id, String name, long time, List<AttributeImpl> attributes, String acr) {
+    public LoginEventImpl(String id, String name, long time, List<AttributeImpl> attributes, String acr, String address) {
         this.id = id;
         this.name = name;
         this.time = time;
         this.attributes = attributes;
         this.acr = acr;
+        this.address = address;
     }
 
     /**
@@ -97,6 +102,7 @@ public class LoginEventImpl implements LoginEvent {
         this.time = time;
         this.attributes = attributes;
         this.acr = null;
+        this.address = null;
     }
 
     /** {@inheritDoc} */
@@ -117,6 +123,11 @@ public class LoginEventImpl implements LoginEvent {
     /** {@inheritDoc} */
     public String getAcr() {
         return acr != null && !acr.isEmpty() ? acr : "n/a";
+    }
+    
+    /** {@inheritDoc} */
+    public String getAddress() {
+        return address != null && !address.isEmpty() ? address : "n/a";
     }
 
     /** {@inheritDoc} */

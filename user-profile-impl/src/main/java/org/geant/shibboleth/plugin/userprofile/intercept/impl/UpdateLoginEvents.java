@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Predicates;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.attribute.transcoding.AttributeTranscoderRegistry;
@@ -50,6 +51,7 @@ import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 import net.shibboleth.shared.service.ReloadableService;
+import net.shibboleth.shared.servlet.HttpServletSupport;
 import net.shibboleth.shared.primitive.StringSupport;
 
 /**
@@ -117,6 +119,10 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
     /** Whether to collect attribute values. */
     @Nonnull
     private Predicate<ProfileRequestContext> collectAttributeValues;
+
+    /** Strategy used to obtain the client Address. */
+    @NonnullAfterInit
+    private Function<ProfileRequestContext, String> addressLookupStrategy;
 
     /** Constructor. */
     public UpdateLoginEvents() {
@@ -207,6 +213,17 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
         collectAttributeValues = collect;
     }
 
+    /**
+     * Set the strategy used to obtain the client IP address.
+     * 
+     * @param strategy lookup strategy
+     * 
+     */
+    public void setAddressLookupStrategy(@Nullable final Function<ProfileRequestContext, String> strategy) {
+        checkSetterPreconditions();
+        addressLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doInitialize() throws ComponentInitializationException {
@@ -218,6 +235,9 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
                 fallbackLanguages, transcoderRegistry);
         attributeDisplayNameFunction = new AttributeDisplayNameFunction(getHttpServletRequest(), fallbackLanguages,
                 transcoderRegistry);
+        if (addressLookupStrategy == null) {
+            addressLookupStrategy = new RemoteAddressStrategy();
+        }
 
     }
 
@@ -287,7 +307,8 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
                     .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
             LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(),
                     System.currentTimeMillis() / 1000, attributes,
-                    userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
+                    userProfileCacheContext.getAuthnContextClassReferencePrincipalName(),
+                    addressLookupStrategy.apply(profileRequestContext));
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
             userProfileCache.setSingleEvent(LoginEvents.ENTRY_NAME, events.serialize(), userProfileCacheContext);
@@ -296,5 +317,23 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.
         }
+    }
+
+    /**
+     * Default strategy for obtaining client address from servlet layer.
+     */
+    private class RemoteAddressStrategy implements Function<ProfileRequestContext, String> {
+
+        /** {@inheritDoc} */
+        @Nullable
+        public String apply(@Nullable final ProfileRequestContext t) {
+            final HttpServletRequest req = getHttpServletRequest();
+            if (req != null) {
+                return HttpServletSupport.getRemoteAddr(req);
+            }
+
+            return null;
+        }
+
     }
 }

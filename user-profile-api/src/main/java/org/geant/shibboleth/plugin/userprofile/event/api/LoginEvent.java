@@ -34,6 +34,9 @@ public interface LoginEvent {
     
     /** Name of the authentication context class principal. */
     public String getAcr();
+    
+    /** client address. */
+    public String getAddress();
 
     /** Attributes sent. */
     public List<? extends Attribute> getAttributes();
