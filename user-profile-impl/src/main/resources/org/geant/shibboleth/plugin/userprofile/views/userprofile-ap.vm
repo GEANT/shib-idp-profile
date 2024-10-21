@@ -108,6 +108,7 @@
           <th>#springMessageText("userProfile.allActivity.columnservice", "Service")</th>
           <th>#springMessageText("userProfile.allActivity.columntime", "Time")</th>
           <th>#springMessageText("userProfile.allActivity.columnacr", "Acr")</th>
+          <th>#springMessageText("userProfile.allActivity.columnaddr", "Address")</th>
           <th>#springMessageText("userProfile.allActivity.columnattributes", "Attributes")</th>
         </tr>
         #foreach($event in $allActivity)
@@ -116,6 +117,7 @@
           <td class="mainline"><span class="small-label">$encoder.encodeForHTMLAttribute($event.getName())</span></td>
           <td class="mainline"><small>$encoder.encodeForHTMLAttribute($dateUtil.epochSecondsToDate($event.getTime()))</small></td>
           <td class="mainline"><span class="small-label">#springMessageText("$acrTranslation", "$event.getAcr()")</span></td>
+          <td class="mainline"><span class="small-label">$encoder.encodeForHTMLAttribute($event.getAddress())</span></td>
           <td class="mainline">
           #foreach($attribute in $event.getAttributes())
           <span class="small-label">$encoder.encodeForHTMLAttribute($attribute.getDisplayValue())</span>
