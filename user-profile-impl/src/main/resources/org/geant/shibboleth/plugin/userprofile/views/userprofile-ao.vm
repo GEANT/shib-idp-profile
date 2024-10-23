@@ -8,6 +8,8 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
 ## attributeDisplayNameFunction - function to display attribute name
@@ -16,17 +18,18 @@
 ## showActivityPage - whether to show Activity Page
 ##
 ##
+#set ($nonce = $cspNonce.generateIdentifier())
+$response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'none'; script-src-elem 'nonce-$nonce'")
 #set ($attributecontexts = $userProfileContext.getRPAttributeContext())
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 <!DOCTYPE html>
 <html>
   <head>
-      <!-- TODO review this string here -->
       <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
       <meta charset="UTF-8" />
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
-      <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+      <script nonce="$nonce"><!-- #parse("jquery-3.7.1.min.js") // --></script>
   </head>
   <body>
 
@@ -108,7 +111,8 @@
       </div>
     </footer>
 
-    <script>
+    <script #if ($nonce)nonce="$nonce"#end>
+    <!--
       function sortTable() {
 
         var table, rows, switching, i, x, y, shouldSwitch;
@@ -127,7 +131,7 @@
             x = rows[i].getElementsByTagName("TD")[0];
             y = rows[i + 1].getElementsByTagName("TD")[0];
 
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
               shouldSwitch = true;
               break;
             }
@@ -140,6 +144,7 @@
       }
 
       sortTable();
+    // -->
     </script>
 
   </body>
