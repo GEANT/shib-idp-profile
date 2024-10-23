@@ -8,6 +8,8 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## dateUtil - User Profile utility class for rendering date.
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
@@ -17,18 +19,18 @@
 ## showAllServices - whether to show All Services
 ##
 ##
+#set ($nonce = $cspNonce.generateIdentifier())
+$response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'none'; script-src-elem 'nonce-$nonce'")
 ## ALL_ACTIVITY is record of past logins
 #set ($allActivity = $userProfileContext.getLoginEvents())
 <!DOCTYPE html>
 <html>
   <head>
-      <!-- TODO review this string here -->
       <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
       <meta charset="UTF-8" />
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
-      <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
-      <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
+      <script nonce="$nonce"><!-- #parse("jquery-3.7.1.min.js") // --></script>
   </head>
   <body>
 
@@ -70,7 +72,8 @@
           #springMessageText("userProfile.allActivity.heading", "All Activity")
         </div>
         <div class="search">
-          <script>
+          <script #if ($nonce)nonce="$nonce"#end>
+          <!--
           $(function() {
             jQuery.expr[':'].icontains = function(a, i, m) {
               return jQuery(a).text().toUpperCase()
@@ -95,6 +98,7 @@
               }
             });
           });
+          // -->
           </script>
           <b style="margin-top: auto;margin-bottom: auto;">#springMessageText("userProfile.allActivity.filter", "Filter:")</b>
           <input type="text" id="search" placeholder="enter terms here...">

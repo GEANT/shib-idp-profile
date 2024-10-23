@@ -25,9 +25,11 @@
     </action-state>
 
     <view-state id="UserProfileViewPersonalData" view="userprofile-pd">
-        <on-entry>
+        <on-render>
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="viewScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="viewScope.cspNonce" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
@@ -40,7 +42,7 @@
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
             <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
-        </on-entry>
+        </on-render>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
         <transition on="activityPage" to="UserProfileViewActivityPage" />
@@ -48,9 +50,11 @@
     </view-state>
     
     <view-state id="UserProfileViewConnectedOrganizations" view="userprofile-co">
-        <on-entry>
+        <on-render>
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="viewScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="viewScope.cspNonce" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="T(org.geant.shibboleth.plugin.userprofile.utils.DateUtil)" result="viewScope.dateUtil" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
@@ -63,7 +67,7 @@
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
             <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
-        </on-entry>
+        </on-render>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
         <transition on="activityPage" to="UserProfileViewActivityPage" />
@@ -72,9 +76,11 @@
     </view-state>
     
     <view-state id="UserProfileViewActivityPage" view="userprofile-ap">
-        <on-entry>
+        <on-render>
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="viewScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="viewScope.cspNonce" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="T(org.geant.shibboleth.plugin.userprofile.utils.DateUtil)" result="viewScope.dateUtil" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
@@ -87,7 +93,7 @@
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showAllServices" result="viewScope.showAllServices" />
             <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
-        </on-entry>
+        </on-render>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
         <transition on="activityPage" to="UserProfileViewActivityPage" />
@@ -95,10 +101,12 @@
     </view-state>
     
     <view-state id="UserProfileViewAllOrganizations" view="userprofile-ao">
-        <on-entry>
+        <on-render>
             <evaluate expression="RenderUserProfileContext" />
             <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPDigester')" result="viewScope.cspDigester" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CSPNonce')" result="viewScope.cspNonce" />
             <evaluate expression="T(net.shibboleth.shared.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
@@ -110,7 +118,7 @@
             <evaluate expression="showConnectedServices" result="viewScope.showConnectedServices" />
             <evaluate expression="showActivityPage" result="viewScope.showActivityPage" />
             <evaluate expression="logoutUrl" result="viewScope.logoutUrl" />
-        </on-entry>
+        </on-render>
         <transition on="personalData" to="UserProfileViewPersonalData" />
         <transition on="connectedOrganizations" to="UserProfileViewConnectedOrganizations" />
         <transition on="activityPage" to="UserProfileViewActivityPage" />

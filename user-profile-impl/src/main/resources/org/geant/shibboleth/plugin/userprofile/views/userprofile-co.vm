@@ -8,6 +8,8 @@
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## profileRequestContext - root of context tree
 ## encoder - HTMLEncoder class
+## cspDigester - Calculates base64-encoded SHA-2 hashes (call apply)
+## cspNonce - Calculates secure nonces (call generateIdentifier)
 ## dateUtil - User Profile utility class for rendering date.
 ## environment - Spring Environment object for property resolution
 ## userProfileContext - user profile context
@@ -17,6 +19,8 @@
 ## showAllServices - whether to show All Services
 ##
 ##
+#set ($nonce = $cspNonce.generateIdentifier())
+$response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'none'; script-src-elem 'nonce-$nonce'")
 ## CONNECTED_ORGANIZATIONS is record of past logins per relying party
 #set ($connectedOrganizations = $userProfileContext.getConnectedOrganizations())
 #set ($relyingPartyAccessTokens = $userProfileContext.getAccessTokens())
@@ -24,13 +28,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <!-- TODO review this string here -->
       <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
       <meta charset="UTF-8" />
       <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
-      <!-- TODO review description string -->
       <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
-      <script src="/idp/javascript/jquery-3.7.1.min.js"></script>
+      <script nonce="$nonce"><!-- #parse("jquery-3.7.1.min.js") // --></script>
   </head>
   <body>
 
@@ -72,7 +74,8 @@
           #springMessageText("userProfile.connectedorganizations.heading", "Connected Organizations")
         </div>
         <div class="search">
-          <script>
+          <script #if ($nonce)nonce="$nonce"#end>
+          <!--
           $(function() {
             jQuery.expr[':'].icontains = function(a, i, m) {
               return jQuery(a).text().toUpperCase()
@@ -96,6 +99,7 @@
               }
             });
           });
+          // -->
           </script>
           <b style="margin-top: auto;margin-bottom: auto;">#springMessageText("userProfile.connectedorganizations.findservice", "Find service:")</b>
           <input type="text" id="search" placeholder="#springMessageText("userProfile.connectedorganizations.search", "Search...")">
@@ -185,7 +189,8 @@
       </div>
     </footer>
 
-    <script>
+    <script #if ($nonce)nonce="$nonce"#end>
+    <!--
       function sortTable() {
 
         var table, rows, switching, i, x, y, shouldSwitch;
@@ -196,27 +201,33 @@
 
           switching = false;
           rows = table.rows;
-
-          for (i = 0; i < (rows.length - 1); i++) {
+         
+          for (i = 1; i < (rows.length - 2); i+=2) {
 
             shouldSwitch = false;
+            
+            var nameRow = rows[i];
+            var secondNameRow = rows[i + 2];
+            var secondFoldedRow = rows[i + 3];
+            
+            x = nameRow.getElementsByTagName("TD")[0];
+            y = secondNameRow.getElementsByTagName("TD")[0];
 
-            x = rows[i].getElementsByTagName("TD")[0];
-            y = rows[i + 1].getElementsByTagName("TD")[0];
-
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) {
               shouldSwitch = true;
               break;
             }
           }
           if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            nameRow.parentNode.insertBefore(secondNameRow, nameRow);
+            nameRow.parentNode.insertBefore(secondFoldedRow, nameRow);
             switching = true;
           }
         }
       }
 
       sortTable();
+    // -->
     </script>
 
   </body>
