@@ -45,6 +45,12 @@ public class LoginEventImpl implements LoginEvent {
     /** Attributes sent. */
     private List<AttributeImpl> attributes;
 
+    /** Name of the authentication context class principal. */
+    private final String acr;
+    
+    /** Client address. */
+    private final String address;
+
     /**
      * Constructor
      * 
@@ -58,6 +64,26 @@ public class LoginEventImpl implements LoginEvent {
         this.name = name;
         this.time = time;
         this.attributes = attributes;
+        acr = null;
+        address = null;
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param id         relying party id of the connected service
+     * @param name       name of the connected service
+     * @param time       authentication time as seconds from epoch
+     * @param attributes attributes sent
+     * @param acr        name of the authentication context class principal.
+     */
+    public LoginEventImpl(String id, String name, long time, List<AttributeImpl> attributes, String acr, String address) {
+        this.id = id;
+        this.name = name;
+        this.time = time;
+        this.attributes = attributes;
+        this.acr = acr;
+        this.address = address;
     }
 
     /**
@@ -75,6 +101,8 @@ public class LoginEventImpl implements LoginEvent {
         this.name = name;
         this.time = time;
         this.attributes = attributes;
+        this.acr = null;
+        this.address = null;
     }
 
     /** {@inheritDoc} */
@@ -90,6 +118,16 @@ public class LoginEventImpl implements LoginEvent {
     /** {@inheritDoc} */
     public long getTime() {
         return time;
+    }
+
+    /** {@inheritDoc} */
+    public String getAcr() {
+        return acr != null && !acr.isEmpty() ? acr : "n/a";
+    }
+    
+    /** {@inheritDoc} */
+    public String getAddress() {
+        return address != null && !address.isEmpty() ? address : "n/a";
     }
 
     /** {@inheritDoc} */

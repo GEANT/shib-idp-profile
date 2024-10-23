@@ -28,11 +28,26 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class LoginEventImplTest {
 
     @Test
-    public void test() throws JsonMappingException, JsonProcessingException {
+    public void test090Format() throws JsonMappingException, JsonProcessingException {
         LoginEventImpl event = LoginEventImpl.parse(
                 "{\"id\":\"id\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
         event = LoginEventImpl.parse(event.serialize());
         Assert.assertEquals(event.getId(), "id");
+        Assert.assertEquals(event.getAcr(), "n/a");
+        Assert.assertEquals(event.getAddress(), "n/a");
+        Assert.assertEquals(event.getTime(), 500);
+        Assert.assertTrue(event.getAttributes().size() == 2);
+        Assert.assertEquals(event.getAttributes().get(0).getName(), "name");
+    }
+
+    @Test
+    public void testFormat() throws JsonMappingException, JsonProcessingException {
+        LoginEventImpl event = LoginEventImpl.parse(
+                "{\"id\":\"id\",\"acr\":\"refedsMFA\",\"address\":\"10.10.10.10\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
+        event = LoginEventImpl.parse(event.serialize());
+        Assert.assertEquals(event.getId(), "id");
+        Assert.assertEquals(event.getAcr(), "refedsMFA");
+        Assert.assertEquals(event.getAddress(), "10.10.10.10");
         Assert.assertEquals(event.getTime(), 500);
         Assert.assertTrue(event.getAttributes().size() == 2);
         Assert.assertEquals(event.getAttributes().get(0).getName(), "name");

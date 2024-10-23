@@ -255,6 +255,7 @@ public class ResolveAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        attributeResolutionContext.setResolutionLabel("admin/userprofile");
         attributeResolutionContext.setAttributeIssuerID(
                 issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null);
         // TODO: Set Group id to resolution context.
@@ -262,9 +263,6 @@ public class ResolveAttributes extends AbstractProfileAction {
         // We set the user we resolve attributes for.
         attributeResolutionContext.setPrincipal(subjectContext.getPrincipalName());
         attributeResolutionContext.resolveAttributes(attributeResolverService);
-        
-        //TODO: WHY missing in idp5 ? FIND OUT!
-        //attributeResolutionContext.setTranscoderRegistry(transcoderRegistry);
         
         // Store the result.
         attributeCtx.setIdPAttributes(attributeResolutionContext.getResolvedIdPAttributes().values());
