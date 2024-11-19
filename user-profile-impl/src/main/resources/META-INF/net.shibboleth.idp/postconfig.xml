@@ -50,6 +50,9 @@
        <bean id="userProfile.UsernameLookupStrategy" parent="shibboleth.Functions.Compose" 
            c:g-ref="shibboleth.PrincipalNameLookup.Subject" c:f-ref="shibboleth.ChildLookup.SubjectContext" />
 
+       <!-- Default relying party id is RelyingPartyContext#getRelyingPartyId. -->
+       <bean id="userProfile.RelyingPartyIdLookupStrategy" class="net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction" />
+
        <!-- Indices we use to store metadata by for User Profile. -->
        <util:set id="userProfile.metadataIndices">
            <bean class="org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex"/>

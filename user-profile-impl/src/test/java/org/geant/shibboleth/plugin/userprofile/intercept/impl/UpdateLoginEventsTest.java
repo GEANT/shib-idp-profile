@@ -57,6 +57,7 @@ import net.shibboleth.oidc.attribute.transcoding.AbstractOIDCAttributeTranscoder
 import net.shibboleth.oidc.attribute.transcoding.OIDCAttributeTranscoder;
 import net.shibboleth.oidc.attribute.transcoding.impl.OIDCStringAttributeTranscoder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.testing.MockApplicationContext;
@@ -98,6 +99,7 @@ public class UpdateLoginEventsTest {
         action = new UpdateLoginEvents();
         action.setUserProfileCache(userProfileCache);
         action.setUsernameLookupStrategy(new usernameLookupStrategy());
+        action.setRelyingPartyIdLookupStrategy(new RelyingPartyIdLookupFunction());
 
         registry = new AttributeTranscoderRegistryImpl();
         registry.setId("test");

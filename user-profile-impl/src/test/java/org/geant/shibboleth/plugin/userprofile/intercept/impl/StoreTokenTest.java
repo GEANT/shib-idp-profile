@@ -53,6 +53,7 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.profile.context.RelyingPartyContext;
+import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.security.DataSealer;
 import net.shibboleth.shared.security.DataSealerException;
@@ -120,6 +121,7 @@ public class StoreTokenTest {
         action = new StoreToken();
         action.setUserProfileCache(userProfileCache);
         action.setUsernameLookupStrategy(new usernameLookupStrategy());
+        action.setRelyingPartyIdLookupStrategy(new RelyingPartyIdLookupFunction());
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
