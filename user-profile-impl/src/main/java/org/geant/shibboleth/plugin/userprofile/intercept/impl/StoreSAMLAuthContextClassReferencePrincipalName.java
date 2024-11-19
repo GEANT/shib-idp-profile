@@ -16,18 +16,26 @@
 
 package org.geant.shibboleth.plugin.userprofile.intercept.impl;
 
+import java.security.Principal;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.impl.DefaultPrincipalDeterminationStrategy;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
+import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
+import net.shibboleth.shared.component.ComponentInitializationException;
+import net.shibboleth.shared.logic.Constraint;
 
 /**
  * Stores authentication class reference name to
@@ -39,8 +47,64 @@ public class StoreSAMLAuthContextClassReferencePrincipalName extends AbstractUse
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(StoreSAMLAuthContextClassReferencePrincipalName.class);
 
-    /** Assertion to look ACR for. */
-    private Assertion assertion;
+    /**
+     * Strategy used to extract, and create if necessary, the
+     * {@link AuthenticationContext} from the {@link ProfileRequestContext}.
+     */
+    @Nonnull
+    private Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupStrategy;
+
+    /** Strategy used to determine the AuthnContextClassRef. */
+    @NonnullAfterInit
+    private Function<ProfileRequestContext, AuthnContextClassRefPrincipal> classRefLookupStrategy;
+
+    /** AuthenticationContext to operate on. */
+    @NonnullBeforeExec
+    private AuthenticationContext authnContext;
+
+    /** Constructor. */
+    public StoreSAMLAuthContextClassReferencePrincipalName() {
+        super();
+        authnCtxLookupStrategy = new ChildContextLookup<>(AuthenticationContext.class);
+    }
+
+    /**
+     * Set the context lookup strategy.
+     * 
+     * @param strategy lookup strategy function for {@link AuthenticationContext}.
+     */
+    public void setAuthenticationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AuthenticationContext> strategy) {
+        checkSetterPreconditions();
+
+        authnCtxLookupStrategy = Constraint.isNotNull(strategy, "Strategy cannot be null");
+
+    }
+
+    /**
+     * Set the strategy function to use to obtain the authentication context class
+     * reference to use.
+     * 
+     * @param strategy authentication context class reference lookup strategy
+     */
+    public void setClassRefLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AuthnContextClassRefPrincipal> strategy) {
+        checkSetterPreconditions();
+        classRefLookupStrategy = Constraint.isNotNull(strategy,
+                "Authentication context class reference strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (classRefLookupStrategy == null) {
+            classRefLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthnContextClassRefPrincipal.class,
+                    new AuthnContextClassRefPrincipal(AuthnContext.UNSPECIFIED_AUTHN_CTX));
+        }
+
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -49,9 +113,9 @@ public class StoreSAMLAuthContextClassReferencePrincipalName extends AbstractUse
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        assertion = new AssertionStrategy().apply(profileRequestContext);
-        if (assertion == null) {
-            log.warn("{} No assertion to look ACR for", getLogPrefix());
+        authnContext = authnCtxLookupStrategy.apply(profileRequestContext);
+        if (authnContext == null) {
+            log.warn("{} No authentication context class", getLogPrefix());
             return false;
         }
         return true;
@@ -60,43 +124,27 @@ public class StoreSAMLAuthContextClassReferencePrincipalName extends AbstractUse
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        for (AuthnStatement statement : assertion.getAuthnStatements()) {
-            if (statement.getAuthnContext() != null && statement.getAuthnContext().getAuthnContextClassRef() != null) {
-                userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
-                        statement.getAuthnContext().getAuthnContextClassRef().getURI());
-                break;
-            }
-            if (statement.getAuthnContext() != null && statement.getAuthnContext().getAuthnContextDeclRef() != null) {
-                userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
-                        statement.getAuthnContext().getAuthnContextDeclRef().getURI());
-                break;
-            }
 
+        RequestedPrincipalContext requestedPrincipalContext = authnContext
+                .getSubcontext(RequestedPrincipalContext.class);
+        if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null) {
+            final Principal matchingPrincipal = requestedPrincipalContext.getMatchingPrincipal();
+            if (matchingPrincipal instanceof AuthnContextClassRefPrincipal) {
+                userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
+                        ((AuthnContextClassRefPrincipal) matchingPrincipal).getAuthnContextClassRef().getURI());
+            } else if (matchingPrincipal instanceof AuthnContextDeclRefPrincipal) {
+                userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
+                        ((AuthnContextDeclRefPrincipal) matchingPrincipal).getAuthnContextDeclRef().getURI());
+            } else {
+                userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
+                        classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef().getURI());
+            }
+        } else {
+            userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
+                    classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef().getURI());
         }
         log.debug("{} ACR stored to context as {}", getLogPrefix(),
                 userProfileCacheContext.getAuthnContextClassReferencePrincipalName());
     }
 
-    private class AssertionStrategy implements Function<ProfileRequestContext, Assertion> {
-
-        /** {@inheritDoc} */
-        @Nullable
-        public Assertion apply(@Nullable final ProfileRequestContext input) {
-            final MessageContext omc = input != null ? input.getOutboundMessageContext() : null;
-
-            if (omc != null) {
-                final Object outboundMessage = omc.getMessage();
-                if (outboundMessage == null) {
-                    return null;
-                } else if (outboundMessage instanceof Assertion) {
-                    return (Assertion) outboundMessage;
-                } else if (outboundMessage instanceof Response
-                        && ((Response) outboundMessage).getAssertions().size() > 0) {
-                    return ((Response) outboundMessage).getAssertions().get(0);
-                }
-            }
-
-            return null;
-        }
-    }
 }
