@@ -45,7 +45,6 @@ import net.shibboleth.idp.consent.logic.impl.AttributeDisplayDescriptionFunction
 import net.shibboleth.idp.consent.logic.impl.AttributeDisplayNameFunction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.profile.context.RelyingPartyContext;
-import net.shibboleth.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.shared.annotation.constraint.NonnullElements;
 import net.shibboleth.shared.component.ComponentInitializationException;
@@ -61,10 +60,6 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
     /** Class logger. */
     @Nonnull
     private final Logger log = LoggerFactory.getLogger(UpdateConnectedOrganizations.class);
-
-    /** Function used to obtain the requester identifier. */
-    @Nullable
-    private Function<ProfileRequestContext, String> requesterLookupStrategy;
 
     /**
      * Strategy used to locate the {@link AttributeContext} associated with a given
@@ -113,22 +108,11 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
     /** Constructor. */
     public UpdateConnectedOrganizations() {
         super();
-        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
         relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
                 .compose(new ChildContextLookup<>(AuthenticationContext.class));
         collectAttributeValues = Predicates.alwaysFalse();
-    }
-
-    /**
-     * Set the strategy used to locate the requester identifier.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRequesterLookupStrategy(@Nullable final Function<ProfileRequestContext, String> strategy) {
-        checkSetterPreconditions();
-        requesterLookupStrategy = strategy;
     }
 
     /**
@@ -252,7 +236,7 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
         try {
             organizations = event != null ? ConnectedServices.parse(event.getValue()) : new ConnectedServices();
             log.debug("Connected organizations {}", organizations.serialize());
-            String rpId = requesterLookupStrategy.apply(profileRequestContext);
+            String rpId = relyingPartyIdLookupStrategy.apply(profileRequestContext);
             ConnectedServiceImpl organization = organizations.getConnectedServices().containsKey(rpId)
                     ? organizations.getConnectedServices().get(rpId)
                     : new ConnectedServiceImpl(rpId, rpUIContext.getServiceName());

@@ -78,13 +78,6 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
     private AttributeContext attributeCtx;
 
     /**
-     * Strategy used to locate or create the {@link RelyingPartyContext} to
-     * populate.
-     */
-    @Nonnull
-    private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextCreationStrategy;
-
-    /**
      * Strategy used to locate the {@link RelyingPartyUIContext} associated with a
      * given {@link ProfileRequestContext}.
      */
@@ -129,8 +122,6 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
         super();
         attributeContextLookupStrategy = new ChildContextLookup<>(AttributeContext.class)
                 .compose(new ChildContextLookup<>(RelyingPartyContext.class));
-        // TODO remove
-        relyingPartyContextCreationStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         relyingPartyUIContextLookupStrategy = new ChildContextLookup<>(RelyingPartyUIContext.class)
                 .compose(new ChildContextLookup<>(AuthenticationContext.class));
         collectAttributeValues = Predicates.alwaysFalse();
@@ -157,18 +148,6 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
         checkSetterPreconditions();
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to return {@link RelyingPartyContext} .
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelyingPartyContextLookup(
-            @Nonnull final Function<ProfileRequestContext, RelyingPartyContext> strategy) {
-        checkSetterPreconditions();
-        relyingPartyContextCreationStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /**
@@ -255,12 +234,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
             return false;
         }
 
-        RelyingPartyContext rpContext = relyingPartyContextCreationStrategy.apply(profileRequestContext);
-        if (rpContext == null) {
-            log.warn("{} Unable to locate relying party context", getLogPrefix());
-            return false;
-        }
-        rpId = rpContext.getRelyingPartyId();
+        rpId = relyingPartyIdLookupStrategy.apply(profileRequestContext);
         if (rpId == null || rpId.isBlank()) {
             log.warn("{} Relying party id missing", getLogPrefix());
             return false;
@@ -334,6 +308,5 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
 
             return null;
         }
-
     }
 }

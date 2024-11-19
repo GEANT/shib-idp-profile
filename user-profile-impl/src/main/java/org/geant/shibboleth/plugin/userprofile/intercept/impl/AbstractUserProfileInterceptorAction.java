@@ -47,6 +47,12 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     @NonnullAfterInit
     protected Function<ProfileRequestContext, String> usernameLookupStrategy;
 
+    /**
+     * Lookup strategy for relying party id.
+     */
+    @NonnullAfterInit
+    protected Function<ProfileRequestContext, String> relyingPartyIdLookupStrategy;
+
     /** User profile cache context. */
     @Nonnull
     protected UserProfileCacheContext userProfileCacheContext;
@@ -80,6 +86,17 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     }
 
     /**
+     * Set Lookup strategy for relying party id.
+     * 
+     * @param strategy lookup strategy for relying party id
+     */
+    public void setRelyingPartyIdLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        checkSetterPreconditions();
+        relyingPartyIdLookupStrategy = Constraint.isNotNull(strategy,
+                "Relying Party Id lookup strategy cannot be null");
+    }
+
+    /**
      * Set Lookup strategy for user profile cache context.
      * 
      * @param strategy lookup strategy for user profile cache context
@@ -110,6 +127,9 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
         }
         if (usernameLookupStrategy == null) {
             throw new ComponentInitializationException("UsernamePrincipal lookup strategy cannot be null");
+        }
+        if (relyingPartyIdLookupStrategy == null) {
+            throw new ComponentInitializationException("RelyingPartyId lookup strategy cannot be null");
         }
     }
 
