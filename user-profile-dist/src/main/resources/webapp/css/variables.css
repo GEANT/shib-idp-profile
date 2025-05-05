@@ -1,0 +1,56 @@
+:root {
+    /* ======================= */
+    /*          Main           */
+    /* ======================= */
+    --main-bg-c: #f5f5f5;
+    --main-bg-c-alt: #e1e1e1;
+
+
+
+    /* ======================= */
+    /*          Text           */
+    /* ======================= */
+    --caption-bg-c: #F0F2F9;
+    --heading-text-c: #5B6186;
+    --large-font-size: 24px;
+    --main-font-family: Raleway;
+    --main-font-weight: 500;
+    --main-font-size: 18pt;
+    --main-text-c: #181E3C;
+
+
+
+    /* ======================= */
+    /*         Tables          */
+    /* ======================= */
+    --table-border: #F0F2F9;
+    --table-font-size: 16pt;
+
+
+
+    /* ======================= */
+    /*        Navigation       */
+    /* ======================= */
+    --nav-bg-c: #F8F8FC;
+    --nav-bg-c-alt: #ececec;
+    --nav-bg-c-alt-2: #dadada;
+    --nav-bg-c-alt-opq: rgba(236, 236, 236, 0.9);
+    --nav-bg-c-side: #dadada;
+
+
+
+    /* ======================= */
+    /*         Buttons         */
+    /* ======================= */
+    --button-bg-c: #4859B2;
+    --button-text-c: #ffffff;
+
+
+
+    /* ======================= */
+    /*          Miscs          */
+    /* ======================= */
+    --bord-rad: 0.5em;
+    --delete-color: #cc3300;
+    --link-c: #4859B2;
+}
