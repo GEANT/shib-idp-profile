@@ -18,8 +18,8 @@
     <idp.version>5.0.0</idp.version>
     <opensaml.groupId>org.opensaml</opensaml.groupId>
     <opensaml.version>5.0.0</opensaml.version>
-    <oidc.common.version>3.0.0</oidc.common.version>
-    <oidc.op.version>4.0.0</oidc.op.version>
+    <oidc.common.version>3.0.1</oidc.common.version>
+    <oidc.op.version>4.1.0</oidc.op.version>
     <oauth2-oidc-sdk.version>10.5.1</oauth2-oidc-sdk.version>
     <java-shib-shared.version>9.0.0</java-shib-shared.version>
     <jackson.version>2.15.2</jackson.version>
@@ -27,6 +27,9 @@
     <shib-shared.groupId>net.shibboleth</shib-shared.groupId>
     <spring.groupId>org.springframework</spring.groupId>
     <checkstyle.configLocation>${project.basedir}/checkstyle.xml</checkstyle.configLocation>
+    <sonar.projectKey>TI_Incubator_user-profile-page-shibboleth-plugin_27564091-2ea1-4622-a1a4-7c77084591a7</sonar.projectKey>
+    <sonar.projectName>User Profile Page Shibboleth Plugin</sonar.projectName>
+    <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
   </properties>
   <repositories>
     <repository>
