@@ -86,7 +86,7 @@ public class UserProfileCacheTest {
     }
     
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testExpirationSetterWithNull() throws ComponentInitializationException {
+    public void testExpirationSetterWithNull() {
         userProfileCache.setRecordExpiration(null);
     }
 
