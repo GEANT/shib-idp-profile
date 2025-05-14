@@ -84,6 +84,11 @@ public class UserProfileCacheTest {
         // Must be positive
         userProfileCache.setRecordExpiration(Duration.ZERO);
     }
+    
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testExpirationSetterWithNull() throws ComponentInitializationException {
+        userProfileCache.setRecordExpiration(null);
+    }
 
     @Test
     public void testStorageGetter() throws ComponentInitializationException {
