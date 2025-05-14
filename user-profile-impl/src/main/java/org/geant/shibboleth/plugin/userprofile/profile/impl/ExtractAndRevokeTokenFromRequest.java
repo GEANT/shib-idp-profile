@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -163,7 +163,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
         userProfileContext.getRefreshTokens().values()
                 .forEach(tokens -> tokens.forEach(token -> collectValidToken(tokenId, token)));
         if (token == null) {
-            log.error("{} token id {} is not valid.", getLogPrefix(), tokenId);
+            log.error("{} token id is not valid.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }

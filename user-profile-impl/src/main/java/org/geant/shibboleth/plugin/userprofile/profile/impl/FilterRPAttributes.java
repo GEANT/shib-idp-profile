@@ -256,27 +256,19 @@ public class FilterRPAttributes extends AbstractProfileAction {
         filterContext.setDirection(Direction.OUTBOUND).setMetadataResolver(metadataResolver)
                 .setPrincipal(subjectContext.getPrincipalName()).setAttributeRecipientID(rpId).setAttributeIssuerID(
                         issuerLookupStrategy != null ? issuerLookupStrategy.apply(profileRequestContext) : null);
-        // TODO: We may rpId so we should also pass metadata to filtering.
-        // .setRequesterMetadataContextLookupStrategy(metadataFromFilterLookupStrategy)
         filterContext.setPrefilteredIdPAttributes(
                 userProfileContext.getRPAttributeContext().get(rpId).getIdPAttributes().values());
-        ServiceableComponent<AttributeFilter> component = null;
 
         try {
-            component = attributeFilterService.getServiceableComponent();
-            if (null == component) {
-                log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
-                        getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
-            } else {
-                final AttributeFilter filter = component.getComponent();
-                filter.filterAttributes(filterContext);
-                filterContext.getParent().removeSubcontext(filterContext);
-                userProfileContext.getRPAttributeContext().get(rpId)
-                        .setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
-                log.debug("{} Attributes filtered {}", getLogPrefix(),
-                        userProfileContext.getRPAttributeContext().get(rpId).getIdPAttributes());
-            }
+            final ServiceableComponent<AttributeFilter> component = attributeFilterService.getServiceableComponent();
+            final AttributeFilter filter = component.getComponent();
+            filter.filterAttributes(filterContext);
+            filterContext.getParent().removeSubcontext(filterContext);
+            userProfileContext.getRPAttributeContext().get(rpId)
+                    .setIdPAttributes(filterContext.getFilteredIdPAttributes().values());
+            log.debug("{} Attributes filtered {}", getLogPrefix(),
+                    userProfileContext.getRPAttributeContext().get(rpId).getIdPAttributes());
+
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);

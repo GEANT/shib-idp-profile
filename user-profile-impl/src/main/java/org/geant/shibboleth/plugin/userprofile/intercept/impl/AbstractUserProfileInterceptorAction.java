@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.shared.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.shared.annotation.constraint.NonnullBeforeExec;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.logic.Constraint;
 
@@ -54,7 +55,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     protected Function<ProfileRequestContext, String> relyingPartyIdLookupStrategy;
 
     /** User profile cache context. */
-    @Nonnull
+    @NonnullBeforeExec
     protected UserProfileCacheContext userProfileCacheContext;
 
     /**
