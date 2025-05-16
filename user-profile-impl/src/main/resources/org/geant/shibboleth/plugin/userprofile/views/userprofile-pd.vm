@@ -1,3 +1,10 @@
+##       |   
+##   \  ___  /                           _________
+##  _  /   \  _    GÉANT                 |  * *  | Co-Funded by
+##     | ~ |       Trust & Identity      | *   * | the European
+##      \_/        Incubator             |__*_*__| Union
+##       =
+##
 ##
 ## Velocity Template for userprofile (for now as end state)
 ##
@@ -22,171 +29,368 @@
 #set ($nonce = $cspNonce.generateIdentifier())
 $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'none'; script-src-elem 'nonce-$nonce'")
 #set ($userAttributes = $userProfileContext.getIdPUserAttributes())
+#set ($offerUri = $userProfileContext.getCredentialOfferUri())
 <!DOCTYPE html>
 <html>
+  <!-- =========== */
+  /*      Head     */
+  /* ============ -->
   <head>
-      <!-- TODO review this string here -->
-      <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
-      <meta charset="UTF-8" />
-      <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
-      <!-- TODO review description string -->
-      <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
-      <script #if ($nonce)nonce="$nonce"#end>
+    <!-- TODO review this string here -->
+    <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+      rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
+    <!-- TODO review description string -->
+    <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+    <script #if ($nonce)nonce="$nonce"#end>
       <!--
-        function doPopup(popupId) {
-          var popup = document.getElementById(popupId);
-          popup.classList.toggle("show");
-        }
-      // -->    
-      </script>
-      <script nonce="$nonce"><!-- #parse("jquery-3.7.1.min.js") // --></script>
-  </head>
-  <body>
+      /* ====================== */
+      /*         Pop up         */
+      /* ====================== */
+      function doPopup(popupId) {
+        var popup = document.getElementById(popupId);
+        popup.classList.toggle("show");
+      }
 
+      function hidePopup(popupId) {
+        var popup = document.getElementById(popupId);
+        popup.classList.toggle("show");
+      }
+      // -->    
+    </script>
+    <script nonce="$nonce">
+      <!-- #parse("jquery-3.7.1.min.js") // -->
+    </script>
+  </head>
+
+
+
+  <!-- ======================= */
+  /*           Body            */
+  /* ======================== -->
+  <body>
+    <!-- ======================= */
+    /*          Header           */
+    /* ======================== -->
     <header>
-      <div id="logo"><img src="/idp/icons/fppp-logo.svg"
-              alt="#springMessageText("idp.logo.alt-text", "logo")" /></div>
-      <label for="nav-toggle" class="nav-toggle-label">
-          <span></span>
+      <div id="logo">
+        <img src="/idp/icons/fppp-logo.svg" alt="#springMessageText("idp.logo.alt-text", "logo")" />
+      </div>
+
+      <label for="mobile-nav-toggle" class="nav-toggle-label">
+        <span><i class="lni lni-menu-hamburger-1"></i></span>
       </label>
     </header>
-    <div id="nav">
-        <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
-            <ul>
-                <!-- TODO: get strings from spring messages -->
-                #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
-                #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
-                #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
-                #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
-                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span></a></li>
-                #if ($showConnectedServices)
-                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
-                #end
-                #if ($showActivityPage)
-                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span></a></li>
-                #end
-                #if ($showAllServices)
-                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span></a></li>
-                #end
-                #if ($logoutUrl)
-                <li><a href="$logoutUrl"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
-                #end
-            </ul>
-        </nav>
+
+
+    <!-- ======================== */
+    /*      Mobile navigation     */
+    /* ========================= -->
+    <input id="mobile-nav-toggle" type="checkbox">
+    <div id="idMobileNav" class="overlay">
+      <label for="mobile-nav-toggle" class="closebtn">
+        <span><i class="lni lni-xmark"></i></span>
+      </label>
+
+      <div class="overlay-content">
+        <!-- TODO: get strings from spring messages -->
+        #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
+        #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
+        #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
+        #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
+
+        <a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/prof-page.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span>
+        </a>
+
+        #if ($showConnectedServices)
+        <a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/conn-orgs.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span>
+        </a>
+        #end
+
+        #if ($showActivityPage)
+        <a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/activity.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span>
+        </a>
+        #end
+
+        #if ($showAllServices)
+        <a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/conn-orgs.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span>
+        </a>
+        #end
+
+        #if ($logoutUrl)
+        <a href="$logoutUrl">
+          <span class="navicon">
+            <img src="/idp/icons/logout.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.logout", "Log Out")</span>
+        </a>
+        #end
+      </div>
     </div>
-    <!-- end of header -->
+
     
+    <!-- ========================= */
+    /*      Desktop navigation     */
+    /* ========================== -->
+    <div id="nav">
+      <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
+        <ul>
+          <!-- TODO: get strings from spring messages -->
+          #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
+          #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
+          #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
+          #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
+
+          <li>
+            <a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/prof-page.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span>
+            </a>
+          </li>
+
+          #if ($showConnectedServices)
+          <li>
+            <a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/conn-orgs.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($showActivityPage)
+          <li>
+            <a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/activity.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($showAllServices)
+          <li>
+            <a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/conn-orgs.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($logoutUrl)
+          <li>
+            <a href="$logoutUrl">
+              <span class="navicon">
+                <img src="/idp/icons/logout.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span>
+            </a>
+          </li>
+          #end
+        </ul>
+      </nav>
+    </div>
+
+
+    <!-- ============= */
+    /*      Banner     */
+    /* ============== -->
     <section id="banner">
-        <!-- TODO explanatory message -->
-        <div>
-          #springMessageText("userProfile.personaldata.heading", "Personal Data")
-        </div>
+      <!-- TODO explanatory message -->
+      <div>
+        #springMessageText("userProfile.personaldata.heading", "Personal Data")
+      </div>
     </section>
+
+
+    <!-- =========== */
+    /*      Main     */
+    /* ============ -->
     <section id="main">
       <div id="personal_data">
-      <table id="maintable">
-        <!-- fixed table header -->
-        <tr>
-            <th>Attribute</th>
-            <th>Your value
-              <label for="actions-toggle"><span class="actionsbutton">Actions ▾</span></label>
-              <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
-              <div class="dropdown-box actions-list">
-                <!-- download data button -->
-                <hr>
-                <script #if ($nonce)nonce="$nonce"#end>
-                <!--
-                function displayModal(csvData) {
-                  $('#csvDisplay').val(csvData);
-                  $('#csvModal').show();
+        <!-- ======================= */
+        /*      Actions dropdown     */
+        /* ======================= -->
+        <div class="actions-dropdown">
+          <label for="actions-toggle">
+            <span class="actions-toggle">Actions <i class="lni lni-chevron-down"></i></span>
+          </label>
+          <input type="checkbox" id="actions-toggle" class="dropdown-toggle">
 
-                  $('#close').on('click', function() {
-                      $('#csvModal').hide();
-                  });
+          <div class="dropdown-box">
+            <!-- ======================= */
+            /*    Download data button   */
+            /* ======================= -->
+            <script #if ($nonce)nonce="$nonce"#end>
+              <!--
+              function displayModal(csvData) {
+                $('#csvDisplay').val(csvData);
+                $('#csvModal').show();
 
-                  $('#copyToClipboard').on('click', function() {
-                      $('#csvDisplay').select();
-                      document.execCommand('copy');
-                      alert('CSV copied to clipboard!');
-                  });
-                }
-
-                $(function() {
-                    $('#download').on('click', function() {
-                        let csvData = 'Attribute,Value\n'; // CSV header
-
-                        // Iterate over each row containing personal data
-                        $('td.personaldata').each(function() {
-                            let attributeName = $(this).contents().filter(function() {
-                                return this.nodeType === 3; // Node type 3 is a text node
-                            }).first().text().trim();
-
-                            let attributeValue = $(this).closest('tr').find('span.label').text().trim();
-                            csvData += `"${attributeName}","${attributeValue}"\n`;
-                        });
-
-                        displayModal(csvData);
-                    });
+                $('#close').on('click', function() {
+                    $('#csvModal').hide();
                 });
-                // -->
-                </script>
-                <span id="download" class="abutton">Export data</span>
-                <div id="csvModal" class="modal">
-                    <div class="modal-content">
-                        <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
-                        <button id="copyToClipboard">Copy to Clipboard</button>
-                        <button id="close">Close</button>
-                    </div>
-                </div>
 
-                <!-- custom button -->
-                <!--
-                <hr>
-                <span class="abutton">Custom action</span>
-                -->
-              </div>            
-            </th>
-        </tr>
-        #foreach($attribute in $userAttributes)
-        <tr>
-          <td class="personaldata">$encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
-          <div class="popup" onclick="doPopup('popup-${attribute.getId()}')"><img class="information-icon" src="/idp/icons/i.svg"/>
-            <span class="popuptext" id="popup-${attribute.getId()}">$encoder.encodeForHTMLAttribute($attributeDisplayDescriptionFunction.apply($attribute))</span>
-          </div> 
-          </td>
-          <td class="personaldata">
-          #foreach ($value in $attribute.values)
-            <span class="label">$encoder.encodeForHTMLAttribute($value.getDisplayValue())</span>
-          #end
-          </td>
-        </tr>
-        #end
-      </table>
-      </div id="personal_data">
+                $('#copyToClipboard').on('click', function() {
+                  $('#csvDisplay').select();
+                  document.execCommand('copy');
+                  alert('CSV copied to clipboard!');
+                });
+              }
+
+              $(function() {
+                $('#download').on('click', function() {
+                  let csvData = 'Attribute,Value\n'; // CSV header
+
+                  // Iterate over each row containing personal data
+                  $('td.personaldata').each(function() {
+                    let attributeName = $(this).contents().filter(function() {
+                      return this.nodeType === 3; // Node type 3 is a text node
+                    }).first().text().trim();
+
+                    let attributeValue = $(this).closest('tr').find('span.label').text().trim();
+                    csvData += `"${attributeName}","${attributeValue}"\n`;
+                  });
+
+                  displayModal(csvData);
+                });
+              });
+              // -->
+            </script>
+
+            <div class="actions-list">
+              <hr>
+              <span id="download" class="actions-button">Export data</span>
+            </div>
+            
+            <div id="csvModal" class="modal">
+              <div>
+                <div class="modal-content">
+                  <textarea id="csvDisplay" rows="10" cols="50"></textarea><br>
+                  <div id="modal-buttons">
+                    <button id="copyToClipboard" class="button">Copy to Clipboard</button>
+                    <button id="close" class="button">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+         
+        <!-- ======================= */
+        /*      Dashboard table      */
+        /* ======================= -->
+        <table id="maintable">
+          <thead> <!-- Fixed table header. -->
+            <tr>
+              <th>Attribute</th>
+              <th>Your value</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            #foreach($attribute in $userAttributes)
+            <tr>
+              <td class="personaldata">
+                $encoder.encodeForHTMLAttribute($attributeDisplayNameFunction.apply($attribute))
+                <div class="popup" onmouseover="doPopup('popup-${attribute.getId()}')" onmouseout="hidePopup('popup-${attribute.getId()}')">
+                  <img class="information-icon" src="/idp/icons/i.svg" />
+                  <span id="popup-${attribute.getId()}" class="popuptext">
+                    $encoder.encodeForHTMLAttribute($attributeDisplayDescriptionFunction.apply($attribute))
+                  </span>
+                </div> 
+              </td>
+              
+              <td class="personaldata">
+                #foreach ($value in $attribute.values)
+                <span class="label">$encoder.encodeForHTMLAttribute($value.getDisplayValue())</span>
+                #end
+              </td>
+            </tr>
+            #end
+          </tbody>
+        </table>
+
+
+        <!-- ============== */
+        /*      QR code     */
+        /* =============== -->
+        ## #if ($offerUri)
+        ## <div class="qr-code">
+        ##   <h3 class="as-h5">#springMessageText("userProfile.wallet.heading", "Transfer your Incubator account to your wallet")</h3>
+        ##   <img src="https://api.qrserver.com/v1/create-qr-code/?data=$offerUri&amp;size=200x200" alt="" title="HELLO" />        
+        ## </div>
+        ## #end
+      </div>
     </section>
 
+
+    <!-- ============= */
+    /*      Footer     */
+    /* ============== -->
     <footer>
       <div>
-          <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+        <div id="idGeantSection">
+          <img src="/idp/icons/GEANT blue new.svg" />
+        </div>
+
+        <div id="idEuSection">
+          <h4>GÉANT Project Funding Statement</h4>
+          <hr>
+          <img src="/idp/icons/Funded by the EU.svg" />
+        </div>
+      </div>
+
+      <div id="idCopyrightText">
+        <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
       </div>
     </footer>
-    
-    <script #if ($nonce)nonce="$nonce"#end>
-    <!--
-      function sortTable() {
 
+
+    <!-- ============== */
+    /*      Scripts     */
+    /* =============== -->
+    <script #if ($nonce)nonce="$nonce"#end>
+      <!--
+      /* ======================= */
+      /*      Table sorting      */
+      /* ======================= */
+      function sortTable() {
         var table, rows, switching, i, x, y, shouldSwitch;
         table = document.getElementById("maintable");
         switching = true;
 
         while (switching) {
-
           switching = false;
           rows = table.rows;
 
           for (i = 1; i < (rows.length - 1); i++) {
-
             shouldSwitch = false;
             
             x = rows[i].getElementsByTagName("TD")[0];
@@ -197,6 +401,7 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
               break;
             }
           }
+
           if (shouldSwitch) {
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
             switching = true;
@@ -205,8 +410,7 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
       }
 
       sortTable();
-    // -->
+      // -->
     </script>
-
   </body>
 </html>
