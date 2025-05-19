@@ -246,7 +246,7 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
           <span class="input-group-text" id="serviceFilterID">
             #springMessageText("userProfile.allActivity.filter", "Filter:")
           </span>
-          <input type="text" class="form-control" placeholder="Enter terms here..." aria-describedby="serviceFilterID">
+          <input id="search" type="text" class="form-control" placeholder="Enter terms here..." aria-describedby="serviceFilterID">
         </div>
       </div>
 
