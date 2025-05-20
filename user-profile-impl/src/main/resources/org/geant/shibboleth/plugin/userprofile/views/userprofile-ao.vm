@@ -1,3 +1,10 @@
+##       |   
+##   \  ___  /                           _________
+##  _  /   \  _    GÉANT                 |  * *  | Co-Funded by
+##     | ~ |       Trust & Identity      | *   * | the European
+##      \_/        Incubator             |__*_*__| Union
+##       =
+##
 ##
 ## Velocity Template for userprofile (for now as end state)
 ##
@@ -24,53 +31,187 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
 #set ($relyingParties = $userProfileContext.getRelyingParties())
 <!DOCTYPE html>
 <html>
+  <!-- =========== */
+  /*      Head     */
+  /* ============ -->
   <head>
-      <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
-      <meta charset="UTF-8" />
-      <link rel="stylesheet" type="text/css" href="/idp/css/userprofile.css">
-      <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
-      <script nonce="$nonce"><!-- #parse("jquery-3.7.1.min.js") // --></script>
+    <title>#springMessageText("userProfile.pageheading", "User Profile Page")</title>
+    <meta charset="UTF-8" />
+    <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+      rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/idp/css/userprofile2.css">
+    <meta name="Description" content="#springMessageText("userProfile.pageheading", "User Profile Page")">
+    <script nonce="$nonce">
+      <!-- #parse("jquery-3.7.1.min.js") // -->
+    </script>
   </head>
-  <body>
 
+
+
+  <!-- ======================= */
+  /*           Body            */
+  /* ======================== -->
+  <body>
+    <!-- ======================= */
+    /*          Header           */
+    /* ======================== -->
     <header>
-      <div id="logo"><img src="/idp/icons/fppp-logo.svg"
-              alt="#springMessageText("idp.logo.alt-text", "logo")" /></div>
-      <label for="nav-toggle" class="nav-toggle-label">
-          <span></span>
+      <div id="logo">
+        <img src="/idp/icons/fppp-logo.svg" alt="#springMessageText("idp.logo.alt-text", "logo")" />
+      </div>
+
+      <label for="mobile-nav-toggle" class="nav-toggle-label">
+        <span><i class="lni lni-menu-hamburger-1"></i></span>
       </label>
     </header>
-    <div id="nav">
-        <input type="checkbox" id="nav-toggle" class="nav-toggle">
-        <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
-            <ul>
-                <!-- TODO: get strings from spring messages -->
-                #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
-                #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
-                #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
-                #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
-                <li><a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/prof-page.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span></a></li>
-                #if ($showConnectedServices)
-                <li><a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span></a></li>
-                #end
-                #if ($showActivityPage)
-                <li><a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/activity.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span></a></li>
-                #end
-                <li><a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end"><span class="navicon"><img src="/idp/icons/conn-orgs.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span></a></li>
-                #if ($logoutUrl)
-                <li><a href="$logoutUrl"><span class="navicon"><img src="/idp/icons/logout.svg" /></span><span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span></a></li>
-                #end
-            </ul>
-        </nav>
+
+
+    <!-- ======================== */
+    /*      Mobile navigation     */
+    /* ========================= -->
+    <input id="mobile-nav-toggle" type="checkbox">
+    <div id="idMobileNav" class="overlay">
+      <label for="mobile-nav-toggle" class="closebtn">
+        <span><i class="lni lni-xmark"></i></span>
+      </label>
+
+      <div class="overlay-content">
+        <!-- TODO: get strings from spring messages -->
+        #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
+        #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
+        #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
+        #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
+
+        <a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/prof-page.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span>
+        </a>
+
+        #if ($showConnectedServices)
+        <a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/conn-orgs.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span>
+        </a>
+        #end
+
+        #if ($showActivityPage)
+        <a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/activity.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span>
+        </a>
+        #end
+
+        #if ($showAllServices)
+        <a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+          <span class="navicon">
+            <img src="/idp/icons/conn-orgs.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span>
+        </a>
+        #end
+
+        #if ($logoutUrl)
+        <a href="$logoutUrl">
+          <span class="navicon">
+            <img src="/idp/icons/logout.svg" />
+          </span>
+          <span class="mobile-nav-label">#springMessageText("userProfile.menu.logout", "Log Out")</span>
+        </a>
+        #end
+      </div>
     </div>
-    <!-- end of header -->
+
     
+    <!-- ========================= */
+    /*      Desktop navigation     */
+    /* ========================== -->
+    <div id="nav">
+      <nav role="navigation" aria-label="#springMessageText("userProfile.pageheading", "User Profile Page")">
+        <ul>
+          <!-- TODO: get strings from spring messages -->
+          #set ($personalDataLink = $flowExecutionUrl + "&_eventId=personalData")
+          #set ($connectedOrganizationsLink = $flowExecutionUrl + "&_eventId=connectedOrganizations")
+          #set ($activityPageLink = $flowExecutionUrl + "&_eventId=activityPage")
+          #set ($allOrganizationsLink = $flowExecutionUrl + "&_eventId=allOrganizations")
+
+          <li>
+            <a href="$personalDataLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/prof-page.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.personaldata", "Personal Data")</span>
+            </a>
+          </li>
+
+          #if ($showConnectedServices)
+          <li>
+            <a href="$connectedOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/conn-orgs.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.connectedorganizations", "Connected Organizations")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($showActivityPage)
+          <li>
+            <a href="$activityPageLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/activity.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.activitypage", "Activity Page")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($showAllServices)
+          <li>
+            <a href="$allOrganizationsLink#if($csrfToken)&${csrfToken.parameterName}=${csrfToken.token}#{else}#end">
+              <span class="navicon">
+                <img src="/idp/icons/conn-orgs.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.allorganizations", "All Organizations")</span>
+            </a>
+          </li>
+          #end
+
+          #if ($logoutUrl)
+          <li>
+            <a href="$logoutUrl">
+              <span class="navicon">
+                <img src="/idp/icons/logout.svg" />
+              </span>
+              <span class="navlabel">#springMessageText("userProfile.menu.logout", "Log Out")</span>
+            </a>
+          </li>
+          #end
+        </ul>
+      </nav>
+    </div>
+    
+
+    <!-- ============= */
+    /*      Banner     */
+    /* ============== -->
     <section id="banner">
         <!-- TODO explanatory message -->
         <div>
           #springMessageText("userProfile.availableorganizations.heading", "All Organizations")
         </div>
     </section>
+
+
+    <!-- =========== */
+    /*      Main     */
+    /* ============ -->
     <section id="main">
       <div id="connected_organizations">
       <form action="$flowExecutionUrl" method="post">
@@ -105,14 +246,34 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
       </form>
     </section>
 
+
+    <!-- ============= */
+    /*      Footer     */
+    /* ============== -->
     <footer>
       <div>
-          <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
+        <div id="idGeantSection">
+          <img src="/idp/icons/GEANT blue new.svg" />
+        </div>
+
+        <div id="idEuSection">
+          <h4>GÉANT Project Funding Statement</h4>
+          <hr>
+          <img src="/idp/icons/Funded by the EU.svg" />
+        </div>
+      </div>
+
+      <div id="idCopyrightText">
+        <p>#springMessageText("idp.footer", "Insert your footer text here.")</p>
       </div>
     </footer>
 
+
+    <!-- ============== */
+    /*      Scripts     */
+    /* =============== -->
     <script #if ($nonce)nonce="$nonce"#end>
-    <!--
+      <!--
       function sortTable() {
 
         var table, rows, switching, i, x, y, shouldSwitch;
@@ -144,8 +305,7 @@ $response.addHeader("Content-Security-Policy", "base-uri 'none'; object-src 'non
       }
 
       sortTable();
-    // -->
+      // -->
     </script>
-
   </body>
 </html>
