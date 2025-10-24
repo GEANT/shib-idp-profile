@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.geant.shibboleth.plugin.userprofile</groupId>
     <artifactId>idp-plugin-userprofile</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
   </parent>
   <name>Shibboleth IdP :: Plugins :: User Profile Impl</name>
   <description>IdP User Profile plugin Implementation.</description>
