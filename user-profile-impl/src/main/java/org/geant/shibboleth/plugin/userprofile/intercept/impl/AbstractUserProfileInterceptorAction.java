@@ -71,7 +71,7 @@ abstract class AbstractUserProfileInterceptorAction extends AbstractProfileActio
     protected UserProfileCache userProfileCache;
 
     /** Constructor. */
-    public AbstractUserProfileInterceptorAction() {
+    AbstractUserProfileInterceptorAction() {
         super();
         userProfileCacheContextLookupStrategy = new ChildContextLookup<>(UserProfileCacheContext.class);
     }

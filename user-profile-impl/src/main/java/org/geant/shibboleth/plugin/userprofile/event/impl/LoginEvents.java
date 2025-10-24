@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -38,7 +38,7 @@ public class LoginEvents {
     private long maxEntries = 50;
 
     /** List of login events. */
-    private List<LoginEventImpl> loginEvents = new ArrayList<LoginEventImpl>();
+    private List<LoginEventImpl> loginEvents = new ArrayList<>();
 
     /**
      * Constuctor.
@@ -82,12 +82,13 @@ public class LoginEvents {
     }
 
     /**
-     * Serialize instance to json string.
+     * Serialize instance to json string. Serialized instance has a maximum number
+     * of entries that defaults to 50.
      * 
      * @return json string representing the instance.
      * @throws JsonProcessingException something went wrong.
      */
-    public String serialize() throws JsonProcessingException {
+    public String serializeWithMaxEntries() throws JsonProcessingException {
         while (getLoginEvents().size() > maxEntries) {
             getLoginEvents().remove(0);
         }

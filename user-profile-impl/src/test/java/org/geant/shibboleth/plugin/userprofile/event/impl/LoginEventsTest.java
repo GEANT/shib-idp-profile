@@ -34,7 +34,7 @@ public class LoginEventsTest {
         LoginEvents loginEvents = LoginEvents.parse(
                 " [{\"id\":\"id\",\"name\":\"name\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}, "
                         + "  {\"id\":\"id\",\"name\":\"name\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}] ");
-        loginEvents = LoginEvents.parse(loginEvents.serialize());
+        loginEvents = LoginEvents.parse(loginEvents.serializeWithMaxEntries());
         Assert.assertEquals(loginEvents.getLoginEvents().size(), 2);
         AttributeImpl attribute = new AttributeImpl("id", "name", "descr", Arrays.asList("foo"));
         loginEvents.getLoginEvents()
@@ -48,7 +48,7 @@ public class LoginEventsTest {
         loginEvents.getLoginEvents()
                 .add(new LoginEventImpl("rpIdNew5", "rpIdNewName5", 2010104, Arrays.asList(attribute, attribute, attribute)));
         loginEvents.setMaxEntries(5);
-        loginEvents = LoginEvents.parse(loginEvents.serialize());
+        loginEvents = LoginEvents.parse(loginEvents.serializeWithMaxEntries());
         Assert.assertEquals(loginEvents.getLoginEvents().size(), 5);
         Assert.assertTrue(loginEvents.getLoginEvents().get(0).getId().equals("rpIdNew1"));
     }

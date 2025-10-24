@@ -36,8 +36,8 @@ public class InitializeUserProfileCacheContext extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        final UserProfileCacheContext UserProfileCacheContext = new UserProfileCacheContext();
-        profileRequestContext.addSubcontext(UserProfileCacheContext, true);
+        final UserProfileCacheContext userProfileCacheContext = new UserProfileCacheContext();
+        profileRequestContext.addSubcontext(userProfileCacheContext, true);
         log.debug("{} new UserProfileCacheContext successfully created and attached", getLogPrefix());
     }
 }

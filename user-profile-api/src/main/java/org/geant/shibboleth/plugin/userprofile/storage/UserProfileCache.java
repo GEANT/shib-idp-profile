@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -70,14 +70,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
      */
     @Nonnull
     @Positive
-    private Duration expires;
-
-    /**
-     * Constructor.
-     */
-    public UserProfileCache() {
-        expires = Duration.ofDays(180);
-    }
+    private Duration expires = Duration.ofDays(180);
 
     /**
      * Set the default user profile authentication record expiration.
@@ -110,7 +103,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
         storage = Constraint.isNotNull(storageService, "StorageService cannot be null");
         final StorageCapabilities caps = storage.getCapabilities();
         if (caps instanceof StorageCapabilities) {
-            Constraint.isTrue(((StorageCapabilities) caps).isServerSide(), "StorageService cannot be client-side");
+            Constraint.isTrue(caps.isServerSide(), "StorageService cannot be client-side");
         }
     }
 
@@ -239,7 +232,7 @@ public class UserProfileCache extends AbstractIdentifiableInitializableComponent
             log.trace("Located User Profile Record '{}' for user '{}'", entry.getValue(), key);
             return Events.parse(entry.getValue());
         } catch (final IOException e) {
-            log.error("Exception reading from storage service, user '{}'. Empty record is created.", e, key);
+            log.error("Exception reading from storage service, user '{}'. Empty record is created.", key, e);
             return new Events();
         }
     }

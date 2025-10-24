@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -20,7 +20,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Unit tests for {@link ConnectedServiceImpl}.
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class ConnectedOrganizationImplTest {
 
     @Test
-    public void testParse() throws JsonMappingException, JsonProcessingException {
+    public void testParse() throws JsonProcessingException {
         ConnectedServiceImpl service = ConnectedServiceImpl.parse(
                 " {\"id\":\"foo\",\"name\":\"fooName\",\"times\":2,\"lastAttributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id2\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}]} ");
         service = ConnectedServiceImpl.parse(service.serialize());

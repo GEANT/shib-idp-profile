@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -78,8 +78,8 @@ public class RenderIdPAttributesTest {
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(userProfileContext.getIdPUserAttributes().size(), 1);
     }
-    
-    public void testFailInvalidProfileContext() throws ComponentInitializationException  {
+
+    public void testFailInvalidProfileContext() throws ComponentInitializationException {
         prc.removeSubcontext(UserProfileContext.class);
         action.initialize();
         final Event event = action.execute(src);
@@ -87,13 +87,13 @@ public class RenderIdPAttributesTest {
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class)
-    public void testFailPostInitSet() throws ComponentInitializationException  {
+    public void testFailPostInitSet() throws ComponentInitializationException {
         action.initialize();
         action.setUserProfileContextLookupStrategy(new ChildContextLookup<>(UserProfileContext.class));
     }
-    
+
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testFailNull() throws ComponentInitializationException {
+    public void testFailNull() {
         action.setUserProfileContextLookupStrategy(null);
     }
 }

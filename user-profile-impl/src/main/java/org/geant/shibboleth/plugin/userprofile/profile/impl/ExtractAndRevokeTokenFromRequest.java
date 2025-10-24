@@ -74,12 +74,6 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
     @NotEmpty
     private String tokenIdFieldName;
 
-    /** For extracting user input. */
-    private HttpServletRequest request;
-
-    /** Context for user profile . */
-    private UserProfileContext userProfileContext;
-
     /** Extracted token. */
     private Token token;
 
@@ -140,7 +134,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        request = getHttpServletRequest();
+        HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.error("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -152,16 +146,16 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
+        UserProfileContext userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
         if (userProfileContext == null) {
             log.error("{} No UserProfileContext name available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         userProfileContext.getAccessTokens().values()
-                .forEach(tokens -> tokens.forEach(token -> collectValidToken(tokenId, token)));
-        userProfileContext.getRefreshTokens().values()
-                .forEach(tokens -> tokens.forEach(token -> collectValidToken(tokenId, token)));
+                .forEach(accessTokens -> accessTokens.forEach(accessToken -> collectValidToken(tokenId, accessToken)));
+        userProfileContext.getRefreshTokens().values().forEach(
+                refreshTokens -> refreshTokens.forEach(refreshToken -> collectValidToken(tokenId, refreshToken)));
         if (token == null) {
             log.error("{} token id is not valid.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -187,8 +181,7 @@ public class ExtractAndRevokeTokenFromRequest extends AbstractProfileAction {
             log.debug("Token expiration time was in the past, returning ZERO");
             revocationLifetime = Duration.ZERO;
         } else {
-            revocationLifetime = Duration.between(Instant.now(), Instant.ofEpochSecond(token.getExp())).abs()
-                    .plus(Duration.ofMinutes(5)).plus(clockSkew);
+            revocationLifetime = Duration.between(now, exp).plus(clockSkew);
         }
         if (revocationCache.revoke(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, token.getTokenId(),
                 revocationLifetime)) {

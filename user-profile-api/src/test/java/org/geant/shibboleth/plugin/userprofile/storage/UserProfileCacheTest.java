@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -63,20 +63,18 @@ public class UserProfileCacheTest {
         storageService = null;
     }
 
-    @Test
-    public void testInit() {
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testInitNoStorage() {
         userProfileCache = new UserProfileCache();
-        try {
-            userProfileCache.setStorage(null);
-            Assert.fail("Null StorageService should have caused constraint violation");
-        } catch (final Exception e) {
-        }
+        userProfileCache.setStorage(null);
+        Assert.fail("Null StorageService should have caused constraint violation");
+    }
 
-        try {
-            userProfileCache.setStorage(new ClientStorageService());
-            Assert.fail("ClientStorageService should have caused constraint violation");
-        } catch (final Exception e) {
-        }
+    @Test(expectedExceptions = ConstraintViolationException.class)
+    public void testInitClientSideStorage() {
+        userProfileCache = new UserProfileCache();
+        userProfileCache.setStorage(new ClientStorageService());
+        Assert.fail("ClientStorageService should have caused constraint violation");
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
@@ -84,7 +82,7 @@ public class UserProfileCacheTest {
         // Must be positive
         userProfileCache.setRecordExpiration(Duration.ZERO);
     }
-    
+
     @Test(expectedExceptions = ConstraintViolationException.class)
     public void testExpirationSetterWithNull() {
         userProfileCache.setRecordExpiration(null);

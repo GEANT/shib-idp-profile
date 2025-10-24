@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -18,11 +18,8 @@ package org.geant.shibboleth.plugin.userprofile.context;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
-import java.util.Comparator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,33 +44,33 @@ public final class UserProfileContext extends BaseContext implements EventsCache
 
     /** Attributes presented as users personal data. */
     @Nonnull
-    private final List<IdPAttribute> idPUserAttributes = new ArrayList<IdPAttribute>();
+    private final List<IdPAttribute> idPUserAttributes = new ArrayList<>();
 
     /** Connected organizations information. */
     @Nonnull
-    private final Map<String, ConnectedService> connectedOrganizations = new HashMap<String, ConnectedService>();
+    private final Map<String, ConnectedService> connectedOrganizations = new HashMap<>();
 
     /** Access tokens per relying party. */
     @Nonnull
-    private final Map<String, List<AccessToken>> accessTokens = new HashMap<String, List<AccessToken>>();
+    private final Map<String, List<AccessToken>> accessTokens = new HashMap<>();
 
     /** Refresh tokens per relying party. */
     @Nonnull
-    private final Map<String, List<Token>> refreshTokens = new HashMap<String, List<Token>>();
+    private final Map<String, List<Token>> refreshTokens = new HashMap<>();
 
     /** Activity page information i.e. login events. */
     @Nonnull
-    private final List<LoginEvent> loginEvents = new ArrayList<LoginEvent>();
+    private final List<LoginEvent> loginEvents = new ArrayList<>();
 
     /** Attribute context per relying party. */
     /** Note! Only used by (the most) experimental all services - page. */
     @Nonnull
-    private final Map<String, AttributeContext> rpAttributeContext = new HashMap<String, AttributeContext>();
+    private final Map<String, AttributeContext> rpAttributeContext = new HashMap<>();
 
     /** Relying party ui context per relying party. */
     /** Note! Only used by (the most) experimental all services - page. */
     @Nonnull
-    private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<String, RelyingPartyUIContext>();
+    private final Map<String, RelyingPartyUIContext> relyingParties = new HashMap<>();
 
     /** Cached user profile events. */
     private Events cachedEvents;
@@ -108,10 +105,7 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      * @param token access token
      */
     public void addAccessToken(@Nonnull String rpId, @Nonnull AccessToken token) {
-        if (!accessTokens.containsKey(rpId)) {
-            accessTokens.put(rpId, new ArrayList<AccessToken>());
-        }
-        accessTokens.get(rpId).add(token);
+        accessTokens.computeIfAbsent(rpId, s -> new ArrayList<>()).add(token);
     }
 
     /**
@@ -130,10 +124,7 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      * @param token refresh token
      */
     public void addRefreshToken(@Nonnull String rpId, @Nonnull Token token) {
-        if (!refreshTokens.containsKey(rpId)) {
-            refreshTokens.put(rpId, new ArrayList<Token>());
-        }
-        refreshTokens.get(rpId).add(token);
+        refreshTokens.computeIfAbsent(rpId, s -> new ArrayList<>()).add(token);
     }
 
     /**
@@ -151,22 +142,6 @@ public final class UserProfileContext extends BaseContext implements EventsCache
      * @return activity page information i.e. login events
      */
     public List<LoginEvent> getLoginEvents() {
-
-        Collections.sort(loginEvents, new Comparator<LoginEvent>() {
-            public int compare(LoginEvent o1, LoginEvent o2) {
-                long t1 = o1.getTime();
-                long t2 = o2.getTime();
-                // reverse order so that most recent on top
-                if (t1 > t2) {
-                    return -1;
-                }
-                if (t2 > t1) {
-                    return 1;
-                }
-                return 0;
-            }
-        });
-
         return loginEvents;
     }
 

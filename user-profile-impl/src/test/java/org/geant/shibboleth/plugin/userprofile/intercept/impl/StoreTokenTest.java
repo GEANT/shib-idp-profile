@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -40,7 +40,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 
@@ -103,8 +102,8 @@ public class StoreTokenTest {
     }
 
     @BeforeMethod
-    public void initTests() throws ComponentInitializationException, JsonProcessingException, NoSuchAlgorithmException,
-            URISyntaxException, DataSealerException {
+    public void initTests()
+            throws ComponentInitializationException, NoSuchAlgorithmException, URISyntaxException, DataSealerException {
         storageService = new MemoryStorageService();
         storageService.setId("test");
         storageService.initialize();
@@ -114,7 +113,7 @@ public class StoreTokenTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.setId("id");
         userProfileCache.initialize();
-        
+
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
 
@@ -160,8 +159,7 @@ public class StoreTokenTest {
     }
 
     @Test
-    public void testSuccess() throws ComponentInitializationException, JsonMappingException, JsonProcessingException,
-            InterruptedException {
+    public void testSuccess() throws ComponentInitializationException, JsonProcessingException, InterruptedException {
         action.initialize();
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

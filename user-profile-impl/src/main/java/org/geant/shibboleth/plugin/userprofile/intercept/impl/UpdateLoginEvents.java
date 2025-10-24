@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -260,7 +260,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
             @Nonnull final ProfileRequestContext profileRequestContext) {
         List<String> values;
         if (collectAttributeValues.test(profileRequestContext)) {
-            values = new ArrayList<String>();
+            values = new ArrayList<>();
             entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
         } else {
             values = null;
@@ -276,7 +276,7 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
         try {
             Event event = userProfileCache.getSingleEvent(user, LoginEvents.ENTRY_NAME, userProfileCacheContext);
             LoginEvents events = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
-            List<AttributeImpl> attributes = new ArrayList<AttributeImpl>();
+            List<AttributeImpl> attributes = new ArrayList<>();
             attributeCtx.getIdPAttributes().entrySet()
                     .forEach(entry -> attributes.add(toAttributeImpl(entry, profileRequestContext)));
             LoginEventImpl loginEvent = new LoginEventImpl(rpId, rpUIContext.getServiceName(),
@@ -285,8 +285,10 @@ public class UpdateLoginEvents extends AbstractUserProfileInterceptorAction {
                     addressLookupStrategy.apply(profileRequestContext));
             events.setMaxEntries(maxEntries);
             events.getLoginEvents().add(loginEvent);
-            userProfileCache.setSingleEvent(LoginEvents.ENTRY_NAME, events.serialize(), userProfileCacheContext);
-            log.debug("{} Updated login events {} ", getLogPrefix(), events.serialize());
+            userProfileCache.setSingleEvent(LoginEvents.ENTRY_NAME, events.serializeWithMaxEntries(), userProfileCacheContext);
+            if (log.isDebugEnabled()) {
+                log.debug("{} Updated login events {} ", getLogPrefix(), events.serializeWithMaxEntries());
+            }
         } catch (JsonProcessingException e) {
             log.error("{} Failed parsing token", getLogPrefix(), e);
             // We are intentionally not returning error.

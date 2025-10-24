@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -33,7 +33,7 @@ public class Events {
 
     /** Map of events, instances by name. */
     @Nonnull
-    private Map<String, Event> events = new HashMap<String, Event>();
+    private Map<String, Event> events = new HashMap<>();
 
     /**
      * Constructor.

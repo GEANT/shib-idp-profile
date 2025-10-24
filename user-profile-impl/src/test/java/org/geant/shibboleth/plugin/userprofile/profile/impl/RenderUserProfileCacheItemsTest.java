@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -44,7 +44,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import net.shibboleth.idp.plugin.oidc.op.storage.RevocationCacheContexts;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -53,7 +52,6 @@ import net.shibboleth.idp.profile.testing.RequestContextBuilder;
 import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.component.UnmodifiableComponentException;
 import net.shibboleth.shared.logic.ConstraintViolationException;
-
 
 /**
  * Unit tests for {@link RenderUserProfileCacheItems}.
@@ -89,9 +87,9 @@ public class RenderUserProfileCacheItemsTest {
         addConnectedServicesEvents();
         addAccessTokenEvents();
         addRefreshTokenEvents();
-        
+
         revocationCache = new StorageServiceRevocationCache();
-        
+
         revocationCache.setStorage(storageService);
         revocationCache.setId("id");
         revocationCache.initialize();
@@ -139,7 +137,7 @@ public class RenderUserProfileCacheItemsTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testFailNullUserProfileContextLookupStrategy() throws ComponentInitializationException {
+    public void testFailNullUserProfileContextLookupStrategy() {
         action.setUserProfileContextLookupStrategy(null);
     }
 
@@ -150,7 +148,7 @@ public class RenderUserProfileCacheItemsTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testFailNullSubjectContextLookupStrategy() throws ComponentInitializationException {
+    public void testFailNullSubjectContextLookupStrategy() {
         action.setUsernameLookupStrategy(null);
     }
 
@@ -167,7 +165,7 @@ public class RenderUserProfileCacheItemsTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class)
-    public void testFailNullUserProfileCache() throws ComponentInitializationException {
+    public void testFailNullUserProfileCache() {
         action.setUserProfileCache(null);
     }
 
@@ -191,7 +189,7 @@ public class RenderUserProfileCacheItemsTest {
         events.getLoginEvents()
                 .add(new LoginEventImpl("rpId2", "ServiceName2", System.currentTimeMillis() / 1000, null));
         userProfileCache.setSingleEvent(new usernameLookupStrategy().apply(prc), LoginEvents.ENTRY_NAME,
-                events.serialize());
+                events.serializeWithMaxEntries());
     }
 
     private void addConnectedServicesEvents() throws JsonProcessingException {
@@ -201,7 +199,7 @@ public class RenderUserProfileCacheItemsTest {
                 services.serialize());
     }
 
-    private void addAccessTokenEvents() throws JsonMappingException, JsonProcessingException {
+    private void addAccessTokenEvents() throws JsonProcessingException {
         Long currentTime = System.currentTimeMillis() / 1000;
         AccessTokens accessTokens = new AccessTokens();
         // expired
@@ -224,7 +222,7 @@ public class RenderUserProfileCacheItemsTest {
                 accessTokens.serialize());
     }
 
-    private void addRefreshTokenEvents() throws JsonMappingException, JsonProcessingException {
+    private void addRefreshTokenEvents() throws JsonProcessingException {
         Long currentTime = System.currentTimeMillis() / 1000;
         RefreshTokens refreshTokens = new RefreshTokens();
         // expired
@@ -264,6 +262,5 @@ public class RenderUserProfileCacheItemsTest {
         }
 
     }
-    
 
 }
