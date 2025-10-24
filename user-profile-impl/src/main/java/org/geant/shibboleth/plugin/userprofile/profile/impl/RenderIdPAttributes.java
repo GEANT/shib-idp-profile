@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -81,9 +81,8 @@ public class RenderIdPAttributes extends AbstractProfileAction {
      * @param attributes attribute identifiers of 'personal data' attributes
      */
     public void setIdPUserAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
-        if (attributes != null) {
-            idPAttributes = StringSupport.normalizeStringCollection(attributes);
-        }
+        assert attributes != null;
+        idPAttributes = StringSupport.normalizeStringCollection(attributes);
     }
 
     @Override
@@ -101,13 +100,7 @@ public class RenderIdPAttributes extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        if (userProfileContext.getRPAttributeContext() == null
-                || userProfileContext.getRPAttributeContext().get(null) == null) {
-            // Nothing to do, no attributes resolved.
-            return false;
-        }
-        return true;
-
+        return userProfileContext.getRPAttributeContext().get(null) != null;
     }
 
     /** {@inheritDoc} */
@@ -118,7 +111,9 @@ public class RenderIdPAttributes extends AbstractProfileAction {
                 .values()) {
             if (attribute != null && !attribute.getValues().isEmpty() && idPAttributes.contains(attribute.getId())) {
                 userProfileContext.getIdPUserAttributes().add(attribute);
-                log.debug("{} Adding attribute {}", getLogPrefix(), attribute.toString());
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Adding attribute {}", getLogPrefix(), attribute);
+                }
             }
         }
     }

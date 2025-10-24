@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -16,12 +16,15 @@
 
 package org.geant.shibboleth.plugin.userprofile.profile.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.geant.shibboleth.plugin.userprofile.context.UserProfileContext;
+import org.geant.shibboleth.plugin.userprofile.event.api.LoginEvent;
 import org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens;
 import org.geant.shibboleth.plugin.userprofile.event.impl.ConnectedServices;
 import org.geant.shibboleth.plugin.userprofile.event.impl.LoginEvents;
@@ -152,8 +155,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        
-        if (usernameLookupStrategy.apply(profileRequestContext) == null || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
+
+        if (usernameLookupStrategy.apply(profileRequestContext) == null
+                || usernameLookupStrategy.apply(profileRequestContext).isEmpty()) {
             log.warn("{} No username", getLogPrefix());
             return false;
         }
@@ -176,7 +180,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
                 tokens.getAccessTokens()
                         .removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
                 userProfileCache.setSingleEvent(user, AccessTokens.ENTRY_NAME, tokens.serialize());
-                log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Updated access tokens {} ", getLogPrefix(), tokens.serialize());
+                }
                 // Remove all revoked tokens from tokens displayed.
                 tokens.getAccessTokens().removeIf(accessToken -> revocationCache
                         .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, accessToken.getTokenId()));
@@ -197,7 +203,9 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
                 tokens.getRefreshTokens()
                         .removeIf(refreshToken -> refreshToken.getExp() < System.currentTimeMillis() / 1000);
                 userProfileCache.setSingleEvent(user, RefreshTokens.ENTRY_NAME, tokens.serialize());
-                log.debug("{} Updated refresh tokens {} ", getLogPrefix(), tokens.serialize());
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Updated refresh tokens {} ", getLogPrefix(), tokens.serialize());
+                }
                 // Remove all revoked tokens from tokens displayed.
                 tokens.getRefreshTokens().removeIf(refreshToken -> revocationCache
                         .isRevoked(RevocationCacheContexts.SINGLE_ACCESS_OR_REFRESH_TOKENS, refreshToken.getTokenId()));
@@ -226,6 +234,7 @@ public class RenderUserProfileCacheItems extends AbstractProfileAction {
         try {
             LoginEvents organizations = event != null ? LoginEvents.parse(event.getValue()) : new LoginEvents();
             userProfileContext.getLoginEvents().clear();
+            Collections.sort(organizations.getLoginEvents(), (o1, o2) -> Long.compare(o2.getTime(), o1.getTime()));
             userProfileContext.getLoginEvents().addAll(organizations.getLoginEvents());
         } catch (JsonProcessingException e) {
             log.error("{} Failed processing connected organizations.", getLogPrefix(), e);

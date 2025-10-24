@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -155,12 +155,13 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
             accessTokens.getAccessTokens()
                     .removeIf(accessToken -> accessToken.getExp() < System.currentTimeMillis() / 1000);
             AccessTokenClaimsSet accessToken = tokenCtx.getJWT() != null
-                    ? AccessTokenClaimsSet.parse(tokenCtx.getJWT().getJWTClaimsSet().toString())
+                    ? AccessTokenClaimsSet.parse(tokenCtx.getJWT(), dataSealer)
                     : AccessTokenClaimsSet.parse(tokenCtx.getOpaque(), dataSealer);
             accessTokens.getAccessTokens().add(new AccessTokenImpl(accessToken));
             userProfileCache.setSingleEvent(AccessTokens.ENTRY_NAME, accessTokens.serialize(), userProfileCacheContext);
-            log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.serialize());
-
+            if (log.isDebugEnabled()) {
+                log.debug("{} Updated access tokens {} ", getLogPrefix(), accessTokens.serialize());
+            }
             String refreshToken = oidcResponseContext.getRefreshToken() != null
                     ? oidcResponseContext.getRefreshToken().getValue()
                     : null;
@@ -175,7 +176,9 @@ public class StoreToken extends AbstractUserProfileInterceptorAction {
                         .add(new RefreshTokenImpl(RefreshTokenClaimsSet.parse(refreshToken, dataSealer)));
                 userProfileCache.setSingleEvent(RefreshTokens.ENTRY_NAME, refreshTokens.serialize(),
                         userProfileCacheContext);
-                log.debug("{} Updated refresh tokens {} ", getLogPrefix(), refreshTokens.serialize());
+                if (log.isDebugEnabled()) {
+                    log.debug("{} Updated refresh tokens {} ", getLogPrefix(), refreshTokens.serialize());
+                }
             }
 
         } catch (JsonProcessingException | ParseException | DataSealerException e) {

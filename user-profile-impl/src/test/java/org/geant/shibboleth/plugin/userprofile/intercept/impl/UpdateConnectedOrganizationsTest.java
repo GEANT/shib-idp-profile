@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -38,7 +38,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -62,6 +61,7 @@ import net.shibboleth.shared.component.ComponentInitializationException;
 import net.shibboleth.shared.primitive.NonnullSupplier;
 import net.shibboleth.shared.testing.MockApplicationContext;
 import net.shibboleth.shared.testing.MockReloadableService;
+
 /**
  * Unit tests for {@link UpdateConnectedOrganizations}.
  */
@@ -82,7 +82,7 @@ public class UpdateConnectedOrganizationsTest {
     private UserProfileCacheContext userProfileCacheContext;
 
     @BeforeMethod
-    public void initTests() throws ComponentInitializationException, JsonProcessingException {
+    public void initTests() throws ComponentInitializationException {
         storageService = new MemoryStorageService();
         storageService.setId("test");
         storageService.initialize();
@@ -92,7 +92,6 @@ public class UpdateConnectedOrganizationsTest {
         userProfileCache.setStorage(storageService);
         userProfileCache.setId("id");
         userProfileCache.initialize();
-        // addLoginEvents();
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
@@ -134,7 +133,7 @@ public class UpdateConnectedOrganizationsTest {
 
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);
-        
+
         action.setTranscoderRegistry(new MockReloadableService<>(registry));
 
         RelyingPartyContext relyingPartyContext = (RelyingPartyContext) prc.addSubcontext(new RelyingPartyContext(),
@@ -158,7 +157,11 @@ public class UpdateConnectedOrganizationsTest {
                 .addSubcontext(new AuthenticationContext(), true);
         authenticationContext.addSubcontext(new RelyingPartyUIContext(), true);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        action.setHttpServletRequestSupplier(new NonnullSupplier<> () {public HttpServletRequest get() { return request;}});
+        action.setHttpServletRequestSupplier(new NonnullSupplier<>() {
+            public HttpServletRequest get() {
+                return request;
+            }
+        });
     }
 
     @AfterMethod
@@ -174,7 +177,7 @@ public class UpdateConnectedOrganizationsTest {
     }
 
     @Test
-    public void testSuccess() throws ComponentInitializationException, JsonMappingException, JsonProcessingException {
+    public void testSuccess() throws ComponentInitializationException, JsonProcessingException {
         action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

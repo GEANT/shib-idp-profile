@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -24,8 +24,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.testing.ActionTestingSupport;
 import net.shibboleth.idp.profile.testing.RequestContextBuilder;
@@ -43,7 +41,7 @@ public class InitializeUserProfileCacheContextTest {
     private ProfileRequestContext prc;
 
     @BeforeMethod
-    public void initTests() throws ComponentInitializationException, JsonProcessingException {
+    public void initTests() throws ComponentInitializationException {
         action = new InitializeUserProfileCacheContext();
         src = (new RequestContextBuilder()).buildRequestContext();
         prc = (new WebflowRequestContextProfileRequestContextLookup()).apply(this.src);

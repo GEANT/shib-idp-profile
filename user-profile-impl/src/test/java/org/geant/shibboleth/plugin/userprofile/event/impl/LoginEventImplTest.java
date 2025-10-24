@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -20,7 +20,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
  * Unit tests for {@link LoginEventImpl}.
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class LoginEventImplTest {
 
     @Test
-    public void test090Format() throws JsonMappingException, JsonProcessingException {
+    public void test090Format() throws JsonProcessingException {
         LoginEventImpl event = LoginEventImpl.parse(
                 "{\"id\":\"id\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
         event = LoginEventImpl.parse(event.serialize());
@@ -41,7 +40,7 @@ public class LoginEventImplTest {
     }
 
     @Test
-    public void testFormat() throws JsonMappingException, JsonProcessingException {
+    public void testFormat() throws JsonProcessingException {
         LoginEventImpl event = LoginEventImpl.parse(
                 "{\"id\":\"id\",\"acr\":\"refedsMFA\",\"address\":\"10.10.10.10\",\"attributes\":[{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]},{\"id\":\"id\",\"name\":\"name\",\"description\":\"desc\",\"values\":[\"foo\",\"bar\"]}],\"time\":500}");
         event = LoginEventImpl.parse(event.serialize());

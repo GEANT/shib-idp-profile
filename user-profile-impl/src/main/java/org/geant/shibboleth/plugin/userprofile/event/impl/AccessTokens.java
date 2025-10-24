@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -35,7 +35,7 @@ public class AccessTokens {
     public final static String ENTRY_NAME = "org.geant.shibboleth.plugin.userprofile.event.impl.AccessTokens";
 
     /** Access tokens. */
-    private List<AccessTokenImpl> accessTokens = new ArrayList<AccessTokenImpl>();
+    private List<AccessTokenImpl> accessTokens = new ArrayList<>();
 
     /**
      * Constructor.
@@ -65,7 +65,7 @@ public class AccessTokens {
         ObjectMapper objectMapper = new ObjectMapper();
         AccessTokenImpl[] accessTokens = objectMapper.readValue(tokens, AccessTokenImpl[].class);
         AccessTokens accTokens = new AccessTokens();
-        accTokens.accessTokens = new ArrayList<AccessTokenImpl>(Arrays.asList(accessTokens));
+        accTokens.accessTokens = new ArrayList<>(Arrays.asList(accessTokens));
         return accTokens;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -218,7 +218,7 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
             @Nonnull final ProfileRequestContext profileRequestContext) {
         List<String> values;
         if (collectAttributeValues.test(profileRequestContext)) {
-            values = new ArrayList<String>();
+            values = new ArrayList<>();
             entry.getValue().getValues().forEach(value -> values.add(value.getDisplayValue()));
         } else {
             values = null;
@@ -235,7 +235,9 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
         ConnectedServices organizations;
         try {
             organizations = event != null ? ConnectedServices.parse(event.getValue()) : new ConnectedServices();
-            log.debug("Connected organizations {}", organizations.serialize());
+            if (log.isDebugEnabled()) {
+                log.debug("Connected organizations {}", organizations.serialize());
+            }
             String rpId = relyingPartyIdLookupStrategy.apply(profileRequestContext);
             ConnectedServiceImpl organization = organizations.getConnectedServices().containsKey(rpId)
                     ? organizations.getConnectedServices().get(rpId)
@@ -247,7 +249,9 @@ public class UpdateConnectedOrganizations extends AbstractUserProfileInterceptor
             organizations.getConnectedServices().put(rpId, organization);
             userProfileCache.setSingleEvent(ConnectedServices.ENTRY_NAME, organizations.serialize(),
                     userProfileCacheContext);
-            log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
+            if (log.isDebugEnabled()) {
+                log.debug("{} Updated connected organizations with {} ", getLogPrefix(), organizations.serialize());
+            }
         } catch (JsonProcessingException e) {
             log.error("{} Failed parsing connected organizations", getLogPrefix(), e);
             // We are intentionally not returning error.

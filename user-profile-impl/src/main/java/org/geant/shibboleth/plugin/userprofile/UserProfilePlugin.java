@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -34,16 +34,15 @@ public class UserProfilePlugin extends PropertyDrivenIdPPlugin {
      * 
      * @throws IOException     if the properties fail to load
      * @throws PluginException if other errors occur
-     * @throws ModuleException 
      */
-    public UserProfilePlugin() throws IOException, PluginException, ModuleException {
+    public UserProfilePlugin() throws IOException, PluginException {
         super(UserProfilePlugin.class);
         try {
             final IdPModule module = new UserProfileModule();
             setEnableOnInstall(Collections.singleton(module));
             setDisableOnRemoval(Collections.singleton(module));
-        } catch (final IOException e) {
-            throw e;
+        } catch (final ModuleException e) {
+            throw new PluginException(e);
         }
     }
 

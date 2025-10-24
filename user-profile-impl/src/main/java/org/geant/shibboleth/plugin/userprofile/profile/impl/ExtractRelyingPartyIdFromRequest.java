@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023, GÉANT
+ * Copyright (c) 2022-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -65,14 +65,8 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
     @NotEmpty
     private String rpIdFieldName;
 
-    /** For extracting user input. */
-    private HttpServletRequest request;
-
     /** Relying party identifier we resolve attributes for. */
     private String rpId;
-
-    /** context for user profile . */
-    private UserProfileContext userProfileContext;
 
     /** Constructor. */
     ExtractRelyingPartyIdFromRequest() {
@@ -124,7 +118,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        request = getHttpServletRequest();
+        HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.error("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -136,7 +130,7 @@ public class ExtractRelyingPartyIdFromRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
+        UserProfileContext userProfileContext = userProfileContextLookupStrategy.apply(profileRequestContext);
         if (userProfileContext == null) {
             log.error("{} No UserProfileContext name available.", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

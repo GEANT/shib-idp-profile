@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, GÉANT
+ * Copyright (c) 2024-2025, GÉANT
  *
  * Licensed under the Apache License, Version 2.0 (the “License”); you may not
  * use this file except in compliance with the License. You may obtain a copy
@@ -129,12 +129,12 @@ public class StoreSAMLAuthContextClassReferencePrincipalName extends AbstractUse
                 .getSubcontext(RequestedPrincipalContext.class);
         if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null) {
             final Principal matchingPrincipal = requestedPrincipalContext.getMatchingPrincipal();
-            if (matchingPrincipal instanceof AuthnContextClassRefPrincipal) {
+            if (matchingPrincipal instanceof AuthnContextClassRefPrincipal authnContextClassRefPrincipal) {
                 userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
-                        ((AuthnContextClassRefPrincipal) matchingPrincipal).getAuthnContextClassRef().getURI());
-            } else if (matchingPrincipal instanceof AuthnContextDeclRefPrincipal) {
+                        authnContextClassRefPrincipal.getAuthnContextClassRef().getURI());
+            } else if (matchingPrincipal instanceof AuthnContextDeclRefPrincipal authnContextDeclRefPrincipal) {
                 userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
-                        ((AuthnContextDeclRefPrincipal) matchingPrincipal).getAuthnContextDeclRef().getURI());
+                        authnContextDeclRefPrincipal.getAuthnContextDeclRef().getURI());
             } else {
                 userProfileCacheContext.setAuthnContextClassReferencePrincipalName(
                         classRefLookupStrategy.apply(profileRequestContext).getAuthnContextClassRef().getURI());
